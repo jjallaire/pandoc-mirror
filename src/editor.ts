@@ -1,7 +1,7 @@
 
 
 import { Schema } from "prosemirror-model"
-import { EditorState, Plugin } from "prosemirror-state"
+import { EditorState, Transaction, Plugin } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 
 import { undo, redo, history } from "prosemirror-history"
@@ -32,9 +32,9 @@ export class Editor {
     })
 
     this.view = new EditorView(this.parent, { 
-      state: this.state
+      state: this.state,
+      dispatchTransaction: this.dispatchTransaction.bind(this)
     })
-
 
   }
 
@@ -52,5 +52,9 @@ export class Editor {
     ]
   } 
 
+  private dispatchTransaction(transaction: Transaction) {
+    this.state = this.state.apply(transaction)
+    this.view.updateState(this.state)
+  }
 
 }
