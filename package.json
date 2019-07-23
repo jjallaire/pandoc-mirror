@@ -4,9 +4,12 @@
   "description": "Pandoc editor using ProseMirror",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "test": "jest --config jestconfig.json",
+    "start": "webpack-dev-server --mode development",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
@@ -20,7 +23,10 @@
     "type": "git",
     "url": "git+https://github.com/jjallaire/pandoc-mirror.git"
   },
-  "keywords": ["pandoc", "editor"],
+  "keywords": [
+    "pandoc",
+    "editor"
+  ],
   "author": "J.J. Allaire",
   "license": "ISC",
   "bugs": {
@@ -29,8 +35,14 @@
   "homepage": "https://github.com/jjallaire/pandoc-mirror#readme",
   "devDependencies": {
     "prettier": "^1.18.2",
+    "ts-loader": "^6.0.4",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "tslint-loader": "^3.5.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.37.0",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
   }
 }
