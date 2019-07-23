@@ -8,8 +8,8 @@ export class Editor {
     this.place = place;
   }
 
-  public inject() : void {
-    this.place.innerText = "injected";
+  public inject(text: string) : void {
+    this.place.innerText = text;
   }
 
 
