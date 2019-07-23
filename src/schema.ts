@@ -27,7 +27,6 @@ export function pandocSchema() : Schema {
   
   const nodes : OrderedMap<NodeSpec> = baseNodes;
   
-
   return new Schema({ nodes });
 }
 
