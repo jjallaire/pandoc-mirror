@@ -5,26 +5,11 @@ import OrderedMap from "orderedmap"
 
 import { Node, NodeSpec, Schema } from "prosemirror-model"
 
-const baseNodes = {
-  "doc": {
-    content: "block+"
-  },
-  "paragraph": {
-    content: "inline*",
-    group: "block",
-    parseDOM: [{tag: "p"}],
-    toDOM() { return ["p", 0] }
-  },
-  "text": {
-    group: "inline",
-    toDOM(node: Node) : any { return node.text }
-  }
-}
 
 
 export function pandocSchema() : Schema {
 
-  const nodes = OrderedMap.from({
+  const baseNodes : OrderedMap<NodeSpec> = OrderedMap.from({
     "doc": { 
       content: "block+" 
     },
@@ -40,7 +25,7 @@ export function pandocSchema() : Schema {
     }
   });
   
-  
+  const nodes : OrderedMap<NodeSpec> = baseNodes;
   
 
   return new Schema({ nodes });
