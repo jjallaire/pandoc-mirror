@@ -1,8 +1,11 @@
 
 
-const Greeter = PandocMirror.Greeter;
+
+const Editor = PandocMirror.Editor;
+
+let editor = new Editor(document.getElementById('editor'));
+editor.inject();
 
 
 
 
-console.log(Greeter('foo'));
