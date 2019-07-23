@@ -1,3 +1,8 @@
+
+// NOTE: We currently use webpack only for creating a hot reloading
+// development server. The npm build command uses ts to directly
+// create the contents of 'dist' 
+
 const path = require('path');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
@@ -6,6 +11,8 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.join(__dirname, '/dist'),
+    library: "PandocMirror",
+    libraryTarget: "var"
   },
   devServer: {
     contentBase: path.join(__dirname, 'dev'),
