@@ -11,6 +11,11 @@ import { dropCursor } from "prosemirror-dropcursor"
 
 import { pandocSchema, pandocEmptyDoc } from './schema'
 
+export enum SelectionType {
+  Text = 'text',
+  Node = 'node'
+}
+
 export interface IEditorOptions {
   autoFocus?: boolean,
   editable?: boolean
@@ -19,7 +24,7 @@ export interface IEditorOptions {
 export interface IEditorHooks {
   isEditable?: () => boolean,
   onUpdate?: () => void,
-  onSelectionChange?: (type: string) => void
+  onSelectionChange?: (type: SelectionType) => void
 }
 
 export class Editor {
@@ -89,7 +94,7 @@ export class Editor {
   private emitSelectionChanged() {
     if (this.hooks.onSelectionChange) {
       this.hooks.onSelectionChange(
-        (this.state.selection instanceof NodeSelection) ? 'node' : 'text'
+        (this.state.selection instanceof NodeSelection) ? SelectionType.Node : SelectionType.Text
       );
     }
   }
