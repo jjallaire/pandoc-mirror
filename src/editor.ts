@@ -35,6 +35,7 @@ export class Editor {
   private schema: Schema
   private state: EditorState
   private view: EditorView
+  private onClickBelow: (ev: MouseEvent) => void
   
   constructor(parent: HTMLElement, options?: IEditorOptions, hooks?: IEditorHooks) {
     
@@ -56,6 +57,9 @@ export class Editor {
       dispatchTransaction: this.dispatchTransaction.bind(this)
     })
 
+    this.onClickBelow = () => this.focus()
+    this.parent.addEventListener("click", this.onClickBelow)
+
     if (this.options.autoFocus) {
       setTimeout(() => {
         this.focus()
@@ -65,6 +69,7 @@ export class Editor {
   }
 
   public destroy() {
+    this.parent.removeEventListener("click", this.onClickBelow)
     this.view.destroy()
   }
 
@@ -116,6 +121,7 @@ export class Editor {
       }
     }
   }
+
 
   private basePlugins() : Plugin[] {
     return [
