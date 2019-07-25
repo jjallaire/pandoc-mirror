@@ -9,6 +9,8 @@ import { baseKeymap } from "prosemirror-commands"
 import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
 
+import { IPandoc } from './pandoc.js'
+
 import { pandocSchema, pandocEmptyDoc } from './schema'
 
 export enum SelectionType {
@@ -18,7 +20,6 @@ export enum SelectionType {
 
 export interface IEditorOptions {
   autoFocus?: boolean,
-  editable?: boolean
 }
 
 export interface IEditorHooks {
@@ -27,9 +28,17 @@ export interface IEditorHooks {
   onSelectionChange?: (type: SelectionType) => void
 }
 
+export interface IEditorConfig {
+  parent: HTMLElement,
+  pandoc: IPandoc,
+  options?: IEditorOptions,
+  hooks?: IEditorHooks
+}
+
 export class Editor {
 
   private parent: HTMLElement
+  private pandoc: IPandoc
   private options: IEditorOptions
   private hooks: IEditorHooks
   private schema: Schema
@@ -37,11 +46,12 @@ export class Editor {
   private view: EditorView
   private onClickBelow: (ev: MouseEvent) => void
   
-  constructor(parent: HTMLElement, options?: IEditorOptions, hooks?: IEditorHooks) {
+  constructor(config: IEditorConfig) {
     
-    this.parent = parent
-    this.options = options || {}
-    this.hooks = hooks || {}
+    this.parent = config.parent
+    this.pandoc = config.pandoc
+    this.options = config.options || {}
+    this.hooks = config.hooks || {}
     this.initHooks()
     
     this.schema = pandocSchema()
@@ -112,16 +122,9 @@ export class Editor {
 
   private initHooks() {
     if (this.hooks.isEditable === undefined) {
-      this.hooks.isEditable = () => {
-        if (this.options.editable !== undefined) {
-          return this.options.editable;
-        } else {
-          return true
-        }
-      }
+      this.hooks.isEditable = () => true
     }
   }
-
 
   private basePlugins() : Plugin[] {
     return [

@@ -4,6 +4,9 @@
 // create the contents of 'dist' 
 
 const path = require('path');
+const express = require('express');
+const child_process = require('child_process')
+
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
@@ -16,7 +19,52 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, 'dev'),
-    port: 8080
+    port: 8080,
+    before: function(app, server) {
+
+      function pandoc({ from, to, input }) {
+        return new Promise(resolve => {
+          let spawn = child_process.spawn;
+          pandoc = spawn('pandoc', ['--from', from, '--to', to]);
+          pandoc.stdout.on('data', data => {
+            let ast = JSON.parse(data);
+            resolve(ast);
+          });
+          pandoc.stdin.setEncoding = 'utf-8';
+          pandoc.stdin.write(input);
+          pandoc.stdin.end();
+        })
+      }
+              
+      app.post('/pandoc/ast', express.json(), function(request, response) {
+        let spawn = child_process.spawn;
+        pandoc = spawn('pandoc', ['--from', request.body.format, '--to', 'json']);
+        pandoc.stdout.on('data', data => {
+          let ast = JSON.parse(data);
+          response.json( { ast });
+        });
+        pandoc.stderr.on('data', data => {
+          response.status(500).send(`${data}`);
+        })
+        pandoc.stdin.setEncoding = 'utf-8';
+        pandoc.stdin.write(request.body.markdown);
+        pandoc.stdin.end();
+      });
+
+      app.post('/pandoc/markdown', express.json(), function(request, response) {
+        let spawn = child_process.spawn;
+        pandoc = spawn('pandoc', ['--from', 'json', '--to', request.body.format]);
+        pandoc.stdout.on('data', data => {
+          response.json( { markdown: `${data}` });
+        });
+        pandoc.stderr.on('data', data => {
+          response.status(500).send(`${data}`);
+        })
+        pandoc.stdin.setEncoding = 'utf-8';
+        pandoc.stdin.write(JSON.stringify(request.body.ast));
+        pandoc.stdin.end();
+      })
+    }
   },
   module: {
     rules: [
