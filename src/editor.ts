@@ -10,6 +10,7 @@ import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
 
 import { IPandoc } from './pandoc.js'
+import { ExtensionManager } from './extensions/manager'
 
 import { pandocSchema, pandocEmptyDoc } from './schema'
 
@@ -44,6 +45,7 @@ export class Editor {
   private schema: Schema
   private state: EditorState
   private view: EditorView
+  private extensions: ExtensionManager
   private onClickBelow: (ev: MouseEvent) => void
   
   constructor(config: IEditorConfig) {
@@ -51,9 +53,12 @@ export class Editor {
     this.parent = config.parent
     this.pandoc = config.pandoc
     this.options = config.options || {}
+    
     this.hooks = config.hooks || {}
     this.initHooks()
     
+    this.extensions = ExtensionManager.create()
+
     this.schema = pandocSchema()
 
     this.state = EditorState.create({

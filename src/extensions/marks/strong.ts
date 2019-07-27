@@ -1,6 +1,6 @@
 
 import { Schema } from 'prosemirror-model'
-import { IEditorExtension, markExtension, MarkCommand } from '../../extension'
+import { IEditorExtension, markExtension, MarkCommand } from '../api'
 
 const extension : IEditorExtension = markExtension({
   name: "strong",

@@ -4,7 +4,7 @@ import { EditorView } from "prosemirror-view"
 import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
 import { toggleMark } from "prosemirror-commands"
 
-import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } from './utils'
+import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } from '../utils'
 
 export interface IEditorExtension {
   marks?: IEditorMark[],
