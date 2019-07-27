@@ -11,6 +11,19 @@ export interface IEditorExtension {
   nodes?: IEditorNode[]
 }
 
+export function markExtension(mark: IEditorMark) : IEditorExtension {
+  return {
+    marks: [mark]
+  }
+}
+
+export function nodeExtension(node: IEditorNode) : IEditorExtension {
+  return {
+    nodes: [node]
+  }
+}
+
+
 export interface IEditorMark {
   name: string,
   spec: MarkSpec,
@@ -18,7 +31,7 @@ export interface IEditorMark {
     from: IPandocReader,
     to: IPandocWriter
   }
-  command: (type: MarkType) => IEditorCommand
+  command: (schema: Schema) => IEditorCommand
 }
 
 export interface IEditorNode {
@@ -28,7 +41,7 @@ export interface IEditorNode {
     from: IPandocReader,
     to: IPandocWriter
   }
-  command: (type: NodeType) => IEditorCommand
+  command: (schema: Schema) => IEditorCommand
 }
 
 export interface IPandocReader {
@@ -56,7 +69,7 @@ export type EditorCommandFn = (state: EditorState, dispatch?: ((tr: Transaction<
 
 export interface IEditorCommand {
   name: string
-  keymap: string
+  keymap: string[] | null
   isEnabled: (state: EditorState) => boolean
   isActive: (state: EditorState) => boolean
   execute: EditorCommandFn
@@ -65,10 +78,10 @@ export interface IEditorCommand {
 export class EditorCommand implements IEditorCommand {
  
   public name: string
-  public keymap: string
+  public keymap: string[] | null
   public command: EditorCommandFn
 
-  constructor(name: string, keymap: string, command: EditorCommandFn) {
+  constructor(name: string, keymap: string[] | null, command: EditorCommandFn) {
     this.name = name
     this.keymap = keymap
     this.command = command;
@@ -93,7 +106,7 @@ export class MarkCommand extends EditorCommand {
   public markType: MarkType;
   public attrs: object
 
-  constructor(name: string, keymap: string, markType: MarkType, attrs = {}) {
+  constructor(name: string, keymap: string[] | null, markType: MarkType, attrs = {}) {
     super(name, keymap, toggleMark(markType, attrs) as EditorCommandFn);
     this.markType = markType;
     this.attrs = attrs;
@@ -109,7 +122,7 @@ export class NodeCommand extends EditorCommand {
   public nodeType: NodeType
   public attrs: object
 
-  constructor(name: string, keymap: string, nodeType: NodeType, attrs: object, command: EditorCommandFn ) {
+  constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, command: EditorCommandFn ) {
     super(name, keymap, command);
     this.nodeType = nodeType;
     this.attrs = attrs;
@@ -121,20 +134,20 @@ export class NodeCommand extends EditorCommand {
 }
 
 export class ListCommand extends NodeCommand {
-  constructor(name: string, keymap: string, schema: Schema, listType: NodeType, listItemType: NodeType) {
+  constructor(name: string, keymap: string[] | null, listType: NodeType, listItemType: NodeType) {
     super(name, keymap, listType, {}, toggleList(listType, listItemType));
   }
 
 }
 
 export class BlockCommand extends NodeCommand {
-  constructor(name: string, keymap: string, blockType: NodeType, toggleType: NodeType, attrs = {}) {
+  constructor(name: string, keymap: string[] | null, blockType: NodeType, toggleType: NodeType, attrs = {}) {
     super(name, keymap, blockType, attrs, toggleBlockType(blockType, toggleType, attrs));
   }
 }
 
 export class WrapCommand extends NodeCommand {
-  constructor(name: string, keymap: string, wrapType: NodeType) {
+  constructor(name: string, keymap: string[] | null, wrapType: NodeType) {
     super(name, keymap, wrapType, {}, toggleWrap(wrapType));
   }
 }
