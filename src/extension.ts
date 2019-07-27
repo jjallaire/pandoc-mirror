@@ -4,7 +4,7 @@ import { EditorView } from "prosemirror-view"
 import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
 import { toggleMark } from "prosemirror-commands"
 
-import { markIsActive, nodeIsActive, toggleList } from './utils'
+import { markIsActive, nodeIsActive, toggleList, toggleBlockType } from './utils'
 
 export interface IEditorExtension {
   marks?: IEditorMark[],
@@ -125,6 +125,12 @@ export class ListCommand extends NodeCommand {
     super(name, keymap, listType, {}, toggleList(listType, listItemType));
   }
 
+}
+
+class BlockCommand extends NodeCommand {
+  constructor(name: string, keymap: string, blockType: NodeType, toggleType: NodeType, attrs = {}) {
+    super(name, keymap, blockType, attrs, toggleBlockType(blockType, toggleType, attrs));
+  }
 }
 
 
