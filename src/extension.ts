@@ -1,10 +1,10 @@
 
 import { EditorState, Transaction } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
-import { NodeSpec, NodeType, MarkSpec, MarkType } from "prosemirror-model"
+import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
 import { toggleMark } from "prosemirror-commands"
 
-import { markIsActive, nodeIsActive } from './utils'
+import { markIsActive, nodeIsActive, toggleList } from './utils'
 
 export interface IEditorExtension {
   marks?: IEditorMark[],
@@ -52,16 +52,15 @@ export interface IPandocWriter {
   
 }
 
+export type EditorCommandFn = (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => boolean
 
 export interface IEditorCommand {
   name: string
   keymap: string
   isEnabled: (state: EditorState) => boolean
   isActive: (state: EditorState) => boolean
-  execute: (state: EditorState, dispatch?: Transaction, view?: EditorView) => boolean
+  execute: EditorCommandFn
 }
-
-type EditorCommandFn = (state: EditorState, dispatch?: Transaction, view?: EditorView) => boolean
 
 export class EditorCommand implements IEditorCommand {
  
@@ -83,7 +82,7 @@ export class EditorCommand implements IEditorCommand {
     return false;
   }
 
-  public execute(state: EditorState, dispatch?: Transaction, view?: EditorView) {
+  public execute(state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) {
     return this.command(state, dispatch, view);
   }
 }
@@ -118,6 +117,12 @@ export class NodeCommand extends EditorCommand {
 
   public isActive(state: EditorState) {
     return nodeIsActive(state, this.nodeType, this.attrs);
+  }
+}
+
+export class ListCommand extends NodeCommand {
+  constructor(name: string, keymap: string, schema: Schema, listType: NodeType, listItemType: NodeType) {
+    super(name, keymap, listType, {}, toggleList(listType, listItemType));
   }
 
 }
