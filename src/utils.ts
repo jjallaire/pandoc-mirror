@@ -4,8 +4,7 @@ import { Node, NodeType } from "prosemirror-model"
 import { findParentNode, findSelectedNodeOfType } from "prosemirror-utils"
 import { wrapInList, liftListItem } from 'prosemirror-schema-list'
 import { EditorView } from "prosemirror-view";
-import { setBlockType } from 'prosemirror-commands'
-
+import { setBlockType, wrapIn, lift } from 'prosemirror-commands'
 
 export function markIsActive(state: EditorState, type: MarkType) {
   const {
@@ -86,3 +85,17 @@ export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}
     return setBlockType(type, attrs)(state, dispatch)
   }
 }
+
+export function toggleWrap(type: NodeType) {
+  
+  return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => {
+    const isActive = nodeIsActive(state, type)
+
+    if (isActive) {
+      return lift(state, dispatch)
+    }
+
+    return wrapIn(type)(state, dispatch)
+  }
+}
+
