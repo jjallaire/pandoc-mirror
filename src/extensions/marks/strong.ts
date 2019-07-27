@@ -21,7 +21,13 @@ const extension : IEditorExtension = markExtension({
     },
     to: {}
   },
-  command: (schema: Schema) => new MarkCommand("strong", ["Mod-b", "Mod-B"], schema.marks.strong)
+  command: (schema: Schema) => {
+    return new MarkCommand(
+      "strong", 
+      ["Mod-b", "Mod-B"], 
+      schema.marks.strong
+    )
+  }
 });
 
 export default extension;
