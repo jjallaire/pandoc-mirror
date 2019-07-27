@@ -127,7 +127,7 @@ export class ListCommand extends NodeCommand {
 
 }
 
-class BlockCommand extends NodeCommand {
+export class BlockCommand extends NodeCommand {
   constructor(name: string, keymap: string, blockType: NodeType, toggleType: NodeType, attrs = {}) {
     super(name, keymap, blockType, attrs, toggleBlockType(blockType, toggleType, attrs));
   }
