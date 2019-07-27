@@ -3,13 +3,16 @@
 
 import OrderedMap from "orderedmap"
 
-import { Node, NodeSpec, Schema } from "prosemirror-model"
+import { Node, NodeSpec, MarkSpec, Schema } from "prosemirror-model"
+
+import { ExtensionManager } from "./extensions/manager"
+import { IEditorMark, IEditorNode } from "./extensions/api"
 
 
+export function pandocSchema(extensions: ExtensionManager) : Schema {
 
-export function pandocSchema() : Schema {
-
-  const baseNodes : OrderedMap<NodeSpec> = OrderedMap.from({
+  // get nodes from extensions (combine with base nodes)
+  const nodes: { [name: string]: NodeSpec; } = {
     "doc": { 
       content: "block+" 
     },
@@ -23,11 +26,21 @@ export function pandocSchema() : Schema {
       group: "inline",
       toDOM(node: Node) : any { return node.text }
     }
+  };
+  extensions.nodes().forEach((node: IEditorNode) => {
+    nodes[node.name] = node.spec
+  });
+
+  // get marks from extensions
+  const marks: { [name: string]: MarkSpec; } = {}
+  extensions.marks().forEach((mark: IEditorMark) => {
+    marks[mark.name] = mark.spec
   });
   
-  const nodes : OrderedMap<NodeSpec> = baseNodes;
-  
-  return new Schema({ nodes });
+  return new Schema({ 
+    nodes: OrderedMap.from(nodes),
+    marks: OrderedMap.from(marks), 
+  });
 }
 
 export function pandocEmptyDoc(schema: Schema) : Node {

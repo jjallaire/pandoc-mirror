@@ -59,7 +59,7 @@ export class Editor {
     
     this.extensions = ExtensionManager.create()
 
-    this.schema = pandocSchema()
+    this.schema = pandocSchema(this.extensions)
 
     this.state = EditorState.create({
       schema: this.schema,
