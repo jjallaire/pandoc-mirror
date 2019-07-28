@@ -1,6 +1,9 @@
 
 
-import { IEditorExtension, IEditorMark, IEditorNode } from './api'
+import { Schema } from 'prosemirror-model'
+
+
+import { IEditorExtension, IEditorMark, IEditorNode, IEditorCommand } from './api'
 
 import markStrong from './marks/strong'
 
@@ -30,13 +33,23 @@ export class ExtensionManager {
     return this.collect<IEditorNode>((extension: IEditorExtension) => extension.nodes)  
   }
 
+  public commands(schema: Schema): IEditorCommand[] {
+    return this.collect<IEditorCommand>((extension: IEditorExtension) => {
+      if (extension.commands) {
+        return extension.commands(schema)
+      } else {
+        return undefined;
+      }
+    })
+  }
+
 
   private collect<T>(collector: (extension: IEditorExtension) => T[] | undefined) {
-    const items : T[] = [];
+    let items : T[] = [];
     this.extensions.forEach(extension => {
       const collected : T[] | undefined = collector(extension)
       if (collected !== undefined) {
-        items.concat(collected);
+        items = items.concat(collected);
       }
     });
     return items; 

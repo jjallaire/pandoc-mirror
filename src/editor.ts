@@ -5,14 +5,18 @@ import { EditorState, Transaction, Plugin, PluginKey, NodeSelection } from "pros
 import { EditorView } from "prosemirror-view"
 import { undo, redo, history } from "prosemirror-history"
 import { keymap } from "prosemirror-keymap"
-import { baseKeymap } from "prosemirror-commands"
+import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from "prosemirror-commands"
 import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
+import { undoInputRule } from "prosemirror-inputrules"
 
 import { IPandoc } from './pandoc.js'
 import { ExtensionManager } from './extensions/manager'
 
 import { pandocSchema, pandocEmptyDoc } from './schema'
+import { EditorCommandFn, IEditorCommand } from "./extensions/api.js";
+
+const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
 
 export enum SelectionType {
   Text = 'text',
@@ -61,6 +65,7 @@ export class Editor {
 
     this.schema = pandocSchema(this.extensions)
 
+    
     this.state = EditorState.create({
       schema: this.schema,
       doc: pandocEmptyDoc(this.schema),
@@ -134,8 +139,7 @@ export class Editor {
   private basePlugins() : Plugin[] {
     return [
       history(),
-      keymap(baseKeymap),
-      keymap({"Mod-z": undo, "Mod-y": redo}),
+      ...this.keymapPlugins(),
       gapCursor(),
       dropCursor(),
       new Plugin({
@@ -147,6 +151,35 @@ export class Editor {
     ]
   } 
 
-  
+  private keymapPlugins() : Plugin[] {
 
+    // start with standard editing keys
+    const keys : { [key: string] : EditorCommandFn } = {};
+    function bindKey(key: string, cmd: EditorCommandFn) {
+      keys[key] = cmd;
+    }
+    bindKey("Mod-z", undo);
+    bindKey("Shift-Mod-z", redo);
+    if (!mac) {
+      bindKey("Mod-y", redo);
+    }
+    bindKey("Backspace", undoInputRule);
+    bindKey("Alt-ArrowUp", joinUp)
+    bindKey("Alt-ArrowDown", joinDown)
+    bindKey("Mod-BracketLeft", lift)
+    bindKey("Escape", selectParentNode)
+
+    // keys from extensions
+    const commands : IEditorCommand[] = this.extensions.commands(this.schema);
+    commands.forEach((command: IEditorCommand) => {
+      if (command.keymap) {
+        command.keymap.forEach((key: string) => bindKey(key, command.execute))
+      }
+    });
+
+    return [
+      keymap(baseKeymap),
+      keymap(keys),
+    ]
+  }
 }

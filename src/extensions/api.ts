@@ -8,21 +8,9 @@ import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } f
 
 export interface IEditorExtension {
   marks?: IEditorMark[],
-  nodes?: IEditorNode[]
+  nodes?: IEditorNode[],
+  commands?: (schema: Schema) => IEditorCommand[]
 }
-
-export function markExtension(mark: IEditorMark) : IEditorExtension {
-  return {
-    marks: [mark]
-  }
-}
-
-export function nodeExtension(node: IEditorNode) : IEditorExtension {
-  return {
-    nodes: [node]
-  }
-}
-
 
 export interface IEditorMark {
   name: string,
@@ -31,7 +19,6 @@ export interface IEditorMark {
     from: IPandocReader,
     to: IPandocWriter
   }
-  command: (schema: Schema) => IEditorCommand
 }
 
 export interface IEditorNode {
@@ -41,7 +28,6 @@ export interface IEditorNode {
     from: IPandocReader,
     to: IPandocWriter
   }
-  command: (schema: Schema) => IEditorCommand
 }
 
 export interface IPandocReader {
@@ -79,24 +65,20 @@ export class EditorCommand implements IEditorCommand {
  
   public name: string
   public keymap: string[] | null
-  public command: EditorCommandFn
+  public execute: EditorCommandFn
 
-  constructor(name: string, keymap: string[] | null, command: EditorCommandFn) {
+  constructor(name: string, keymap: string[] | null, execute: EditorCommandFn) {
     this.name = name
     this.keymap = keymap
-    this.command = command;
+    this.execute = execute;
   }
 
   public isEnabled(state: EditorState) : boolean {
-    return this.command(state);
+    return this.execute(state);
   }
 
   public isActive(state: EditorState) : boolean {
     return false;
-  }
-
-  public execute(state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) {
-    return this.command(state, dispatch, view);
   }
 }
 
@@ -122,8 +104,8 @@ export class NodeCommand extends EditorCommand {
   public nodeType: NodeType
   public attrs: object
 
-  constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, command: EditorCommandFn ) {
-    super(name, keymap, command);
+  constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, execute: EditorCommandFn ) {
+    super(name, keymap, execute);
     this.nodeType = nodeType;
     this.attrs = attrs;
   }
