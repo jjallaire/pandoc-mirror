@@ -40,6 +40,13 @@ export interface IEditorConfig {
   hooks?: IEditorHooks
 }
 
+export interface IEditorCommand {
+  name: string,
+  isEnabled: () => boolean,
+  isActive: () => boolean,
+  execute: () => void
+}
+
 export class Editor {
 
   private parent: HTMLElement
@@ -99,6 +106,17 @@ export class Editor {
 
   public blur() {
     (this.view.dom as HTMLElement).blur()
+  }
+
+  public commands() : IEditorCommand[] {
+    return this.extensions.commands(this.schema).map((command: Command) => {
+      return {
+        name: command.name,
+        isActive: () => command.isActive(this.state),
+        isEnabled: () => command.isEnabled(this.state),
+        execute: () => command.execute(this.state, this.view.dispatch, this.view)
+      }
+    })
   }
 
   private dispatchTransaction(transaction: Transaction) {
