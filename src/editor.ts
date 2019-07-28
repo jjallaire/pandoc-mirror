@@ -46,6 +46,7 @@ export interface IEditorCommand {
   isActive: () => boolean,
   execute: () => void
 }
+export interface IEditorCommands { [name: string] : IEditorCommand } 
 
 export class Editor {
 
@@ -108,15 +109,18 @@ export class Editor {
     (this.view.dom as HTMLElement).blur()
   }
 
-  public commands() : IEditorCommand[] {
-    return this.extensions.commands(this.schema).map((command: Command) => {
+  public commands() : IEditorCommands  {
+    return this.extensions.commands(this.schema).reduce((commands: IEditorCommands, command: Command) => {
       return {
-        name: command.name,
-        isActive: () => command.isActive(this.state),
-        isEnabled: () => command.isEnabled(this.state),
-        execute: () => command.execute(this.state, this.view.dispatch, this.view)
+        ...commands,
+        [command.name]: {
+          name: command.name,
+          isActive: () => command.isActive(this.state),
+          isEnabled: () => command.isEnabled(this.state),
+          execute: () => command.execute(this.state, this.view.dispatch, this.view)
+        }
       }
-    })
+    }, {})
   }
 
   private dispatchTransaction(transaction: Transaction) {
