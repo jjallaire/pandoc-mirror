@@ -14,7 +14,7 @@ import { IPandoc } from './pandoc.js'
 import { ExtensionManager } from './extensions/manager'
 
 import { pandocSchema, pandocEmptyDoc } from './schema'
-import { EditorCommandFn, IEditorCommand } from "./extensions/api.js";
+import { CommandFn, Command } from "./extensions/api.js";
 
 const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
 
@@ -154,8 +154,8 @@ export class Editor {
   private keymapPlugins() : Plugin[] {
 
     // start with standard editing keys
-    const keys : { [key: string] : EditorCommandFn } = {};
-    function bindKey(key: string, cmd: EditorCommandFn) {
+    const keys : { [key: string] : CommandFn } = {};
+    function bindKey(key: string, cmd: CommandFn) {
       keys[key] = cmd;
     }
     bindKey("Mod-z", undo);
@@ -170,8 +170,8 @@ export class Editor {
     bindKey("Escape", selectParentNode)
 
     // keys from extensions
-    const commands : IEditorCommand[] = this.extensions.commands(this.schema);
-    commands.forEach((command: IEditorCommand) => {
+    const commands : Command[] = this.extensions.commands(this.schema);
+    commands.forEach((command: Command) => {
       if (command.keymap) {
         command.keymap.forEach((key: string) => bindKey(key, command.execute))
       }

@@ -6,13 +6,13 @@ import { toggleMark } from "prosemirror-commands"
 
 import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } from '../utils'
 
-export interface IEditorExtension {
-  marks?: IEditorMark[],
-  nodes?: IEditorNode[],
-  commands?: (schema: Schema) => IEditorCommand[]
+export interface IExtension {
+  marks?: IMark[],
+  nodes?: INode[],
+  commands?: (schema: Schema) => Command[]
 }
 
-export interface IEditorMark {
+export interface IMark {
   name: string,
   spec: MarkSpec,
   pandoc: {
@@ -21,7 +21,7 @@ export interface IEditorMark {
   }
 }
 
-export interface IEditorNode {
+export interface INode {
   name: string,
   spec: NodeSpec,
   pandoc: {
@@ -51,23 +51,15 @@ export interface IPandocWriter {
   
 }
 
-export type EditorCommandFn = (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => boolean
+export type CommandFn = (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => boolean
 
-export interface IEditorCommand {
-  name: string
-  keymap: string[] | null
-  isEnabled: (state: EditorState) => boolean
-  isActive: (state: EditorState) => boolean
-  execute: EditorCommandFn
-}
-
-export class EditorCommand implements IEditorCommand {
+export class Command {
  
   public name: string
   public keymap: string[] | null
-  public execute: EditorCommandFn
+  public execute: CommandFn
 
-  constructor(name: string, keymap: string[] | null, execute: EditorCommandFn) {
+  constructor(name: string, keymap: string[] | null, execute: CommandFn) {
     this.name = name
     this.keymap = keymap
     this.execute = execute;
@@ -83,13 +75,13 @@ export class EditorCommand implements IEditorCommand {
 }
 
 
-export class MarkCommand extends EditorCommand {
+export class MarkCommand extends Command {
   
   public markType: MarkType;
   public attrs: object
 
   constructor(name: string, keymap: string[] | null, markType: MarkType, attrs = {}) {
-    super(name, keymap, toggleMark(markType, attrs) as EditorCommandFn);
+    super(name, keymap, toggleMark(markType, attrs) as CommandFn);
     this.markType = markType;
     this.attrs = attrs;
   }
@@ -99,12 +91,12 @@ export class MarkCommand extends EditorCommand {
   }
 }
 
-export class NodeCommand extends EditorCommand {
+export class NodeCommand extends Command {
 
   public nodeType: NodeType
   public attrs: object
 
-  constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, execute: EditorCommandFn ) {
+  constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, execute: CommandFn ) {
     super(name, keymap, execute);
     this.nodeType = nodeType;
     this.attrs = attrs;
