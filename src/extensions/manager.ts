@@ -5,12 +5,14 @@ import { Schema } from 'prosemirror-model'
 
 import { IExtension, IMark, INode, Command } from './api'
 
+import markEm from './marks/em'
 import markStrong from './marks/strong'
 
 export class ExtensionManager {
 
   public static create() : ExtensionManager {
     const manager = new ExtensionManager();
+    manager.register(markEm);
     manager.register(markStrong);
     return manager;
   }
