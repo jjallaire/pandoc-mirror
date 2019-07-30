@@ -13,7 +13,7 @@ import { undoInputRule } from "prosemirror-inputrules"
 import { IPandoc } from './pandoc.js'
 import { ExtensionManager } from './extensions/manager'
 
-import { pandocSchema, pandocEmptyDoc } from './schema'
+import { editorSchema, emptyDoc } from './schema'
 import { CommandFn, Command } from "./extensions/api.js";
 
 const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
@@ -71,12 +71,12 @@ export class Editor {
     
     this.extensions = ExtensionManager.create()
 
-    this.schema = pandocSchema(this.extensions)
+    this.schema = editorSchema(this.extensions)
 
     
     this.state = EditorState.create({
       schema: this.schema,
-      doc: pandocEmptyDoc(this.schema),
+      doc: emptyDoc(this.schema),
       plugins: [...this.basePlugins()]
     })
 

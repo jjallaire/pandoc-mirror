@@ -9,7 +9,7 @@ import { ExtensionManager } from "./extensions/manager"
 import { IMark, INode } from "./extensions/api"
 
 
-export function pandocSchema(extensions: ExtensionManager) : Schema {
+export function editorSchema(extensions: ExtensionManager) : Schema {
 
   // get nodes from extensions (combine with base nodes)
   const nodes: { [name: string]: NodeSpec; } = {
@@ -43,7 +43,7 @@ export function pandocSchema(extensions: ExtensionManager) : Schema {
   });
 }
 
-export function pandocEmptyDoc(schema: Schema) : Node {
+export function emptyDoc(schema: Schema) : Node {
   return schema.nodeFromJSON({
     type: 'doc',
     content: [{
