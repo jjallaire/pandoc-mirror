@@ -14,6 +14,8 @@ import nodeHeading from './nodes/heading'
 import nodeBlockquote from './nodes/blockquote'
 import nodeCodeBlock from './nodes/code_block'
 import nodeHorizontalRule from './nodes/horizontal_rule'
+import nodeLists from './nodes/lists'
+import { CommandFn } from 'src/utils/command';
 
 export class ExtensionManager {
 
@@ -26,7 +28,8 @@ export class ExtensionManager {
       nodeHeading,
       nodeBlockquote,
       nodeHorizontalRule,
-      nodeCodeBlock
+      nodeCodeBlock,
+      nodeLists
     ]);
     return manager
   }
@@ -51,10 +54,28 @@ export class ExtensionManager {
 
   public pandocReaders(): IPandocReader[] {
     const readers : IPandocReader[] = [];
-    return readers.concat(
-      this.marks().map((mark: IMark) => mark.pandoc.from),
-      this.nodes().map((node: INode) => node.pandoc.from)
-    )
+    this.marks().forEach((mark: IMark) => {
+      if (mark.pandoc) {
+        readers.push(mark.pandoc.from)
+      }
+    })
+    this.nodes().forEach((node: INode) => {
+      if (node.pandoc) {
+        readers.push(node.pandoc.from)
+      }
+    })
+
+    return readers;
+  }
+
+  public keymap(schema: Schema): { [key: string]: CommandFn } {
+    let keys : { [key: string] : CommandFn } = {}
+    this.extensions.forEach(extension => {
+      if (extension.keymap) {
+        keys = { ...keys, ...extension.keymap(schema) }
+      }
+    })
+    return keys;
   }
 
   public commands(schema: Schema): Command[] {

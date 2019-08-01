@@ -225,7 +225,7 @@ export class Editor {
     bindKey("Mod-BracketLeft", lift)
     bindKey("Escape", selectParentNode)
 
-    // keys from extensions
+    // command keys from extensions
     const commands : Command[] = this.extensions.commands(this.schema);
     commands.forEach((command: Command) => {
       if (command.keymap) {
@@ -233,9 +233,13 @@ export class Editor {
       }
     });
 
+    // keymap from extensions
+    const extensionKeys = this.extensions.keymap(this.schema)
+
     return [
-      keymap(baseKeymap),
       keymap(keys),
+      keymap(extensionKeys),
+      keymap(baseKeymap),
     ]
   }
 

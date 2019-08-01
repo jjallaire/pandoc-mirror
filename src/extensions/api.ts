@@ -14,6 +14,7 @@ import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '..
 export interface IExtension {
   marks?: IMark[],
   nodes?: INode[],
+  keymap?: (schema: Schema) => { [key: string] : CommandFn }
   commands?: (schema: Schema) => Command[]
   inputRules?: (schema: Schema) => InputRule[]
 }
@@ -30,7 +31,7 @@ export interface IMark {
 export interface INode {
   name: string,
   spec: NodeSpec,
-  pandoc: {
+  pandoc?: {
     from: IPandocReader,
     to: IPandocWriter
   }
