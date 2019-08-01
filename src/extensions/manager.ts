@@ -7,24 +7,26 @@ import { IExtension, IMark, INode, Command, IPandocReader } from './api'
 
 import markEm from './marks/em'
 import markStrong from './marks/strong'
+import markCode from './marks/code'
 
 export class ExtensionManager {
 
   public static create() : ExtensionManager {
-    const manager = new ExtensionManager();
-    manager.register(markEm);
-    manager.register(markStrong);
-    return manager;
+    const manager = new ExtensionManager()
+    manager.register(markEm)
+    manager.register(markStrong)
+    manager.register(markCode)
+    return manager
   }
 
   private extensions: IExtension[];
 
   private constructor() {
-    this.extensions = [];
+    this.extensions = []
   }
 
   public register(extension: IExtension) : void {
-    this.extensions.push(extension);
+    this.extensions.push(extension)
   }
 
   public marks() : IMark[] {
@@ -40,7 +42,7 @@ export class ExtensionManager {
       if (extension.commands) {
         return extension.commands(schema)
       } else {
-        return undefined;
+        return undefined
       }
     })
   }
@@ -55,13 +57,13 @@ export class ExtensionManager {
 
 
   private collect<T>(collector: (extension: IExtension) => T[] | undefined) {
-    let items : T[] = [];
+    let items : T[] = []
     this.extensions.forEach(extension => {
       const collected : T[] | undefined = collector(extension)
       if (collected !== undefined) {
-        items = items.concat(collected);
+        items = items.concat(collected)
       }
     });
-    return items; 
+    return items
   }
 }
