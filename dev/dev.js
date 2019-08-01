@@ -53,6 +53,12 @@ This is *italic* text.
 
 ***
 
+\`\`\`r
+Here is a code block.
+
+Another line of code.
+\`\`\`
+
 > This is a blockquote. See how it runs!
 
 This is \`code\` text.
