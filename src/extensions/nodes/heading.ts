@@ -1,6 +1,6 @@
 
 import { Schema } from 'prosemirror-model'
-import { InputRule, textblockTypeInputRule } from 'prosemirror-inputrules'
+import { textblockTypeInputRule } from 'prosemirror-inputrules'
 import { IExtension, BlockCommand } from '../api'
 
 const HEADING_LEVEL = 0;

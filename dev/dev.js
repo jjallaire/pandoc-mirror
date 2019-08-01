@@ -51,6 +51,8 @@ This is **bold** text.
 
 This is *italic* text.
 
+> This is a blockquote. See how it runs!
+
 This is \`code\` text.
 `;
 

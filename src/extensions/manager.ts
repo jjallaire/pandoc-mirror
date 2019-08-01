@@ -11,6 +11,7 @@ import markStrong from './marks/strong'
 import markCode from './marks/code'
 
 import nodeHeading from './nodes/heading'
+import nodeBlockquote from './nodes/blockquote'
 
 export class ExtensionManager {
 
@@ -20,6 +21,7 @@ export class ExtensionManager {
     manager.register(markStrong)
     manager.register(markCode)
     manager.register(nodeHeading)
+    manager.register(nodeBlockquote)
     return manager
   }
 
