@@ -5,7 +5,7 @@ import { Schema, NodeType } from 'prosemirror-model'
 import { IExtension, NodeCommand, IPandocToken } from '../api'
 import { wrappingInputRule } from 'prosemirror-inputrules'
 import { commandToggleList } from '../../utils/command';
-import {wrapInList, splitListItem, liftListItem, sinkListItem} from "prosemirror-schema-list"
+import { wrapInList, splitListItem, liftListItem, sinkListItem } from "prosemirror-schema-list"
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
