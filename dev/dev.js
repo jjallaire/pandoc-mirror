@@ -44,18 +44,11 @@ let editor = new Editor({
 });
 
 
-/*
-pandoc.markdownToAst('this is some *bold* text')
-  .then(ast => {
-    console.log(ast);
-    return pandoc.astToMarkdown(ast);
-  })
-  .then(markdown => {
-    console.log(markdown);
-  });
-*/
+let content = `
+This is **bold** text. 
 
+This is *italic* text.
+`;
 
-
-
+editor.setContent(content)
 

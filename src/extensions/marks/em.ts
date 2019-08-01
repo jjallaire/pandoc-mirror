@@ -3,7 +3,6 @@ import { Schema } from 'prosemirror-model'
 import { IExtension, MarkCommand } from '../api'
 
 const extension : IExtension = {
-
   
   marks: [{
     name: "em",

@@ -3,7 +3,7 @@
 import { Schema } from 'prosemirror-model'
 
 
-import { IExtension, IMark, INode, Command } from './api'
+import { IExtension, IMark, INode, Command, IPandocReader } from './api'
 
 import markEm from './marks/em'
 import markStrong from './marks/strong'
@@ -43,6 +43,14 @@ export class ExtensionManager {
         return undefined;
       }
     })
+  }
+
+  public pandocReaders(): IPandocReader[] {
+    const readers : IPandocReader[] = [];
+    return readers.concat(
+      this.marks().map((mark: IMark) => mark.pandoc.from),
+      this.nodes().map((node: INode) => node.pandoc.from)
+    )
   }
 
 

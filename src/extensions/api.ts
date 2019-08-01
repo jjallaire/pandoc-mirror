@@ -42,8 +42,14 @@ export interface IPandocReader {
   text?: boolean,
 
   // functions for getting attributes and children
-  getAttrs?: (tok: object) => object,
-  getChildren?: (tok: object) => []
+  getAttrs?: (tok: IPandocToken) => any,
+  getChildren?: (tok: IPandocToken) => any[],
+  getText?: (tok: IPandocToken) => string
+}
+
+export interface IPandocToken {
+  t: string,
+  c: any
 }
 
 // tslint:disable-next-line:no-empty-interface

@@ -1,6 +1,6 @@
 
 
-import { Schema } from "prosemirror-model"
+import { Schema, Node } from "prosemirror-model"
 import { EditorState, Transaction, Plugin, PluginKey, NodeSelection } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 import { undo, redo, history } from "prosemirror-history"
@@ -10,11 +10,14 @@ import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
 import { undoInputRule } from "prosemirror-inputrules"
 
-import { IPandoc } from './pandoc.js'
+import { IPandocEngine } from './pandoc/engine'
+import { pandocReaders } from './pandoc/readers'
+import { markdownToDoc } from './pandoc/to_doc'
+
 import { ExtensionManager } from './extensions/manager'
 
 import { editorSchema, emptyDoc } from './schema'
-import { CommandFn, Command } from "./extensions/api.js";
+import { CommandFn, Command, IPandocReader, IPandocToken } from "./extensions/api.js";
 
 const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
 
@@ -35,7 +38,7 @@ export interface IEditorHooks {
 
 export interface IEditorConfig {
   parent: HTMLElement,
-  pandoc: IPandoc,
+  pandoc: IPandocEngine,
   options?: IEditorOptions,
   hooks?: IEditorHooks
 }
@@ -51,7 +54,7 @@ export interface IEditorCommands { [name: string] : IEditorCommand }
 export class Editor {
 
   private parent: HTMLElement
-  private pandoc: IPandoc
+  private pandoc: IPandocEngine
   private options: IEditorOptions
   private hooks: IEditorHooks
   private schema: Schema
@@ -100,6 +103,31 @@ export class Editor {
     this.parent.removeEventListener("click", this.onClickBelow)
     this.view.destroy()
   }
+
+  public setContent(content: string, emitUpdate?: boolean) {
+    
+    // do the conversion
+    return markdownToDoc(
+      content,
+      this.schema,
+      this.pandoc,
+      pandocReaders(this.extensions)
+    )
+      .then((doc: Node) => {
+        this.state = EditorState.create({
+          schema: this.state.schema,
+          doc,
+          plugins: this.state.plugins
+        })
+    
+        this.view.updateState(this.state)
+    
+        if (emitUpdate) {
+          this.emitUpdate()
+        }
+      });
+  }
+
 
   public focus() {
     this.view.focus()
@@ -205,3 +233,4 @@ export class Editor {
     ]
   }
 }
+
