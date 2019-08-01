@@ -120,11 +120,11 @@ class Parser {
         }
         const nodeType = this.schema.nodes[reader.node];
         handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
-          let content = null;
+          let content : Node[] = [];
           if (reader.getText) {
-            content = this.schema.text(reader.getText(tok));
+            content = [this.schema.text(reader.getText(tok))];
           }
-          state.addNode(nodeType, getAttrs(tok), [content as Node]);
+          state.addNode(nodeType, getAttrs(tok), content);
         }
 
       // lists (ignore unknown)

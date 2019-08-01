@@ -12,6 +12,7 @@ import markCode from './marks/code'
 
 import nodeHeading from './nodes/heading'
 import nodeBlockquote from './nodes/blockquote'
+import nodeHorizontalRule from './nodes/horizontal_rule'
 
 export class ExtensionManager {
 
@@ -22,6 +23,7 @@ export class ExtensionManager {
     manager.register(markCode)
     manager.register(nodeHeading)
     manager.register(nodeBlockquote)
+    manager.register(nodeHorizontalRule)
     return manager
   }
 

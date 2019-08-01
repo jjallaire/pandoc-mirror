@@ -17,7 +17,10 @@ import { markdownToDoc } from './pandoc/to_doc'
 import { ExtensionManager } from './extensions/manager'
 
 import { editorSchema, emptyDoc } from './schema'
-import { CommandFn, Command, IPandocReader, IPandocToken } from "./extensions/api.js";
+import { Command } from "./extensions/api";
+import { CommandFn } from './utils/command'
+
+
 
 const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
 

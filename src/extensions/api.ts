@@ -1,11 +1,15 @@
 
 import { EditorState, Transaction } from "prosemirror-state"
-import { EditorView } from "prosemirror-view"
 import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
 import { InputRule } from "prosemirror-inputrules"
 import { toggleMark } from "prosemirror-commands"
 
-import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } from '../utils'
+import { CommandFn } from '../utils/command'
+
+import { nodeIsActive } from '../utils/node'
+import { markIsActive } from '../utils/mark'
+import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '../utils/command'
+
 
 export interface IExtension {
   marks?: IMark[],
@@ -59,7 +63,6 @@ export interface IPandocWriter {
   
 }
 
-export type CommandFn = (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => boolean
 
 export class Command {
  
@@ -117,20 +120,20 @@ export class NodeCommand extends Command {
 
 export class ListCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, listType: NodeType, listItemType: NodeType) {
-    super(name, keymap, listType, {}, toggleList(listType, listItemType));
+    super(name, keymap, listType, {}, commandToggleList(listType, listItemType));
   }
 
 }
 
 export class BlockCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, blockType: NodeType, toggleType: NodeType, attrs = {}) {
-    super(name, keymap, blockType, attrs, toggleBlockType(blockType, toggleType, attrs));
+    super(name, keymap, blockType, attrs, commandToggleBlockType(blockType, toggleType, attrs));
   }
 }
 
 export class WrapCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, wrapType: NodeType) {
-    super(name, keymap, wrapType, {}, toggleWrap(wrapType));
+    super(name, keymap, wrapType, {}, commandToggleWrap(wrapType));
   }
 }
 

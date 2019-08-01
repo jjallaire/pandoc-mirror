@@ -1,4 +1,6 @@
-import { MarkType, Schema } from "prosemirror-model"
+
+
+import { Schema } from "prosemirror-model"
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Node, NodeType } from "prosemirror-model"
 import { findParentNode, findSelectedNodeOfType } from "prosemirror-utils"
@@ -6,34 +8,12 @@ import { wrapInList, liftListItem } from 'prosemirror-schema-list'
 import { EditorView } from "prosemirror-view";
 import { setBlockType, wrapIn, lift } from 'prosemirror-commands'
 
-export function markIsActive(state: EditorState, type: MarkType) {
-  const {
-    from,
-    $from,
-    to,
-    empty,
-  } = state.selection
+import { nodeIsActive, canInsertNode } from './node'
+import { Command } from "src/extensions/api";
 
-  if (empty) {
-    return !!type.isInSet(state.storedMarks || $from.marks())
-  }
+export type CommandFn = (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => boolean
 
-  return !!state.doc.rangeHasMark(from, to, type)
-}
-
-export function nodeIsActive(state: EditorState, type: NodeType, attrs = {}) {
-  const predicate = (n: Node) => n.type === type
-  const node = findSelectedNodeOfType(type)(state.selection)
-    || findParentNode(predicate)(state.selection)
-
-  if (!Object.keys(attrs).length || !node) {
-    return !!node
-  }
-
-  return node.node.hasMarkup(type, attrs)
-}
-
-export function toggleList(listType: NodeType, itemType: NodeType) {
+export function commandToggleList(listType: NodeType, itemType: NodeType) : CommandFn {
   
   function isList(node: Node, schema: Schema) {
     return (node.type === schema.nodes.bullet_list
@@ -74,8 +54,8 @@ export function toggleList(listType: NodeType, itemType: NodeType) {
 }
 
 
-export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}) {
-  return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView)=> {
+export function commandToggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}) : CommandFn {
+  return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void)) => {
     const isActive = nodeIsActive(state, type, attrs)
 
     if (isActive) {
@@ -86,7 +66,7 @@ export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}
   }
 }
 
-export function toggleWrap(type: NodeType) {
+export function commandToggleWrap(type: NodeType) : CommandFn {
   
   return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => {
     const isActive = nodeIsActive(state, type)
@@ -99,3 +79,18 @@ export function toggleWrap(type: NodeType) {
   }
 }
 
+export function commandInsertNode(nodeType: NodeType, attrs = {}) : CommandFn {
+
+  return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void)) => {
+
+    if (!canInsertNode(state, nodeType)) {
+      return false;
+    }
+
+    if (dispatch) { 
+      dispatch(state.tr.replaceSelectionWith(nodeType.create(attrs)))
+    }
+
+    return true;
+  }
+}
