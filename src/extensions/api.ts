@@ -2,6 +2,7 @@
 import { EditorState, Transaction } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
+import { InputRule } from "prosemirror-inputrules"
 import { toggleMark } from "prosemirror-commands"
 
 import { markIsActive, nodeIsActive, toggleList, toggleBlockType, toggleWrap } from '../utils'
@@ -10,6 +11,7 @@ export interface IExtension {
   marks?: IMark[],
   nodes?: INode[],
   commands?: (schema: Schema) => Command[]
+  inputRules?: (schema: Schema) => InputRule[]
 }
 
 export interface IMark {

@@ -2,6 +2,7 @@
 
 import { Schema } from 'prosemirror-model'
 
+import { InputRule } from 'prosemirror-inputrules'
 
 import { IExtension, IMark, INode, Command, IPandocReader } from './api'
 
@@ -40,6 +41,14 @@ export class ExtensionManager {
     return this.collect<INode>((extension: IExtension) => extension.nodes)  
   }
 
+  public pandocReaders(): IPandocReader[] {
+    const readers : IPandocReader[] = [];
+    return readers.concat(
+      this.marks().map((mark: IMark) => mark.pandoc.from),
+      this.nodes().map((node: INode) => node.pandoc.from)
+    )
+  }
+
   public commands(schema: Schema): Command[] {
     return this.collect<Command>((extension: IExtension) => {
       if (extension.commands) {
@@ -50,12 +59,14 @@ export class ExtensionManager {
     })
   }
 
-  public pandocReaders(): IPandocReader[] {
-    const readers : IPandocReader[] = [];
-    return readers.concat(
-      this.marks().map((mark: IMark) => mark.pandoc.from),
-      this.nodes().map((node: INode) => node.pandoc.from)
-    )
+  public inputRules(schema: Schema) : InputRule[] {
+    return this.collect<InputRule>((extension: IExtension) => {
+      if (extension.inputRules) {
+        return extension.inputRules(schema)
+      } else {
+        return undefined
+      }
+    })
   }
 
 

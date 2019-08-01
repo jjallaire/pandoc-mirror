@@ -1,5 +1,6 @@
 
 import { Schema } from 'prosemirror-model'
+import { InputRule, textblockTypeInputRule } from 'prosemirror-inputrules'
 import { IExtension, BlockCommand } from '../api'
 
 const HEADING_LEVEL = 0;
@@ -48,13 +49,16 @@ const extension : IExtension = {
   }],
   
   commands: (schema: Schema) => {
+    return [1,2,3,4,5,6].map(level => new HeadingCommand(schema, level))
+  },
+
+  inputRules: (schema: Schema) => {
     return [
-      new HeadingCommand(schema, 1),
-      new HeadingCommand(schema, 2),
-      new HeadingCommand(schema, 3),
-      new HeadingCommand(schema, 4),
-      new HeadingCommand(schema, 5),
-      new HeadingCommand(schema, 6),
+      textblockTypeInputRule(
+        new RegExp("^(#{1,6})\\s$"),
+        schema.nodes.heading, 
+        match => ({level: match[1].length})
+      )
     ]
   }
 };

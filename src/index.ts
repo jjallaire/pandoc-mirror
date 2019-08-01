@@ -8,7 +8,7 @@ import { keymap } from "prosemirror-keymap"
 import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from "prosemirror-commands"
 import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
-import { undoInputRule } from "prosemirror-inputrules"
+import { inputRules, InputRule, smartQuotes, emDash, ellipsis, undoInputRule} from "prosemirror-inputrules"
 
 import { IPandocEngine } from './pandoc/engine'
 import { pandocReaders } from './pandoc/readers'
@@ -192,6 +192,7 @@ export class Editor {
     return [
       history(),
       ...this.keymapPlugins(),
+      this.inputRulesPlugin(),
       gapCursor(),
       dropCursor(),
       new Plugin({
@@ -234,5 +235,23 @@ export class Editor {
       keymap(keys),
     ]
   }
+
+  private inputRulesPlugin(): Plugin {
+
+    // base input rules
+    let rules: InputRule[] = [
+      ...smartQuotes,
+      ellipsis,
+      emDash
+    ];
+  
+    // add rules from extensions
+    rules = rules.concat(this.extensions.inputRules(this.schema))
+  
+    // return plugin
+    return inputRules({ rules })
+  
+  }
+  
 }
 
