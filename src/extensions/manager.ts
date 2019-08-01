@@ -19,13 +19,15 @@ export class ExtensionManager {
 
   public static create() : ExtensionManager {
     const manager = new ExtensionManager()
-    manager.register(markEm)
-    manager.register(markStrong)
-    manager.register(markCode)
-    manager.register(nodeHeading)
-    manager.register(nodeBlockquote)
-    manager.register(nodeHorizontalRule)
-    manager.register(nodeCodeBlock)
+    manager.register([
+      markEm, 
+      markStrong,
+      markCode,
+      nodeHeading,
+      nodeBlockquote,
+      nodeHorizontalRule,
+      nodeCodeBlock
+    ]);
     return manager
   }
 
@@ -35,8 +37,8 @@ export class ExtensionManager {
     this.extensions = []
   }
 
-  public register(extension: IExtension) : void {
-    this.extensions.push(extension)
+  public register(extensions: IExtension[]) : void {
+    this.extensions.push(...extensions)
   }
 
   public marks() : IMark[] {
