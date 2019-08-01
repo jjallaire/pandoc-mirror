@@ -45,6 +45,8 @@ let editor = new Editor({
 
 
 let content = `
+### Heading 
+
 This is **bold** text. 
 
 This is *italic* text.

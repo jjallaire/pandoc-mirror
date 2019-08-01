@@ -106,7 +106,7 @@ export class Editor {
 
   public setContent(content: string, emitUpdate?: boolean) {
     
-    // do the conversion
+    // convert from pandoc markdown to prosemirror doc
     return markdownToDoc(
       content,
       this.schema,
@@ -114,14 +114,16 @@ export class Editor {
       pandocReaders(this.extensions)
     )
       .then((doc: Node) => {
+
+        // re-initialize editor state
         this.state = EditorState.create({
           schema: this.state.schema,
           doc,
           plugins: this.state.plugins
         })
-    
         this.view.updateState(this.state)
     
+        // notify listeners if requested
         if (emitUpdate) {
           this.emitUpdate()
         }

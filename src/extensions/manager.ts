@@ -9,6 +9,8 @@ import markEm from './marks/em'
 import markStrong from './marks/strong'
 import markCode from './marks/code'
 
+import nodeHeading from './nodes/heading'
+
 export class ExtensionManager {
 
   public static create() : ExtensionManager {
@@ -16,6 +18,7 @@ export class ExtensionManager {
     manager.register(markEm)
     manager.register(markStrong)
     manager.register(markCode)
+    manager.register(nodeHeading)
     return manager
   }
 
