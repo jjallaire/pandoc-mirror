@@ -21,9 +21,6 @@ import { Command } from "./extensions/api";
 import { CommandFn } from './utils/command'
 
 
-
-const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
-
 export enum SelectionType {
   Text = 'text',
   Node = 'node'
@@ -209,6 +206,9 @@ export class Editor {
 
   private keymapPlugins() : Plugin[] {
 
+    // detect mac
+    const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false
+
     // start with standard editing keys
     const keys : { [key: string] : CommandFn } = {};
     function bindKey(key: string, cmd: CommandFn) {
@@ -234,7 +234,7 @@ export class Editor {
     });
 
     // keymap from extensions
-    const extensionKeys = this.extensions.keymap(this.schema)
+    const extensionKeys = this.extensions.keymap(this.schema, mac)
 
     return [
       keymap(keys),

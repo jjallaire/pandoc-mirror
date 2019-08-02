@@ -51,6 +51,9 @@ This is **bold** text.
 
 This is *italic* text.
 
+This is hard break.  
+Next line after hard break.
+
 ***
 
 - Unordered

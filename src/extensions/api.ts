@@ -14,7 +14,7 @@ import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '..
 export interface IExtension {
   marks?: IMark[],
   nodes?: INode[],
-  keymap?: (schema: Schema) => { [key: string] : CommandFn }
+  keymap?: (schema: Schema, mac: boolean) => { [key: string] : CommandFn }
   commands?: (schema: Schema) => Command[]
   inputRules?: (schema: Schema) => InputRule[]
 }

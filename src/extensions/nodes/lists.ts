@@ -91,7 +91,7 @@ const extension : IExtension = {
     
   ],
 
-  keymap: (schema: Schema) => {
+  keymap: (schema: Schema, mac: boolean) => {
     return {
       "Shift-Ctrl-8": wrapInList(schema.nodes.bullet_list),
       "Shift-Ctrl-9": wrapInList(schema.nodes.ordered_list),

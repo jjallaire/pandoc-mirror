@@ -15,6 +15,8 @@ import nodeBlockquote from './nodes/blockquote'
 import nodeCodeBlock from './nodes/code_block'
 import nodeHorizontalRule from './nodes/horizontal_rule'
 import nodeLists from './nodes/lists'
+import nodeHardBreak from './nodes/hard_break'
+
 import { CommandFn } from 'src/utils/command';
 
 export class ExtensionManager {
@@ -29,7 +31,8 @@ export class ExtensionManager {
       nodeBlockquote,
       nodeHorizontalRule,
       nodeCodeBlock,
-      nodeLists
+      nodeLists,
+      nodeHardBreak
     ]);
     return manager
   }
@@ -68,11 +71,11 @@ export class ExtensionManager {
     return readers;
   }
 
-  public keymap(schema: Schema): { [key: string]: CommandFn } {
+  public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {
     let keys : { [key: string] : CommandFn } = {}
     this.extensions.forEach(extension => {
       if (extension.keymap) {
-        keys = { ...keys, ...extension.keymap(schema) }
+        keys = { ...keys, ...extension.keymap(schema, mac) }
       }
     })
     return keys;
