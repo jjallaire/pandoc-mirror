@@ -1,16 +1,21 @@
 
 import { Schema } from 'prosemirror-model'
+import { setBlockType } from 'prosemirror-commands'
 import { textblockTypeInputRule } from 'prosemirror-inputrules'
+
 import { IExtension, BlockCommand } from '../api'
+import { CommandFn } from '../../utils/command';
 
 const HEADING_LEVEL = 0;
 const HEADING_CHILDREN = 2;
+
+const kHeadingLevels = [1,2,3,4,5,6]
 
 class HeadingCommand extends BlockCommand {
   constructor(schema: Schema, level: number) {
     super(
       "heading" + level,
-      null,
+      ["Shift-Ctrl-" + level],
       schema.nodes.heading, 
       schema.nodes.paragraph,
       { level }
@@ -49,13 +54,13 @@ const extension : IExtension = {
   }],
   
   commands: (schema: Schema) => {
-    return [1,2,3,4,5,6].map(level => new HeadingCommand(schema, level))
+    return kHeadingLevels.map(level => new HeadingCommand(schema, level))
   },
 
   inputRules: (schema: Schema) => {
     return [
       textblockTypeInputRule(
-        new RegExp("^(#{1,6})\\s$"),
+        new RegExp("^(#{1," + kHeadingLevels.length + "})\\s$"),
         schema.nodes.heading, 
         match => ({level: match[1].length})
       )

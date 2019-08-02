@@ -5,7 +5,7 @@ import { EditorState, Transaction, Plugin, PluginKey, NodeSelection } from "pros
 import { EditorView } from "prosemirror-view"
 import { undo, redo, history } from "prosemirror-history"
 import { keymap } from "prosemirror-keymap"
-import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from "prosemirror-commands"
+import { baseKeymap, joinUp, joinDown, lift, selectParentNode, setBlockType } from "prosemirror-commands"
 import { gapCursor } from "prosemirror-gapcursor"
 import { dropCursor } from "prosemirror-dropcursor"
 import { inputRules, InputRule, smartQuotes, emDash, ellipsis, undoInputRule} from "prosemirror-inputrules"
@@ -224,6 +224,8 @@ export class Editor {
     bindKey("Alt-ArrowDown", joinDown)
     bindKey("Mod-BracketLeft", lift)
     bindKey("Escape", selectParentNode)
+
+    bindKey("Shift-Ctrl-0", setBlockType(this.schema.nodes.paragraph))
 
     // command keys from extensions
     const commands : Command[] = this.extensions.commands(this.schema);

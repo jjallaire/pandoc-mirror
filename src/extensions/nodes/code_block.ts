@@ -1,6 +1,7 @@
 
 
 import { Schema, Node as ProsemirrorNode } from 'prosemirror-model'
+import { setBlockType } from 'prosemirror-commands'
 import { IExtension, IPandocToken, BlockCommand } from '../api'
 
 const CODE_BLOCK_ATTR = 0;
@@ -44,6 +45,12 @@ const extension : IExtension = {
       to: {}
     },
   }],
+
+  keymap: (schema: Schema, mac: boolean) => {
+    return {
+      "Shift-Ctrl-\\": setBlockType(schema.nodes.code_block)
+    }
+  },
   
   commands: (schema: Schema) => {
     return [

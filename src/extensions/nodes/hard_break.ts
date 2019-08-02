@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view'
 import { chainCommands, exitCode } from 'prosemirror-commands'
 
 import { IExtension } from '../api'
-import { CommandFn } from '../../utils/command';
+import { CommandFn } from '../../utils/command'
 
 const extension : IExtension = {
   

@@ -24,7 +24,7 @@ const extension : IExtension = {
   
   commands: (schema: Schema) => {
     return [
-      new Command("horizontal_rule", null, commandInsertNode(schema.nodes.horizontal_rule))
+      new Command("horizontal_rule", ["Mod-_"], commandInsertNode(schema.nodes.horizontal_rule))
     ]
   },
 };
