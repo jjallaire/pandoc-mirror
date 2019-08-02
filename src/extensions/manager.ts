@@ -4,11 +4,12 @@ import { Schema } from 'prosemirror-model'
 
 import { InputRule } from 'prosemirror-inputrules'
 
-import { IExtension, IMark, INode, Command, IPandocReader } from './api'
+import { IExtension, IMark, INode, Command, IPandocReader, IEditorUI } from './api'
 
 import markEm from './marks/em'
 import markStrong from './marks/strong'
 import markCode from './marks/code'
+import markLink from './marks/link'
 
 import nodeHeading from './nodes/heading'
 import nodeBlockquote from './nodes/blockquote'
@@ -27,6 +28,7 @@ export class ExtensionManager {
       markEm, 
       markStrong,
       markCode,
+      markLink,
       nodeHeading,
       nodeBlockquote,
       nodeHorizontalRule,
@@ -81,10 +83,10 @@ export class ExtensionManager {
     return keys;
   }
 
-  public commands(schema: Schema): Command[] {
+  public commands(schema: Schema, ui: IEditorUI): Command[] {
     return this.collect<Command>((extension: IExtension) => {
       if (extension.commands) {
-        return extension.commands(schema)
+        return extension.commands(schema, ui)
       } else {
         return undefined
       }

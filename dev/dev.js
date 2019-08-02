@@ -36,9 +36,21 @@ let hooks = {
   }
 }
 
+let ui = {
+  onEditLink(link) { 
+    console.log(link)
+    return Promise.resolve(null) 
+  },
+  onEditImage(image) { 
+    console.log(image)
+    return Promise.resolve(null) 
+  }
+}
+
 let editor = new Editor({
   parent: document.getElementById('editor'), 
   pandoc,
+  ui,
   options,
   hooks
 });
@@ -61,6 +73,8 @@ Next line after hard break.
 
 1. Ordered
 2. List
+
+This is a link to [Google](https://www.google.com)
 
 
 \`\`\`r

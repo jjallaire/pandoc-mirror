@@ -11,11 +11,12 @@ import { markIsActive } from '../utils/mark'
 import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '../utils/command'
 
 
+
 export interface IExtension {
   marks?: IMark[],
   nodes?: INode[],
   keymap?: (schema: Schema, mac: boolean) => { [key: string] : CommandFn }
-  commands?: (schema: Schema) => Command[]
+  commands?: (schema: Schema, ui: IEditorUI) => Command[]
   inputRules?: (schema: Schema) => InputRule[]
 }
 
@@ -63,7 +64,6 @@ export interface IPandocToken {
 export interface IPandocWriter {
   
 }
-
 
 export class Command {
  
@@ -137,6 +137,32 @@ export class WrapCommand extends NodeCommand {
     super(name, keymap, wrapType, {}, commandToggleWrap(wrapType));
   }
 }
+
+export interface IEditorUI {
+  onEditLink: (link: ILinkProps) => Promise<ILinkEditResult | null>,
+  onEditImage: (image: IImageProps) => Promise<IImageEditResult | null>
+}
+
+
+
+export interface ILinkProps {
+  href: string,
+  title?: string
+}
+
+export interface ILinkEditResult {
+  action: 'edit' | 'remove',
+  link: ILinkProps
+}
+
+export interface IImageProps {
+  src: string,
+  title?: string,
+  alt?: string
+}
+
+type IImageEditResult = IImageProps
+
 
 
 

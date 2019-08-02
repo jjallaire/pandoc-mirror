@@ -17,7 +17,7 @@ import { markdownToDoc } from './pandoc/to_doc'
 import { ExtensionManager } from './extensions/manager'
 
 import { editorSchema, emptyDoc } from './schema'
-import { Command } from "./extensions/api";
+import { Command, IEditorUI } from "./extensions/api";
 import { CommandFn } from './utils/command'
 
 
@@ -39,8 +39,9 @@ export interface IEditorHooks {
 export interface IEditorConfig {
   parent: HTMLElement,
   pandoc: IPandocEngine,
+  ui: IEditorUI,
   options?: IEditorOptions,
-  hooks?: IEditorHooks
+  hooks?: IEditorHooks, 
 }
 
 export interface IEditorCommand {
@@ -55,6 +56,7 @@ export class Editor {
 
   private parent: HTMLElement
   private pandoc: IPandocEngine
+  private ui: IEditorUI
   private options: IEditorOptions
   private hooks: IEditorHooks
   private schema: Schema
@@ -67,6 +69,7 @@ export class Editor {
     
     this.parent = config.parent
     this.pandoc = config.pandoc
+    this.ui = config.ui
     this.options = config.options || {}
     
     this.hooks = config.hooks || {}
@@ -140,7 +143,7 @@ export class Editor {
   }
 
   public commands() : IEditorCommands  {
-    return this.extensions.commands(this.schema).reduce((commands: IEditorCommands, command: Command) => {
+    return this.extensions.commands(this.schema, this.ui).reduce((commands: IEditorCommands, command: Command) => {
       return {
         ...commands,
         [command.name]: {
@@ -228,7 +231,7 @@ export class Editor {
     bindKey("Shift-Ctrl-0", setBlockType(this.schema.nodes.paragraph))
 
     // command keys from extensions
-    const commands : Command[] = this.extensions.commands(this.schema);
+    const commands : Command[] = this.extensions.commands(this.schema, this.ui);
     commands.forEach((command: Command) => {
       if (command.keymap) {
         command.keymap.forEach((key: string) => bindKey(key, command.execute))
