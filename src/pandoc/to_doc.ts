@@ -1,7 +1,7 @@
-import { Schema, Mark, Node, NodeType } from "prosemirror-model"
+import { Schema, Mark, Node, NodeType } from 'prosemirror-model';
 
-import { IPandocEngine } from "./engine";
-import { IPandocReader, IPandocToken } from "src/extensions/api";
+import { IPandocEngine } from './engine';
+import { IPandocReader, IPandocToken } from 'src/extensions/api';
 
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
@@ -14,31 +14,26 @@ import { IPandocReader, IPandocToken } from "src/extensions/api";
 // TODO: support pandoc {} syntax for fenced code regions
 
 // TODO: support for image figures (where alt text is displayed in a <p> below the image).
-// note that alt text supports arbitrary markup so need a structured way to allow 
+// note that alt text supports arbitrary markup so need a structured way to allow
 // selection and editing of just the alt text
 
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
-
-
 export function markdownToDoc(
-  markdown: string, 
-  schema: Schema, 
+  markdown: string,
+  schema: Schema,
   pandoc: IPandocEngine,
-  pandocReaders: IPandocReader[]) : Promise<Node> {
-  
-    return pandoc.markdownToAst(markdown)
-    .then(ast => {
-      const parser : Parser = new Parser(schema, pandocReaders);
-      return parser.parse(ast);
-    })
-
-} 
+  pandocReaders: IPandocReader[],
+): Promise<Node> {
+  return pandoc.markdownToAst(markdown).then(ast => {
+    const parser: Parser = new Parser(schema, pandocReaders);
+    return parser.parse(ast);
+  });
+}
 
 class Parser {
-
-  private schema: Schema
-  private handlers: { [token: string] : ParserTokenHandler }
+  private schema: Schema;
+  private handlers: { [token: string]: ParserTokenHandler };
 
   constructor(schema: Schema, readers: IPandocReader[]) {
     this.schema = schema;
@@ -46,7 +41,7 @@ class Parser {
   }
 
   public parse(ast: any): Node {
-    const state : ParserState = new ParserState(this.schema);
+    const state: ParserState = new ParserState(this.schema);
     this.parseTokens(state, ast.blocks);
     return state.topNode();
   }
@@ -66,21 +61,20 @@ class Parser {
   private createHandlers(readers: IPandocReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
-      
       // some default implementations for getting children & attribs
       const getChildren = reader.getChildren || ((tok: IPandocToken) => tok.c);
       const getAttrs = reader.getAttrs || (() => ({}));
-      
-      // text 
+
+      // text
       if (reader.text) {
         handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
           if (reader.getText) {
             const text = reader.getText(tok);
             state.addText(text);
           }
-        }
+        };
 
-      // marks (ignore unknown)
+        // marks (ignore unknown)
       } else if (reader.mark) {
         if (!this.schema.marks[reader.mark]) {
           continue;
@@ -90,14 +84,14 @@ class Parser {
           const mark = markType.create(getAttrs(tok));
           state.openMark(mark);
           if (reader.getText) {
-            state.addText(reader.getText(tok))
+            state.addText(reader.getText(tok));
           } else {
             this.parseTokens(state, getChildren(tok));
           }
           state.closeMark(mark);
-        } 
+        };
 
-      // blocks (ignore unknown)
+        // blocks (ignore unknown)
       } else if (reader.block) {
         if (!this.schema.nodes[reader.block]) {
           continue;
@@ -106,126 +100,124 @@ class Parser {
         handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
           state.openNode(nodeType, getAttrs(tok));
           if (reader.getText) {
-            state.addText(reader.getText(tok))
+            state.addText(reader.getText(tok));
           } else {
             this.parseTokens(state, getChildren(tok));
           }
           state.closeNode();
         };
 
-      // nodes (inore unknown)
+        // nodes (inore unknown)
       } else if (reader.node) {
         if (!this.schema.nodes[reader.node]) {
           continue;
         }
         const nodeType = this.schema.nodes[reader.node];
         handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
-          let content : Node[] = [];
+          let content: Node[] = [];
           if (reader.getText) {
             content = [this.schema.text(reader.getText(tok))];
           }
           state.addNode(nodeType, getAttrs(tok), content);
-        }
+        };
 
-      // lists (ignore unknown)
+        // lists (ignore unknown)
       } else if (reader.list) {
         if (!this.schema.nodes[reader.list]) {
           continue;
         }
         const nodeType = this.schema.nodes[reader.list];
-        const listItem = "list_item"
+        const listItem = 'list_item';
         const listItemNodeType = this.schema.nodes[listItem];
         handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
           const children = getChildren(tok);
-          const tight = children.length && children[0][0].t === "Plain";
+          const tight = children.length && children[0][0].t === 'Plain';
           const attrs = getAttrs(tok);
           if (tight) {
-            attrs.tight = "true";
+            attrs.tight = 'true';
           }
           state.openNode(nodeType, attrs);
           children.forEach((child: IPandocToken[]) => {
             state.openNode(listItemNodeType, {});
-            this.parseTokens(state, child); 
+            this.parseTokens(state, child);
             state.closeNode();
           });
           state.closeNode();
-        }
+        };
       }
     }
     return handlers;
   }
 }
 
-
 class ParserState {
-
-  private schema: Schema 
-  private stack: IParserStackElement[]
-  private marks: Mark[]
+  private schema: Schema;
+  private stack: IParserStackElement[];
+  private marks: Mark[];
 
   constructor(schema: Schema) {
     this.schema = schema;
-    this.stack = [ { type: this.schema.topNodeType, attrs: {}, content: [] }]
-    this.marks = Mark.none 
+    this.stack = [{ type: this.schema.topNodeType, attrs: {}, content: [] }];
+    this.marks = Mark.none;
   }
 
-  public topNode() : Node {
+  public topNode(): Node {
     return this.top().type.createAndFill(null, this.top().content) as Node;
   }
 
   public addText(text: string) {
     if (!text) {
-      return
+      return;
     }
-    const nodes : Node[] = this.top().content
-    const last : Node = nodes[nodes.length - 1]
-    const node : Node = this.schema.text(text, this.marks)
-    const merged : Node | undefined = this.maybeMerge(last, node)
-    if (last && merged) { 
-      nodes[nodes.length - 1] = merged
-    } else { 
-      nodes.push(node)
+    const nodes: Node[] = this.top().content;
+    const last: Node = nodes[nodes.length - 1];
+    const node: Node = this.schema.text(text, this.marks);
+    const merged: Node | undefined = this.maybeMerge(last, node);
+    if (last && merged) {
+      nodes[nodes.length - 1] = merged;
+    } else {
+      nodes.push(node);
     }
   }
 
   public addNode(type: NodeType, attrs: {}, content: Node[]) {
-    const node : Node | null | undefined = type.createAndFill(attrs, content, this.marks) 
+    const node: Node | null | undefined = type.createAndFill(attrs, content, this.marks);
     if (!node) {
-      return null
+      return null;
     }
-    if (this.stack.length)  {
-      this.top().content.push(node)
+    if (this.stack.length) {
+      this.top().content.push(node);
     }
-    return node
+    return node;
   }
 
   public openNode(type: NodeType, attrs: {}) {
-    this.stack.push({ type, attrs, content: []})
+    this.stack.push({ type, attrs, content: [] });
   }
 
-  public closeNode() : Node {
+  public closeNode(): Node {
     if (this.marks.length) {
-      this.marks = Mark.none
+      this.marks = Mark.none;
     }
-    const info : IParserStackElement = this.stack.pop() as IParserStackElement
-    return this.addNode(info.type, info.attrs, info.content) as Node
+    const info: IParserStackElement = this.stack.pop() as IParserStackElement;
+    return this.addNode(info.type, info.attrs, info.content) as Node;
   }
 
   public openMark(mark: Mark) {
-    this.marks = mark.addToSet(this.marks)
+    this.marks = mark.addToSet(this.marks);
   }
 
   public closeMark(mark: Mark) {
-    this.marks = mark.removeFromSet(this.marks)
+    this.marks = mark.removeFromSet(this.marks);
   }
 
-  private top() : IParserStackElement {
-    return this.stack[this.stack.length - 1]
+  private top(): IParserStackElement {
+    return this.stack[this.stack.length - 1];
   }
 
-  private maybeMerge(a: Node, b: Node) : Node | undefined {
+  private maybeMerge(a: Node, b: Node): Node | undefined {
     if (a && a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
-      return this.schema.text(a.text as string + b.text as string, a.marks)
+      return this.schema.text(((a.text as string) + b.text) as string, a.marks);
     } else {
       return undefined;
     }
@@ -233,10 +225,9 @@ class ParserState {
 }
 
 interface IParserStackElement {
-  type: NodeType,
-  attrs: {},
-  content: Node[]
+  type: NodeType;
+  attrs: {};
+  content: Node[];
 }
 
-type ParserTokenHandler = (state: ParserState, tok: IPandocToken) => void
-
+type ParserTokenHandler = (state: ParserState, tok: IPandocToken) => void;
