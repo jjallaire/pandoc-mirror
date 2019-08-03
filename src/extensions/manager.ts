@@ -2,6 +2,8 @@
 
 import { Schema } from 'prosemirror-model'
 
+import { Plugin } from 'prosemirror-state'
+
 import { InputRule } from 'prosemirror-inputrules'
 
 import { IExtension, IMark, INode, Command, IPandocReader, IEditorUI } from './api'
@@ -17,6 +19,7 @@ import nodeCodeBlock from './nodes/code_block'
 import nodeHorizontalRule from './nodes/horizontal_rule'
 import nodeLists from './nodes/lists'
 import nodeHardBreak from './nodes/hard_break'
+import nodeImage from './nodes/image/index'
 
 import { CommandFn } from 'src/utils/command';
 
@@ -34,7 +37,8 @@ export class ExtensionManager {
       nodeHorizontalRule,
       nodeCodeBlock,
       nodeLists,
-      nodeHardBreak
+      nodeHardBreak,
+      nodeImage
     ]);
     return manager
   }
@@ -87,6 +91,16 @@ export class ExtensionManager {
     return this.collect<Command>((extension: IExtension) => {
       if (extension.commands) {
         return extension.commands(schema, ui)
+      } else {
+        return undefined
+      }
+    })
+  }
+
+  public plugins(schema: Schema, ui: IEditorUI): Plugin[] {
+    return this.collect<Plugin>((extension: IExtension) => {
+      if (extension.plugins) {
+        return extension.plugins(schema, ui)
       } else {
         return undefined
       }

@@ -1,5 +1,5 @@
 
-import { EditorState, Transaction } from "prosemirror-state"
+import { EditorState, Plugin } from "prosemirror-state"
 import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from "prosemirror-model"
 import { InputRule } from "prosemirror-inputrules"
 import { toggleMark } from "prosemirror-commands"
@@ -13,11 +13,12 @@ import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '..
 
 
 export interface IExtension {
-  marks?: IMark[],
-  nodes?: INode[],
+  marks?: IMark[]
+  nodes?: INode[]
   keymap?: (schema: Schema, mac: boolean) => { [key: string] : CommandFn }
   commands?: (schema: Schema, ui: IEditorUI) => Command[]
   inputRules?: (schema: Schema) => InputRule[]
+  plugins?: (schema: Schema, ui: IEditorUI) => Plugin[]
 }
 
 export interface IMark {
@@ -139,11 +140,12 @@ export class WrapCommand extends NodeCommand {
 }
 
 export interface IEditorUI {
-  onEditLink: (link: ILinkProps) => Promise<ILinkEditResult | null>,
-  onEditImage: (image: IImageProps) => Promise<IImageEditResult | null>
+  onEditLink: ILinkEditor,
+  onEditImage: IImageEditor
 }
 
-
+export type ILinkEditor = (link: ILinkProps) => Promise<ILinkEditResult | null>
+export type IImageEditor = (image: IImageProps) => Promise<IImageEditResult | null>
 
 export interface ILinkProps {
   href: string,
@@ -156,7 +158,7 @@ export interface ILinkEditResult {
 }
 
 export interface IImageProps {
-  src: string,
+  src: string | null,
   title?: string,
   alt?: string
 }

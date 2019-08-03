@@ -3,7 +3,7 @@ import { Schema, MarkType } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { IExtension, Command, IEditorUI, ILinkEditResult, ILinkProps } from '../api'
+import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from '../api'
 import { markIsActive, getMarkAttrs, getMarkRange } from '../../utils/mark'
 
 const TARGET_URL = 0;
@@ -55,7 +55,7 @@ const extension : IExtension = {
   }
 };
 
-function linkCommand(markType: MarkType, onEditLink: (link: ILinkProps) => Promise<ILinkEditResult | null>) {
+function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
 
   return (state: EditorState, dispatch?: ((tr: Transaction<any>) => void), view?: EditorView) => {
 

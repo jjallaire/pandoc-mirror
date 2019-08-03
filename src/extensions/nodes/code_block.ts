@@ -1,5 +1,6 @@
 
 
+
 import { Schema, Node as ProsemirrorNode } from 'prosemirror-model'
 import { setBlockType } from 'prosemirror-commands'
 import { IExtension, IPandocToken, BlockCommand } from '../api'
