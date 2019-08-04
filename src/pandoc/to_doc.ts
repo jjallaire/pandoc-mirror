@@ -8,6 +8,9 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 
 // TOOD: error handling
 
+// TODO: handle duplicate ids when block elements are split
+// TODO: handle section divs
+
 // TODO: parse and forward Attr for elements that support them (results in id, class,
 // and data-attribs in PM schema)
 
