@@ -1,0 +1,14 @@
+
+
+#editor {
+  border: 1px solid; 
+  width: 80%; 
+  height: 500px; 
+  padding: 8px;
+}
+
+.ProseMirror blockquote {
+  padding-left: 0.75em;
+  border-left: 3px solid #eee;
+  margin-left: 0; margin-right: 0;
+}

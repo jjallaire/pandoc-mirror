@@ -1,12 +1,29 @@
 
 
-//   UI framework for demo: 
-//     https://github.com/vitmalina/w2ui/
-//     http://w2ui.com/web/demos/#!toolbar/toolbar-1
+// notification hooks
+let hooks = {
+  isEditable: () => true,
+  onUpdate() {
+    console.log("updated!")
+  },
+  onSelectionChange(type) {
+    console.log("selection changed: " + type)
+  }
+}
 
+// ui handlers
+let ui = {
+  onEditLink(link) { 
+    console.log(link)
+    return Promise.resolve(null) 
+  },
+  onEditImage(image) { 
+    console.log(image)
+    return Promise.resolve(null) 
+  }
+}
 
-const Editor = PandocMirror.Editor;
-
+// pandoc ast conversion handlers
 let pandoc = {
   markdownToAst(markdown) {
     return axios.post("/pandoc/ast", { format: 'commonmark', markdown })
@@ -22,74 +39,19 @@ let pandoc = {
   }
 };
 
-let options = {
-  autoFocus: true
-}
-
-let hooks = {
-  isEditable: () => true,
-  onUpdate() {
-    console.log("updated!")
-  },
-  onSelectionChange(type) {
-    console.log("selection changed: " + type)
-  }
-}
-
-let ui = {
-  onEditLink(link) { 
-    console.log(link)
-    return Promise.resolve(null) 
-  },
-  onEditImage(image) { 
-    console.log(image)
-    return Promise.resolve(null) 
-  }
-}
-
-let editor = new Editor({
+// create editor
+let editor = new PandocMirror.Editor({
   parent: document.getElementById('editor'), 
   pandoc,
   ui,
-  options,
+  options: {
+    autoFocus: true
+  },
   hooks
 });
 
-
-let content = `
-### Heading 
-
-This is **bold** text. 
-
-This is *italic* text.
-
-This is hard break.  
-Next line after hard break.
-
-***
-
-- Unordered
-- List
-
-1. Ordered
-2. List
-
-This is a link to [Google](https://www.google.com)
-
-This is an image:
-
-![](rstudio.png)
-
-\`\`\`r
-Here is a code block.
-
-Another line of code.
-\`\`\`
-
-> This is a blockquote. See how it runs!
-
-This is \`code\` text.
-`;
-
-editor.setContent(content)
+// get content and load it into the editor
+axios.get('content.md') .then(result => {
+  editor.setContent(result.data)
+})
 

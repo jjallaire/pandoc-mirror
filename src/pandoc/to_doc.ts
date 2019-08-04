@@ -8,6 +8,8 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 
 // TOOD: error handling
 
+// TODO: handle SoftBreak (source preservation issue, maybe need to use spans?)
+
 // TODO: handle duplicate ids when block elements are split
 // TODO: handle section divs
 
