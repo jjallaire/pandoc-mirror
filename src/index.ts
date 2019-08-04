@@ -64,32 +64,47 @@ export class Editor {
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
+    
+    // maintain references to config
     this.parent = config.parent;
     this.pandoc = config.pandoc;
     this.ui = config.ui;
     this.options = config.options || {};
 
+    // initialize hooks
     this.hooks = config.hooks || {};
     this.initHooks();
 
+    // create extensions
     this.extensions = ExtensionManager.create();
 
+    // create schema
     this.schema = editorSchema(this.extensions);
 
+    // create state
     this.state = EditorState.create({
       schema: this.schema,
       doc: emptyDoc(this.schema),
       plugins: [...this.basePlugins()],
     });
 
+    // create view
     this.view = new EditorView(this.parent, {
       state: this.state,
       dispatchTransaction: this.dispatchTransaction.bind(this),
     });
 
+    // set some css invariants on the editor and it's container
+    this.parent.style.overflowY = 'scroll';
+    const editorStyle = (this.view.dom as HTMLElement).style;
+    editorStyle.outline = 'none';
+    editorStyle.width = '100%';
+
+    // focus editor when container below it is clicked
     this.onClickBelow = () => this.focus();
     this.parent.addEventListener('click', this.onClickBelow);
 
+    // focus editor immediately if requested
     if (this.options.autoFocus) {
       setTimeout(() => {
         this.focus();
