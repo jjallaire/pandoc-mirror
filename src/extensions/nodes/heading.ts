@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 
-import { IExtension, BlockCommand } from '../api';
+import { IExtension, BlockCommand, IPandocToken } from '../api';
 import { CommandFn } from '../../utils/command';
 
 const HEADING_LEVEL = 0;
@@ -41,10 +41,10 @@ const extension: IExtension = {
         from: {
           token: 'Header',
           block: 'heading',
-          getAttrs: tok => ({
+          getAttrs: (tok : IPandocToken) => ({
             level: tok.c[HEADING_LEVEL],
           }),
-          getChildren: tok => tok.c[HEADING_CHILDREN],
+          getChildren: (tok : IPandocToken) => tok.c[HEADING_CHILDREN],
         },
         to: {},
       },

@@ -2,7 +2,7 @@ import { Schema, MarkType } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from '../api';
+import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps, IPandocToken } from '../api';
 import { markIsActive, getMarkAttrs, getMarkRange } from '../../utils/mark';
 
 const TARGET_URL = 0;
@@ -37,7 +37,7 @@ const extension: IExtension = {
         from: {
           token: 'Link',
           mark: 'link',
-          getAttrs: tok => {
+          getAttrs: (tok : IPandocToken) => {
             const target = tok.c[LINK_TARGET];
             return {
               href: target[TARGET_URL],
