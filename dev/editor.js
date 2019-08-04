@@ -76,7 +76,9 @@ Next line after hard break.
 
 This is a link to [Google](https://www.google.com)
 
-This is a link to an image: ![](google.png)
+This is an image:
+
+![](rstudio.png)
 
 \`\`\`r
 Here is a code block.
