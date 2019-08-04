@@ -1,0 +1,15 @@
+/* Add space around the hr to make clicking it easier */
+
+.ProseMirror hr {
+  padding: 2px 0;
+  border: none;
+  margin: 1em 0;
+}
+
+.ProseMirror hr:after {
+  content: "";
+  display: block;
+  height: 1px;
+  background-color: silver;
+  line-height: 2px;
+}

@@ -18,8 +18,12 @@ import { editorSchema, emptyDoc } from './schema';
 import { Command, IEditorUI } from './extensions/api';
 import { CommandFn } from './utils/command';
 
-// standard prosemirror styles
+// standard prosemirror + additional built-in styles
+// (these styles are about behavior not appearance)
 import 'prosemirror-view/style/prosemirror.css';
+import './styles/prosemirror.css';
+
+
 
 export enum SelectionType {
   Text = 'text',
