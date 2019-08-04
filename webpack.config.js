@@ -18,7 +18,8 @@ module.exports = {
     libraryTarget: "var"
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dev'),
+    contentBase: [path.join(__dirname, 'dev'), path.join(__dirname, 'node_modules')],
+    watchContentBase: true,
     port: 8080,
     before: function(app, server) {
 
