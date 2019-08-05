@@ -133,7 +133,7 @@ export class Editor {
     return () => { this.parent.removeEventListener(event, handler); };
   }
 
-  public setContent(content: string, emitUpdate?: boolean) {
+  public setContent(content: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
     return markdownToDoc(content, this.schema, this.pandoc, pandocReaders(this.extensions)).then((doc: Node) => {
       // re-initialize editor state
@@ -147,6 +147,7 @@ export class Editor {
       // notify listeners if requested
       if (emitUpdate) {
         this.emitUpdate();
+        this.emitSelectionChanged();
       }
     });
   }
@@ -160,7 +161,14 @@ export class Editor {
   }
 
   public commands(): IEditorCommands {
-    return this.extensions.commands(this.schema, this.ui).reduce((commands: IEditorCommands, command: Command) => {
+
+    const allCommands: Command[] = [
+      new Command('undo', null, undo),
+      new Command('redo', null, redo),
+      ...this.extensions.commands(this.schema, this.ui)
+    ];
+
+    return allCommands.reduce((commands: IEditorCommands, command: Command) => {
       return {
         ...commands,
         [command.name]: {
@@ -172,7 +180,7 @@ export class Editor {
       };
     }, {});
   }
-
+ 
   private dispatchTransaction(transaction: Transaction) {
     // apply the transaction
     this.state = this.state.apply(transaction);

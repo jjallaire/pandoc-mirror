@@ -14,8 +14,15 @@ var initToolbar = function(toolbar, editor) {
   }
   
   // initialize toolbar
+  const kBreak = [ { type: 'break' } ]
+  toolbar.add(button('undo', 'fa-undo'))
+  toolbar.add(button('redo', 'fa-repeat'))
+  toolbar.add(kBreak)
   toolbar.add(button('strong', 'fa-bold'))
   toolbar.add(button('em', 'fa-italic'))
+  toolbar.add(button('code', 'fa-code'))
+  toolbar.add(kBreak)
+
  
   // sync toolbar to editor state changes
   editor.subscribe(PandocMirror.kEventSelectionChange, () => {
@@ -29,7 +36,7 @@ var initToolbar = function(toolbar, editor) {
         if (cmd.isEnabled())
           toolbar.enable(command)
         else
-          toolbar.disable
+          toolbar.disable(command)
       }
     })
   })
