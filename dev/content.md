@@ -12,8 +12,8 @@ Next line after hard break.
 - Unordered
 - List
 
-1. Ordered
-2. List
+2. Ordered
+3. List
 
 This is a link to [Google](https://www.google.com)
 

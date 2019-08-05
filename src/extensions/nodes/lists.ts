@@ -6,6 +6,7 @@ import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirr
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
+const LIST_ATTRIB_ORDER = 0;
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
@@ -73,7 +74,7 @@ const extension: IExtension = {
         toDOM(node) {
           const attrs: { [key: string]: string } = {};
           if (node.attrs.order !== 1) {
-            attrs.order = node.attrs.order;
+            attrs.start = node.attrs.order[LIST_ATTRIB_ORDER];
           }
           if (node.attrs.tight) {
             attrs['data-tight'] = 'true';
