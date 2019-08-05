@@ -39,44 +39,42 @@ let pandoc = {
   }
 };
 
+// create editor container
+const container = document.createElement('div')
+container.id = 'container'
+document.body.append(container)
 
-// function to initialize editor given a parent
-function initEditor(parent) {
-  // create editor
-  let editor = new PandocMirror.Editor({
-    parent, 
-    pandoc,
-    ui,
-    options: {
-      autoFocus: true
-    },
-    hooks
-  });
+// create editor
+let editor = new PandocMirror.Editor({
+  parent: container, 
+  pandoc,
+  ui,
+  options: {
+    autoFocus: true
+  },
+  hooks
+});
 
-  // get content and load it into the editor
-  axios.get('content.md') .then(result => {
-    editor.setContent(result.data)
-  })
-}
-
+// layout ui
 $('#layout').w2layout({
   name: 'layout',
   panels: [{ 
     type: 'main', 
     overflow: 'scroll',
-    toolbar: {
-      items: [
-        { type: 'button',  id: 'item5',  caption: 'Item 5', icon: 'w2ui-icon-check', hint: 'Hint for item 5' }
-      ]
-    }, 
+    toolbar: initToolbar(editor),
     content: {
       render: function() {
-        const container = $("<div id='container'></div>")
-        $(this.box).append(container);
-        initEditor(container.get(0))
+        $(container).appendTo($(this.box))
       }
     }
   },
   ]
 });
+
+// get content and load it into the editor
+axios.get('content.md') .then(result => {
+  editor.setContent(result.data)
+})
+
+
 
