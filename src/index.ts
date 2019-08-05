@@ -15,7 +15,7 @@ import { markdownToDoc } from './pandoc/to_doc';
 import { ExtensionManager } from './extensions/manager';
 
 import { editorSchema, emptyDoc } from './schema';
-import { Command, IEditorUI } from './extensions/api';
+import { Command, IEditorUI, BlockCommand } from './extensions/api';
 import { CommandFn } from './utils/command';
 
 // standard prosemirror + additional built-in styles
@@ -165,6 +165,7 @@ export class Editor {
     const allCommands: Command[] = [
       new Command('undo', null, undo),
       new Command('redo', null, redo),
+      new BlockCommand('paragraph', null, this.schema.nodes.paragraph, this.schema.nodes.paragraph),
       ...this.extensions.commands(this.schema, this.ui)
     ];
 
