@@ -6,7 +6,7 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TOOD: error handling
+// TOOD: error handling for pandoc
 
 // TODO: handle SoftBreak (source preservation issue, maybe need to use spans?)
 

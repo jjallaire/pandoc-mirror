@@ -33,7 +33,6 @@ export function insertAndSelectNode(node: Node, state: EditorState, dispatch: (t
 
   // select node
   // (https://discuss.prosemirror.net/t/how-to-select-a-node-immediately-after-inserting-it/1566)
-  // TODO: if there is no nodeBefore do we need to insert at the beginning? (or will there always be one?)
   if (tr.selection.$anchor.nodeBefore) {
     const resolvedPos = tr.doc.resolve(tr.selection.anchor - tr.selection.$anchor.nodeBefore.nodeSize);
     tr.setSelection(new NodeSelection(resolvedPos));
