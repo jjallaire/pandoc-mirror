@@ -99,7 +99,7 @@ export class Editor {
     this.state = EditorState.create({
       schema: this.schema,
       doc: emptyDoc(this.schema),
-      plugins: [...this.basePlugins()],
+      plugins: this.createPlugins(),
     });
 
     // create view
@@ -146,7 +146,7 @@ export class Editor {
       this.state = EditorState.create({
         schema: this.state.schema,
         doc,
-        plugins: this.state.plugins,
+        plugins: this.state.plugins
       });
       this.view.updateState(this.state);
 
@@ -216,7 +216,7 @@ export class Editor {
     }
   }
 
-  private basePlugins(): Plugin[] {
+  private createPlugins(): Plugin[] {
     return [
       history(),
       ...this.keymapPlugins(),
@@ -229,6 +229,7 @@ export class Editor {
           editable: this.hooks.isEditable,
         },
       }),
+      ...this.extensions.plugins(this.schema, this.ui)
     ];
   }
 
