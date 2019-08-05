@@ -76,7 +76,7 @@ const extension: IExtension = {
             attrs.order = node.attrs.order;
           }
           if (node.attrs.tight) {
-            attrs.tight = 'true';
+            attrs['data-tight'] = 'true';
           }
           return ['ol', attrs, 0];
         },

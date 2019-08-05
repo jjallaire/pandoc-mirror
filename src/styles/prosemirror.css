@@ -13,3 +13,32 @@
   background-color: silver;
   line-height: 2px;
 }
+
+/* Improve on default blockquote treatment */
+
+.ProseMirror blockquote {
+  padding-left: 0.75em;
+  border-left: 3px solid #eee;
+  margin-left: 0; 
+  margin-right: 0;
+}
+
+/* Impement support for data-tight on lists */
+
+.ProseMirror ul[data-tight] > li > p,
+.ProseMirror ol[data-tight] > li > p {
+  margin-block-start: 0.1em;
+}
+
+/* Tweak bottom margins for list items */
+
+.ProseMirror li > p {
+  margin-bottom: 5px;
+}
+
+.ProseMirror li:last-of-type > p {
+  margin-bottom: 16px;
+}
+
+
+

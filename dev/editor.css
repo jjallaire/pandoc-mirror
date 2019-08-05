@@ -18,13 +18,6 @@
   background-color: white;
 }
 
-
-.ProseMirror blockquote {
-  padding-left: 0.75em;
-  border-left: 3px solid #eee;
-  margin-left: 0; margin-right: 0;
-}
-
 .w2ui-toolbar table.w2ui-button .w2ui-tb-image > span {
   color: grey;
 }
