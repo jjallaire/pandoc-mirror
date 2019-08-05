@@ -88,17 +88,12 @@ function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
             range = { from: state.selection.from, to: state.selection.to };
           }
 
-          // action: edit the link
+          const tr = state.tr;
+          tr.removeMark(range.from, range.to, markType);
           if (result.action === 'edit') {
-            const tr = state.tr;
-            tr.removeMark(range.from, range.to, markType);
             tr.addMark(range.from, range.to, markType.create(result.link));
-            dispatch(tr);
-
-            // action: remove the link
-          } else if (result.action === 'remove') {
-            dispatch(state.tr.removeMark(range.from, range.to, markType));
-          }
+          } 
+          dispatch(tr);
         }
 
         if (view) {

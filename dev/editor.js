@@ -1,20 +1,14 @@
 
 
-// notification hooks
+// behavior hooks
 let hooks = {
   isEditable: () => true
 }
 
 // ui handlers
 let ui = {
-  onEditLink(link) { 
-    console.log(link)
-    return Promise.resolve(null) 
-  },
-  onEditImage(image) { 
-    console.log(image)
-    return Promise.resolve(null) 
-  }
+  onEditLink: editLink, 
+  onEditImage: editImage
 }
 
 // pandoc ast conversion handlers

@@ -23,6 +23,12 @@ import { CommandFn } from './utils/command';
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
 
+// re-exports from extension api
+export  { IEditorUI, 
+          IImageEditor, IImageProps,
+          ILinkEditor, ILinkEditResult, ILinkProps } 
+  from './extensions/api';
+
 export interface IEditorOptions {
   autoFocus?: boolean;
 }
