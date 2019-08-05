@@ -1,10 +1,8 @@
 
-
 const editLink = function(link) {
   
   return new Promise(resolve => {
 
-    // show dialog
     showDialog({
       id: 'linkDialog', 
       title: 'Edit Link', 
@@ -56,74 +54,49 @@ const editImage = function(image) {
 
   return new Promise(resolve => {
 
-
-
-  })
-}
-
-// based on http://w2ui.com/web/demos/#!forms/forms-8
-function showDialog( { id, title, html, fields, record, actions, options } ) {
-
-  // create the dialog if need be
-  if (!w2ui[id]) {
-    $().w2form({
-      name: id,
-      style: 'border: 0px; background-color: transparent;',
-      formHTML: html,
-      fields: fields
+    showDialog({
+      id: 'imageDialog', 
+      title: 'Edit Image', 
+      html: `
+        <div class="w2ui-page page-0">
+          <div class="w2ui-field">
+            <label>URL:</label>
+            <div>
+              <input name="src" type="text" style="width: 250px">
+            </div>
+          </div>
+          <div class="w2ui-field">
+            <label>Title:</label>
+            <div>
+              <input name="title" type="text" style="width: 250px">
+            </div>
+          </div> 
+          <div class="w2ui-field">
+            <label>Alt:</label>
+            <div>
+              <input name="alt" type="text" style="width: 250px">
+            </div>
+          </div>            
+        </div>
+        <div class="w2ui-buttons">
+          <button class="w2ui-btn" name="cancel">Cancel</button>
+          <button class="w2ui-btn" name="save">OK</button>
+        </div>
+      `,
+      fields: [
+        { field: 'src', type: 'text', required: true },
+        { field: 'title', type: 'text' },
+        { field: 'alt', type: 'text' }
+      ],
+      record: image, 
+      actions: {
+        save: resolve,
+      }
     });
-  }
 
-  // helper to close dialog
-  function closeDialog() { $('#' + id).w2popup('close'); }
-
-  // populate data
-  const dialog = w2ui[id]
-  dialog.record = record
-
-  // hookup standard actions
-  dialog.actions = {
-    save: function () { 
-      if (this.validate().length === 0) {
-        closeDialog();
-        actions.save(this.record)
-      } 
-    }.bind(dialog),
-
-    cancel: closeDialog
-  }
-
-  // hookup custom actions
-  Object.keys(actions).filter(action => action !== "save").forEach(action => {
-    dialog.actions[action] = function() {
-      closeDialog()
-      actions[action](this.record)
-    }.bind(dialog)
   })
-
-
-  $().w2popup('open', {
-    title   : title,
-    body    : `<div id="${id}" style="width: 100%; height: 100%;"></div>`,
-    style   : 'padding: 15px 0px 0px 0px',
-    width   : 500,
-    height  : 300, 
-    showMax : false,
-    onToggle: function (event) {
-      $(w2ui[id].box).hide();
-      event.onComplete = function () {
-        $(w2ui[id].box).show();
-        w2ui[id].resize();
-      }
-    },
-    onOpen: function (event) {
-      event.onComplete = function () {
-        $('#' + id).w2render(id);
-      }
-    },
-    ...options
-  });
 }
+
 
 const initToolbar = function(toolbar, editor) {
 
@@ -230,5 +203,70 @@ const initToolbar = function(toolbar, editor) {
   })
   
 
+}
+
+
+// based on http://w2ui.com/web/demos/#!forms/forms-8
+function showDialog( { id, title, html, fields, record, actions, options } ) {
+
+  // create the dialog if need be
+  if (!w2ui[id]) {
+    $().w2form({
+      name: id,
+      style: 'border: 0px; background-color: transparent;',
+      formHTML: html,
+      fields: fields
+    });
+  }
+
+  // helper to close dialog
+  function closeDialog() { $('#' + id).w2popup('close'); }
+
+  // populate data
+  const dialog = w2ui[id]
+  dialog.record = record
+
+  // hookup standard actions
+  dialog.actions = {
+    save: function () { 
+      if (this.validate().length === 0) {
+        closeDialog();
+        actions.save(this.record)
+      } 
+    }.bind(dialog),
+
+    cancel: closeDialog
+  }
+
+  // hookup custom actions
+  Object.keys(actions).filter(action => action !== "save").forEach(action => {
+    dialog.actions[action] = function() {
+      closeDialog()
+      actions[action](this.record)
+    }.bind(dialog)
+  })
+
+
+  $().w2popup('open', {
+    title   : title,
+    body    : `<div id="${id}" style="width: 100%; height: 100%;"></div>`,
+    style   : 'padding: 15px 0px 0px 0px',
+    width   : 500,
+    height  : 300, 
+    showMax : false,
+    onToggle: function (event) {
+      $(w2ui[id].box).hide();
+      event.onComplete = function () {
+        $(w2ui[id].box).show();
+        w2ui[id].resize();
+      }
+    },
+    onOpen: function (event) {
+      event.onComplete = function () {
+        $('#' + id).w2render(id);
+      }
+    },
+    ...options
+  });
 }
 
