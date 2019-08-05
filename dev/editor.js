@@ -14,13 +14,13 @@ let ui = {
 // pandoc ast conversion handlers
 let pandoc = {
   markdownToAst(markdown) {
-    return axios.post("/pandoc/ast", { format: 'commonmark', markdown })
+    return axios.post("/pandoc/ast", { format: 'markdown', markdown })
       .then(result => {
       return result.data.ast;
     })
   },
   astToMarkdown(ast) {
-    return axios.post("/pandoc/markdown", { format: 'commonmark', ast: ast })
+    return axios.post("/pandoc/markdown", { format: 'markdown', ast: ast })
       .then(result => {
         return result.data.markdown;
     })
