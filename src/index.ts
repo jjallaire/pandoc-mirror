@@ -23,21 +23,12 @@ import { CommandFn } from './utils/command';
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
 
-
-
-export enum SelectionType {
-  Text = 'text',
-  Node = 'node',
-}
-
 export interface IEditorOptions {
   autoFocus?: boolean;
 }
 
 export interface IEditorHooks {
   isEditable?: () => boolean;
-  onUpdate?: () => void;
-  onSelectionChange?: (type: SelectionType) => void;
 }
 
 export interface IEditorConfig {
@@ -58,12 +49,16 @@ export interface IEditorCommands {
   [name: string]: IEditorCommand;
 }
 
+export const kEventUpdate = 'update';
+export const kEventSelectionChange = 'selectionChange';
+
 export class Editor {
   private parent: HTMLElement;
   private pandoc: IPandocEngine;
   private ui: IEditorUI;
   private options: IEditorOptions;
   private hooks: IEditorHooks;
+  private events: { [key: string]: Event };
   private schema: Schema;
   private state: EditorState;
   private view: EditorView;
@@ -81,6 +76,12 @@ export class Editor {
     // initialize hooks
     this.hooks = config.hooks || {};
     this.initHooks();
+
+    // initialize custom events
+    this.events = {
+      [kEventUpdate]: new Event(kEventUpdate),
+      [kEventSelectionChange]: new Event(kEventSelectionChange)
+    };
 
     // create extensions
     this.extensions = ExtensionManager.create();
@@ -122,6 +123,14 @@ export class Editor {
   public destroy() {
     this.parent.removeEventListener('click', this.onClickBelow);
     this.view.destroy();
+  }
+
+  public subscribe(event: string, handler: VoidFunction) : VoidFunction {
+    if (!this.events.hasOwnProperty(event)) {
+      throw new Error(`Unknown event ${event}. Valid events are ${Object.keys(this.events).join(', ')}`);
+    }
+    this.parent.addEventListener(event, handler);
+    return () => { this.parent.removeEventListener(event, handler); };
   }
 
   public setContent(content: string, emitUpdate?: boolean) {
@@ -179,17 +188,11 @@ export class Editor {
   }
 
   private emitSelectionChanged() {
-    if (this.hooks.onSelectionChange) {
-      this.hooks.onSelectionChange(
-        this.state.selection instanceof NodeSelection ? SelectionType.Node : SelectionType.Text,
-      );
-    }
+    this.parent.dispatchEvent(this.events.selectionChange);
   }
 
   private emitUpdate() {
-    if (this.hooks.onUpdate) {
-      this.hooks.onUpdate();
-    }
+    this.parent.dispatchEvent(this.events.update);
   }
 
   private initHooks() {

@@ -2,13 +2,7 @@
 
 // notification hooks
 let hooks = {
-  isEditable: () => true,
-  onUpdate() {
-    console.log("updated!")
-  },
-  onSelectionChange(type) {
-    console.log("selection changed: " + type)
-  }
+  isEditable: () => true
 }
 
 // ui handlers
@@ -56,12 +50,12 @@ let editor = new PandocMirror.Editor({
 });
 
 // layout ui
-$('#layout').w2layout({
+const layout = $('#layout').w2layout({
   name: 'layout',
   panels: [{ 
     type: 'main', 
     overflow: 'scroll',
-    toolbar: initToolbar(editor),
+    toolbar: { items: [] },
     content: {
       render: function() {
         $(container).appendTo($(this.box))
@@ -70,6 +64,10 @@ $('#layout').w2layout({
   },
   ]
 });
+
+// initialize toolbar
+const toolbar = layout.get('main').toolbar
+initToolbar(toolbar, editor)
 
 // get content and load it into the editor
 axios.get('content.md') .then(result => {
