@@ -17,6 +17,9 @@ Next line after hard break.
 
 This is a link to [Google](https://www.google.com)
 
+This is an image:
+
+![](google.png){#myImage .foo .bar}
 
 ```r
 Here is a code block.
