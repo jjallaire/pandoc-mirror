@@ -1,9 +1,11 @@
-import { Schema, MarkType } from 'prosemirror-model';
+import { Schema, MarkType, Mark, Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps, IPandocToken } from '../api';
 import { markIsActive, getMarkAttrs, getMarkRange } from '../../utils/mark';
+
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -37,7 +39,7 @@ const extension: IExtension = {
         from: {
           token: 'Link',
           mark: 'link',
-          getAttrs: (tok : IPandocToken) => {
+          getAttrs: (tok: IPandocToken) => {
             const target = tok.c[LINK_TARGET];
             return {
               href: target[TARGET_URL],
@@ -46,7 +48,21 @@ const extension: IExtension = {
           },
           getChildren: tok => tok.c[LINK_CHILDREN],
         },
-        to: {},
+        to: {
+          open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+            return isPlainURL(mark, parent, index, 1) ? '<' : '[';
+          },
+          close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+            return isPlainURL(mark, parent, index, -1)
+              ? '>'
+              : '](' +
+                  state.esc(mark.attrs.href) +
+                  (mark.attrs.title
+                    ? ' ' + (state as any).quote(mark.attrs.title) // quote function not declared in @types
+                    : '') +
+                  ')';
+          },
+        },
       },
     },
   ],
@@ -92,7 +108,7 @@ function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
           tr.removeMark(range.from, range.to, markType);
           if (result.action === 'edit') {
             tr.addMark(range.from, range.to, markType.create(result.link));
-          } 
+          }
           dispatch(tr);
         }
 
@@ -104,6 +120,21 @@ function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
 
     return true;
   };
+}
+
+function isPlainURL(link: Mark, parent: Fragment, index: number, side: -1 | 1) {
+  if (link.attrs.title) {
+    return false;
+  }
+  const content = parent.child(index + (side < 0 ? -1 : 0));
+  if (!content.isText || content.text !== link.attrs.href || content.marks[content.marks.length - 1] !== link) {
+    return false;
+  }
+  if (index === (side < 0 ? 1 : parent.childCount - 1)) {
+    return true;
+  }
+  const next = parent.child(index + (side < 0 ? -2 : 1));
+  return !link.isInSet(next.marks);
 }
 
 export default extension;

@@ -20,7 +20,12 @@ const extension: IExtension = {
           token: 'Emph',
           mark: 'em',
         },
-        to: {},
+        to: {
+          open: '*',
+          close: '*',
+          mixable: true,
+          expelEnclosingWhitespace: true,
+        },
       },
     },
   ],

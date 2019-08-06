@@ -1,9 +1,8 @@
-import { Schema } from 'prosemirror-model';
-import { setBlockType } from 'prosemirror-commands';
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension, BlockCommand, IPandocToken } from '../api';
-import { CommandFn } from '../../utils/command';
 
 const HEADING_LEVEL = 0;
 const HEADING_CHILDREN = 2;
@@ -41,12 +40,16 @@ const extension: IExtension = {
         from: {
           token: 'Header',
           block: 'heading',
-          getAttrs: (tok : IPandocToken) => ({
+          getAttrs: (tok: IPandocToken) => ({
             level: tok.c[HEADING_LEVEL],
           }),
-          getChildren: (tok : IPandocToken) => tok.c[HEADING_CHILDREN],
+          getChildren: (tok: IPandocToken) => tok.c[HEADING_CHILDREN],
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.write(state.repeat('#', node.attrs.level) + ' ');
+          state.renderInline(node);
+          state.closeBlock(node);
+        },
       },
     },
   ],

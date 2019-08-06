@@ -4,7 +4,16 @@ import { Plugin } from 'prosemirror-state';
 
 import { InputRule } from 'prosemirror-inputrules';
 
-import { IExtension, IMark, INode, Command, IPandocReader, IEditorUI } from './api';
+import {
+  IExtension,
+  IMark,
+  INode,
+  Command,
+  IPandocReader,
+  IEditorUI,
+  PandocNodeWriterFn,
+  IPandocMarkWriter,
+} from './api';
 
 import markEm from './marks/em';
 import markStrong from './marks/strong';
@@ -61,17 +70,31 @@ export class ExtensionManager {
   public pandocReaders(): IPandocReader[] {
     const readers: IPandocReader[] = [];
     this.marks().forEach((mark: IMark) => {
-      if (mark.pandoc) {
-        readers.push(mark.pandoc.from);
-      }
+      readers.push(mark.pandoc.from);
     });
     this.nodes().forEach((node: INode) => {
-      if (node.pandoc) {
+      if (node.pandoc.from) {
         readers.push(node.pandoc.from);
       }
     });
 
     return readers;
+  }
+
+  public pandocMarkWriters(): { [key: string]: IPandocMarkWriter } {
+    const writers: { [key: string]: IPandocMarkWriter } = {};
+    this.marks().forEach((mark: IMark) => {
+      writers[mark.name] = mark.pandoc.to;
+    });
+    return writers;
+  }
+
+  public pandocNodeWriters(): { [key: string]: PandocNodeWriterFn } {
+    const writers: { [key: string]: PandocNodeWriterFn } = {};
+    this.nodes().forEach((node: INode) => {
+      writers[node.name] = node.pandoc.to;
+    });
+    return writers;
   }
 
   public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {

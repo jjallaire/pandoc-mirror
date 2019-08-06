@@ -11,6 +11,7 @@ import { inputRules, InputRule, smartQuotes, emDash, ellipsis, undoInputRule } f
 import { IPandocEngine } from './pandoc/engine';
 import { pandocReaders } from './pandoc/readers';
 import { markdownToDoc } from './pandoc/to_doc';
+import { markdownFromDoc } from './pandoc/from_doc';
 
 import { ExtensionManager } from './extensions/manager';
 
@@ -22,12 +23,10 @@ import { CommandFn } from './utils/command';
 // (these styles are about behavior not appearance)
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 // re-exports from extension api
-export  { IEditorUI, 
-          IImageEditor, IImageProps,
-          ILinkEditor, ILinkEditResult, ILinkProps } 
-  from './extensions/api';
+export { IEditorUI, IImageEditor, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api';
 
 export interface IEditorOptions {
   autoFocus?: boolean;
@@ -72,7 +71,6 @@ export class Editor {
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
-    
     // maintain references to config
     this.parent = config.parent;
     this.pandoc = config.pandoc;
@@ -86,7 +84,7 @@ export class Editor {
     // initialize custom events
     this.events = {
       [kEventUpdate]: new Event(kEventUpdate),
-      [kEventSelectionChange]: new Event(kEventSelectionChange)
+      [kEventSelectionChange]: new Event(kEventSelectionChange),
     };
 
     // create extensions
@@ -131,12 +129,14 @@ export class Editor {
     this.view.destroy();
   }
 
-  public subscribe(event: string, handler: VoidFunction) : VoidFunction {
+  public subscribe(event: string, handler: VoidFunction): VoidFunction {
     if (!this.events.hasOwnProperty(event)) {
       throw new Error(`Unknown event ${event}. Valid events are ${Object.keys(this.events).join(', ')}`);
     }
     this.parent.addEventListener(event, handler);
-    return () => { this.parent.removeEventListener(event, handler); };
+    return () => {
+      this.parent.removeEventListener(event, handler);
+    };
   }
 
   public setContent(content: string, emitUpdate = true) {
@@ -146,7 +146,7 @@ export class Editor {
       this.state = EditorState.create({
         schema: this.state.schema,
         doc,
-        plugins: this.state.plugins
+        plugins: this.state.plugins,
       });
       this.view.updateState(this.state);
 
@@ -156,6 +156,24 @@ export class Editor {
         this.emitSelectionChanged();
       }
     });
+  }
+
+  public getContent(): string {
+    // get mark and node writers from extensions
+    const markWriters = this.extensions.pandocMarkWriters();
+    const nodeWriters = this.extensions.pandocNodeWriters();
+
+    // add built in node writers
+    nodeWriters.paragraph = (state: MarkdownSerializerState, node: Node, parent: Node, index: number) => {
+      state.renderInline(node);
+      state.closeBlock(node);
+    };
+    nodeWriters.text = (state: MarkdownSerializerState, node: Node, parent: Node, index: number) => {
+      state.text(node.text as string);
+    };
+
+    // generate markdown
+    return markdownFromDoc(this.state.doc, markWriters, nodeWriters);
   }
 
   public getJSON(): any {
@@ -171,12 +189,11 @@ export class Editor {
   }
 
   public commands(): IEditorCommands {
-
     const allCommands: Command[] = [
       new Command('undo', null, undo),
       new Command('redo', null, redo),
       new BlockCommand('paragraph', null, this.schema.nodes.paragraph, this.schema.nodes.paragraph),
-      ...this.extensions.commands(this.schema, this.ui)
+      ...this.extensions.commands(this.schema, this.ui),
     ];
 
     return allCommands.reduce((commands: IEditorCommands, command: Command) => {
@@ -191,7 +208,7 @@ export class Editor {
       };
     }, {});
   }
- 
+
   private dispatchTransaction(transaction: Transaction) {
     // apply the transaction
     this.state = this.state.apply(transaction);
@@ -233,7 +250,7 @@ export class Editor {
           editable: this.hooks.isEditable,
         },
       }),
-      ...this.extensions.plugins(this.schema, this.ui)
+      ...this.extensions.plugins(this.schema, this.ui),
     ];
   }
 

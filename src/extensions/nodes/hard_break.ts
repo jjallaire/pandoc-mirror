@@ -1,7 +1,8 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { chainCommands, exitCode } from 'prosemirror-commands';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension } from '../api';
 import { CommandFn } from '../../utils/command';
@@ -24,7 +25,14 @@ const extension: IExtension = {
           token: 'LineBreak',
           node: 'hard_break',
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          for (let i = index + 1; i < parent.childCount; i++) {
+            if (parent.child(i).type !== node.type) {
+              state.write('\\\n');
+              return;
+            }
+          }
+        },
       },
     },
   ],

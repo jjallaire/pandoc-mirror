@@ -23,7 +23,12 @@ const extension: IExtension = {
           token: 'Strong',
           mark: 'strong',
         },
-        to: {},
+        to: {
+          open: '**',
+          close: '**',
+          mixable: true,
+          expelEnclosingWhitespace: true,
+        },
       },
     },
   ],

@@ -1,5 +1,6 @@
 import { Schema, Node as ProsemirrorNode, NodeType } from 'prosemirror-model';
 import { NodeSelection, EditorState, Transaction } from 'prosemirror-state';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension, Command, IPandocToken, IEditorUI, IImageEditor } from '../../api';
 import { canInsertNode } from '../../../utils/node';
@@ -63,7 +64,16 @@ const extension: IExtension = {
             };
           },
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.write(
+            '![' +
+              state.esc(node.attrs.alt || '') +
+              '](' +
+              state.esc(node.attrs.src) +
+              (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
+              ')',
+          );
+        },
       },
     },
   ],

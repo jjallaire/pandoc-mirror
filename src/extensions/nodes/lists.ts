@@ -1,4 +1,6 @@
-import { Schema, NodeType } from 'prosemirror-model';
+import { Schema, NodeType, Node as ProsemirrorNode } from 'prosemirror-model';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { IExtension, NodeCommand, IPandocToken } from '../api';
 import { wrappingInputRule } from 'prosemirror-inputrules';
 import { commandToggleList } from '../../utils/command';
@@ -26,6 +28,11 @@ const extension: IExtension = {
           return ['li', 0];
         },
       },
+      pandoc: {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.renderContent(node);
+        },
+      },
     },
     {
       name: 'bullet_list',
@@ -49,7 +56,9 @@ const extension: IExtension = {
           token: 'BulletList',
           list: 'bullet_list',
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
+        },
       },
     },
     {
@@ -91,7 +100,15 @@ const extension: IExtension = {
           }),
           getChildren: (tok: IPandocToken) => tok.c[LIST_CHILDREN],
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          const start = node.attrs.order || 1;
+          const maxW = String(start + node.childCount - 1).length;
+          const space = state.repeat(' ', maxW + 2);
+          state.renderList(node, space, i => {
+            const nStr = String(start + i);
+            return state.repeat(' ', maxW - nStr.length) + nStr + '. ';
+          });
+        },
       },
     },
   ],

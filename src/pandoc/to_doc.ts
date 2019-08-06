@@ -71,7 +71,6 @@ class Parser {
   private createHandlers(readers: IPandocReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
-      
       // resolve children (provide default impl)
       const getChildren = reader.getChildren || ((tok: IPandocToken) => tok.c);
 

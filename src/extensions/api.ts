@@ -1,7 +1,18 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { NodeSpec, NodeType, MarkSpec, MarkType, Schema } from 'prosemirror-model';
+import {
+  NodeSpec,
+  NodeType,
+  Node as ProsemirrorNode,
+  MarkSpec,
+  MarkType,
+  Schema,
+  Mark,
+  Fragment,
+} from 'prosemirror-model';
 import { InputRule } from 'prosemirror-inputrules';
 import { toggleMark } from 'prosemirror-commands';
+
+import { MarkdownSerializer, MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { CommandFn } from '../utils/command';
 
@@ -23,16 +34,16 @@ export interface IMark {
   spec: MarkSpec;
   pandoc: {
     from: IPandocReader;
-    to: IPandocWriter;
+    to: IPandocMarkWriter;
   };
 }
 
 export interface INode {
   name: string;
   spec: NodeSpec;
-  pandoc?: {
-    from: IPandocReader;
-    to: IPandocWriter;
+  pandoc: {
+    from?: IPandocReader;
+    to: PandocNodeWriterFn;
   };
 }
 
@@ -62,8 +73,26 @@ export interface IPandocToken {
   c: any;
 }
 
-// tslint:disable-next-line:no-empty-interface
-export interface IPandocWriter {}
+export type PandocMarkWriterFn = (
+  state: MarkdownSerializerState,
+  mark: Mark,
+  parent: Fragment,
+  index: number,
+) => string;
+export interface IPandocMarkWriter {
+  open: string | PandocMarkWriterFn;
+  close: string | PandocMarkWriterFn;
+  mixable?: boolean;
+  escape?: boolean;
+  expelEnclosingWhitespace?: boolean;
+}
+
+export type PandocNodeWriterFn = (
+  state: MarkdownSerializerState,
+  node: ProsemirrorNode,
+  parent: ProsemirrorNode,
+  index: number,
+) => void;
 
 export class Command {
   public name: string;

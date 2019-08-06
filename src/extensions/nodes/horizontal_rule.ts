@@ -1,4 +1,6 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { IExtension, Command } from '../api';
 import { commandInsertNode } from 'src/utils/command';
 
@@ -18,7 +20,10 @@ const extension: IExtension = {
           token: 'HorizontalRule',
           node: 'horizontal_rule',
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.write(node.attrs.markup || '---');
+          state.closeBlock(node);
+        },
       },
     },
   ],

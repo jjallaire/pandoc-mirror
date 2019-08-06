@@ -1,6 +1,7 @@
-import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 import { IExtension, IPandocToken, BlockCommand } from '../api';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -41,7 +42,13 @@ const extension: IExtension = {
           }),
           getText: (tok: IPandocToken) => tok.c[CODE_BLOCK_TEXT],
         },
-        to: {},
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+          state.write('```' + (node.attrs.params || '') + '\n');
+          state.text(node.textContent, false);
+          state.ensureNewLine();
+          state.write('```');
+          state.closeBlock(node);
+        },
       },
     },
   ],
