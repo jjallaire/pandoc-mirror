@@ -10,6 +10,7 @@ import { imageDialog } from './dialog';
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
 
+const IMAGE_ATTR = 0;
 const IMAGE_ALT = 1;
 const IMAGE_TARGET = 2;
 
@@ -23,6 +24,8 @@ const extension: IExtension = {
           src: {},
           alt: { default: null },
           title: { default: null },
+          id: { default: null },
+          class: { default: null },
         },
         group: 'inline',
         draggable: true,
@@ -33,8 +36,10 @@ const extension: IExtension = {
               const el = dom as Element;
               return {
                 src: el.getAttribute('src'),
-                title: el.getAttribute('title'),
-                alt: el.getAttribute('alt'),
+                title: el.getAttribute('title') || null,
+                alt: el.getAttribute('alt') || null,
+                id: el.getAttribute('id') || null,
+                class: el.getAttribute('class') || null,
               };
             },
           },
@@ -47,6 +52,7 @@ const extension: IExtension = {
         from: {
           token: 'Image',
           node: 'image',
+          pandocAttr: IMAGE_ATTR,
           getAttrs: (tok: IPandocToken) => {
             const target = tok.c[IMAGE_TARGET];
             return {

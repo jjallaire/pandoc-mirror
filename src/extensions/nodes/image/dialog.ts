@@ -19,6 +19,8 @@ export function imageDialog(
       src: node.attrs.src,
       title: node.attrs.title,
       alt: node.attrs.alt,
+      id: node.attrs.id,
+      class: node.attrs.class
     };
   } else {
     image = nodeType.create(image).attrs as IImageProps;

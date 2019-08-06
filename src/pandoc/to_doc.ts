@@ -66,9 +66,20 @@ class Parser {
   private createHandlers(readers: IPandocReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
-      // some default implementations for getting children & attribs
+      
+      // resolve children (provide default impl)
       const getChildren = reader.getChildren || ((tok: IPandocToken) => tok.c);
-      const getAttrs = reader.getAttrs || (() => ({}));
+
+      // resolve getAttrs (enhance for pandocAttr if requested)
+      const getAttrs = (tok: IPandocToken) => {
+        const attrs = reader.getAttrs ? reader.getAttrs(tok) : {};
+        if (reader.pandocAttr !== undefined) {
+          const pandocAttr = tok.c[reader.pandocAttr as number];
+          attrs.id = pandocAttr[0] || undefined;
+          attrs.class = pandocAttr[1].length > 0 ? pandocAttr[1].join(' ') : undefined;
+        }
+        return attrs;
+      };
 
       // text
       if (reader.text) {

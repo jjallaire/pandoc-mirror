@@ -47,6 +47,10 @@ export interface IPandocReader {
   mark?: string;
   text?: boolean;
 
+  // indication that the token has pandoc attributes in it's content
+  // (i.e. [id, classes[], key,value[]])
+  pandocAttr?: number;
+
   // functions for getting attributes and children
   getAttrs?: (tok: IPandocToken) => any;
   getChildren?: (tok: IPandocToken) => any[];
@@ -151,6 +155,8 @@ export interface IImageProps {
   src: string | null;
   title?: string;
   alt?: string;
+  id?: string;
+  class?: string;
 }
 
 type IImageEditResult = IImageProps;
