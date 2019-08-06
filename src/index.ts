@@ -158,6 +158,10 @@ export class Editor {
     });
   }
 
+  public getJSON(): any {
+    return this.state.doc.toJSON();
+  }
+
   public focus() {
     this.view.focus();
   }
