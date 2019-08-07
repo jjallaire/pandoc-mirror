@@ -23,6 +23,7 @@ import markStrong from './marks/strong';
 import markCode from './marks/code';
 import markLink from './marks/link';
 
+import nodeParagraph from './nodes/paragraph';
 import nodeHeading from './nodes/heading';
 import nodeBlockquote from './nodes/blockquote';
 import nodeCodeBlock from './nodes/code_block';
@@ -43,6 +44,7 @@ export class ExtensionManager {
       markStrong,
       markCode,
       markLink,
+      nodeParagraph,
       nodeHeading,
       nodeBlockquote,
       nodeHorizontalRule,

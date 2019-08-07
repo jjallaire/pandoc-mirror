@@ -163,10 +163,6 @@ export class Editor {
     const nodeWriters = this.extensions.pandocNodeWriters();
 
     // add built in node writers
-    nodeWriters.paragraph = (state: MarkdownSerializerState, node: Node, parent: Node, index: number) => {
-      state.renderInline(node);
-      state.closeBlock(node);
-    };
     nodeWriters.text = (state: MarkdownSerializerState, node: Node, parent: Node, index: number) => {
       state.text(node.text as string);
     };
@@ -189,7 +185,6 @@ export class Editor {
 
   public commands(): IEditorCommands {
     const allCommands: Command[] = [
-      new BlockCommand('paragraph', null, this.schema.nodes.paragraph, this.schema.nodes.paragraph),
       ...this.extensions.commands(this.schema, this.ui),
     ];
 
@@ -264,8 +259,6 @@ export class Editor {
     bindKey('Alt-ArrowDown', joinDown);
     bindKey('Mod-BracketLeft', lift);
     bindKey('Escape', selectParentNode);
-
-    bindKey('Shift-Ctrl-0', setBlockType(this.schema.nodes.paragraph));
 
     // command keys from extensions
     const commands: Command[] = this.extensions.commands(this.schema, this.ui);

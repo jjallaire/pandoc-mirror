@@ -11,14 +11,6 @@ export function editorSchema(extensions: ExtensionManager): Schema {
     doc: {
       content: 'block+',
     },
-    paragraph: {
-      content: 'inline*',
-      group: 'block',
-      parseDOM: [{ tag: 'p' }],
-      toDOM(node: Node): any {
-        return ['p', 0];
-      },
-    },
     text: {
       group: 'inline',
       toDOM(node: Node): any {
