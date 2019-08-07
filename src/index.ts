@@ -19,7 +19,6 @@ import { CommandFn } from './utils/command';
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
 
-
 // re-exports from extension api
 export { IEditorUI, IImageEditor, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api';
 
@@ -136,12 +135,7 @@ export class Editor {
 
   public setContent(content: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(
-        content, 
-        this.schema, 
-        this.pandoc, 
-        this.extensions.pandocReaders()).then((doc: Node) => {
-
+    return markdownToDoc(content, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -180,18 +174,17 @@ export class Editor {
   }
 
   public commands(): IEditorCommands {
-    return this.extensions.commands(this.schema, this.ui)
-      .reduce((commands: IEditorCommands, command: Command) => {
-        return {
-          ...commands,
-          [command.name]: {
-            name: command.name,
-            isActive: () => command.isActive(this.state),
-            isEnabled: () => command.isEnabled(this.state),
-            execute: () => command.execute(this.state, this.view.dispatch, this.view),
-          },
-        };
-      }, {});
+    return this.extensions.commands(this.schema, this.ui).reduce((commands: IEditorCommands, command: Command) => {
+      return {
+        ...commands,
+        [command.name]: {
+          name: command.name,
+          isActive: () => command.isActive(this.state),
+          isEnabled: () => command.isEnabled(this.state),
+          execute: () => command.execute(this.state, this.view.dispatch, this.view),
+        },
+      };
+    }, {});
   }
 
   private dispatchTransaction(transaction: Transaction) {
@@ -237,7 +230,6 @@ export class Editor {
   }
 
   private keymapPlugins(): Plugin[] {
-   
     // command keys from extensions
     const commandKeys: { [key: string]: CommandFn } = {};
     const commands: Command[] = this.extensions.commands(this.schema, this.ui);
@@ -256,5 +248,4 @@ export class Editor {
     // return plugins
     return [keymap(commandKeys), keymap(extensionKeys)];
   }
-
 }

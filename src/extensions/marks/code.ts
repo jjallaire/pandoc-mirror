@@ -15,11 +15,13 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [{
-          token: 'Code',
-          mark: 'code',
-          getText: (tok: IPandocToken) => tok.c[CODE_TEXT],
-        }],
+        from: [
+          {
+            token: 'Code',
+            mark: 'code',
+            getText: (tok: IPandocToken) => tok.c[CODE_TEXT],
+          },
+        ],
         to: {
           open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             return backticksFor(parent.child(index), -1);

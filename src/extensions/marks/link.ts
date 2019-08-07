@@ -36,18 +36,20 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [{
-          token: 'Link',
-          mark: 'link',
-          getAttrs: (tok: IPandocToken) => {
-            const target = tok.c[LINK_TARGET];
-            return {
-              href: target[TARGET_URL],
-              title: target[TARGET_TITLE] || null,
-            };
+        from: [
+          {
+            token: 'Link',
+            mark: 'link',
+            getAttrs: (tok: IPandocToken) => {
+              const target = tok.c[LINK_TARGET];
+              return {
+                href: target[TARGET_URL],
+                title: target[TARGET_TITLE] || null,
+              };
+            },
+            getChildren: tok => tok.c[LINK_CHILDREN],
           },
-          getChildren: tok => tok.c[LINK_CHILDREN],
-        }],
+        ],
         to: {
           open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             return isPlainURL(mark, parent, index, 1) ? '<' : '[';

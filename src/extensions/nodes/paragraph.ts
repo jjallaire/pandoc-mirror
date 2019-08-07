@@ -16,10 +16,7 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [
-          { token: 'Para', block: 'paragraph' },
-          { token: 'Plain', block: 'paragraph' },
-        ],
+        from: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderInline(node);
           state.closeBlock(node);
@@ -29,11 +26,8 @@ const extension: IExtension = {
   ],
 
   commands: (schema: Schema) => {
-    return [
-      new BlockCommand('paragraph', ['Shift-Ctrl-0'], schema.nodes.paragraph, schema.nodes.paragraph),
-    ];
+    return [new BlockCommand('paragraph', ['Shift-Ctrl-0'], schema.nodes.paragraph, schema.nodes.paragraph)];
   },
 };
 
 export default extension;
-

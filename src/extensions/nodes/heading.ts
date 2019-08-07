@@ -37,14 +37,16 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [{
-          token: 'Header',
-          block: 'heading',
-          getAttrs: (tok: IPandocToken) => ({
-            level: tok.c[HEADING_LEVEL],
-          }),
-          getChildren: (tok: IPandocToken) => tok.c[HEADING_CHILDREN],
-        }],
+        from: [
+          {
+            token: 'Header',
+            block: 'heading',
+            getAttrs: (tok: IPandocToken) => ({
+              level: tok.c[HEADING_LEVEL],
+            }),
+            getChildren: (tok: IPandocToken) => tok.c[HEADING_CHILDREN],
+          },
+        ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.write(state.repeat('#', node.attrs.level) + ' ');
           state.renderInline(node);

@@ -16,10 +16,12 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [{
-          token: 'Emph',
-          mark: 'em',
-        }],
+        from: [
+          {
+            token: 'Emph',
+            mark: 'em',
+          },
+        ],
         to: {
           open: '*',
           close: '*',

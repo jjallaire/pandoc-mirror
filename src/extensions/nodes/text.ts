@@ -17,16 +17,14 @@ const extension: IExtension = {
         from: [
           { token: 'Str', text: true, getText: (tok: IPandocToken) => tok.c },
           { token: 'Space', text: true, getText: () => ' ' },
-          { token: 'SoftBreak', text: true, getText: () => ' '}
+          { token: 'SoftBreak', text: true, getText: () => ' ' },
         ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.text(node.text as string);
-        }
+        },
       },
     },
   ],
-
 };
 
 export default extension;
-

@@ -6,12 +6,11 @@ import { ExtensionManager } from './extensions/manager';
 import { IMark, INode } from './extensions/api';
 
 export function editorSchema(extensions: ExtensionManager): Schema {
-  
   // build in doc node + nodes from extensions
   const nodes: { [name: string]: NodeSpec } = {
     doc: {
       content: 'block+',
-    }
+    },
   };
   extensions.nodes().forEach((node: INode) => {
     nodes[node.name] = node.spec;

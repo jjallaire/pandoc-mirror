@@ -50,20 +50,22 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: [{
-          token: 'Image',
-          node: 'image',
-          pandocAttr: IMAGE_ATTR,
-          getAttrs: (tok: IPandocToken) => {
-            const target = tok.c[IMAGE_TARGET];
-            return {
-              src: target[TARGET_URL],
-              title: target[TARGET_TITLE] || null,
-              // TODO: support for figures
-              alt: collectText(tok.c[IMAGE_ALT]),
-            };
+        from: [
+          {
+            token: 'Image',
+            node: 'image',
+            pandocAttr: IMAGE_ATTR,
+            getAttrs: (tok: IPandocToken) => {
+              const target = tok.c[IMAGE_TARGET];
+              return {
+                src: target[TARGET_URL],
+                title: target[TARGET_TITLE] || null,
+                // TODO: support for figures
+                alt: collectText(tok.c[IMAGE_ALT]),
+              };
+            },
           },
-        }],
+        ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.write(
             '![' +

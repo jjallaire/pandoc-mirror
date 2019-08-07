@@ -41,7 +41,6 @@ export class ExtensionManager {
   public static create(): ExtensionManager {
     const manager = new ExtensionManager();
     manager.register([
-      
       // behaviors
       behaviorBasekeys,
       behaviorCursor,
@@ -64,7 +63,6 @@ export class ExtensionManager {
       nodeLists,
       nodeHardBreak,
       nodeImage,
-      
     ]);
     return manager;
   }
