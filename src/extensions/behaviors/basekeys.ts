@@ -2,8 +2,7 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 
-import { IExtension } from '../api';
-import { CommandFn } from '../../utils/command';
+import { IExtension, CommandFn } from '../api';
 
 const extension: IExtension = {
   plugins: () => {

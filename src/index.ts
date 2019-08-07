@@ -12,8 +12,7 @@ import { markdownFromDoc } from './pandoc/from_doc';
 
 import { ExtensionManager } from './extensions/manager';
 
-import { Command, IEditorUI, INode, IMark } from './extensions/api';
-import { CommandFn } from './utils/command';
+import { Command, CommandFn, IEditorUI, INode, IMark } from './extensions/api';
 
 // standard prosemirror + additional built-in styles
 // (these styles are about behavior not appearance)

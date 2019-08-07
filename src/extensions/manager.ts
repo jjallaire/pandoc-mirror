@@ -9,6 +9,7 @@ import {
   IMark,
   INode,
   Command,
+  CommandFn,
   IPandocReader,
   IEditorUI,
   PandocNodeWriterFn,
@@ -34,8 +35,6 @@ import nodeHorizontalRule from './nodes/horizontal_rule';
 import nodeLists from './nodes/lists';
 import nodeHardBreak from './nodes/hard_break';
 import nodeImage from './nodes/image/index';
-
-import { CommandFn } from 'src/utils/command';
 
 export class ExtensionManager {
   public static create(): ExtensionManager {

@@ -8,7 +8,7 @@ import { setBlockType, wrapIn, lift } from 'prosemirror-commands';
 
 import { nodeIsActive, canInsertNode } from './node';
 
-export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
+import { CommandFn } from '../extensions/api';
 
 export function commandToggleList(listType: NodeType, itemType: NodeType): CommandFn {
   function isList(node: Node, schema: Schema) {

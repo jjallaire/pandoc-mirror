@@ -1,4 +1,4 @@
-import { EditorState, Plugin } from 'prosemirror-state';
+import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import {
   NodeSpec,
   NodeType,
@@ -11,10 +11,9 @@ import {
 } from 'prosemirror-model';
 import { InputRule } from 'prosemirror-inputrules';
 import { toggleMark } from 'prosemirror-commands';
+import { EditorView } from 'prosemirror-view';
 
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-
-import { CommandFn } from '../utils/command';
 
 import { nodeIsActive } from '../utils/node';
 import { markIsActive } from '../utils/mark';
@@ -93,6 +92,8 @@ export type PandocNodeWriterFn = (
   parent: ProsemirrorNode,
   index: number,
 ) => void;
+
+export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
 
 export class Command {
   public name: string;
