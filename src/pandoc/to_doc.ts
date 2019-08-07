@@ -3,31 +3,6 @@ import { Schema, Mark, Node, NodeType } from 'prosemirror-model';
 import { IPandocEngine } from './engine';
 import { IPandocReader, IPandocToken } from 'src/extensions/api';
 
-// pandoc schema:
-//  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
-
-// TODO: debugging tools (selected node/mark view, markdown output view)
-
-// TODO: parse and forward Attr for elements that support them (results in id, class,
-// and data-attribs in PM schema)
-
-// TOOD: error handling for pandoc
-
-// TODO: handle duplicate ids when block elements are split (required once
-//       we support ids on divs)
-// TODO: handle section divs (when active headers imply an enclosing node, perhaps
-//       though this could be implemented via node decorator?
-
-
-
-// TODO: support pandoc {} syntax for fenced code regions
-
-// TODO: support for image figures (where alt text is displayed in a <p> below the image).
-// note that alt text supports arbitrary markup so need a structured way to allow
-// selection and editing of just the alt text
-
-// TODO: toggleMark from prosemirror shows commands enabled even when marks: false
-
 export function markdownToDoc(
   markdown: string,
   schema: Schema,
