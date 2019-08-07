@@ -19,10 +19,10 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'Strong',
           mark: 'strong',
-        },
+        }],
         to: {
           open: '**',
           close: '**',

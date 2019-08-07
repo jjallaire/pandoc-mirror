@@ -54,10 +54,10 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'BulletList',
           list: 'bullet_list',
-        },
+        }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
         },
@@ -94,14 +94,14 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'OrderedList',
           list: 'ordered_list',
           getAttrs: (tok: IPandocToken) => ({
             order: tok.c[LIST_ORDER][ORDER_START],
           }),
           getChildren: (tok: IPandocToken) => tok.c[LIST_CHILDREN],
-        },
+        }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           const start = node.attrs.order || 1;
           const maxW = String(start + node.childCount - 1).length;

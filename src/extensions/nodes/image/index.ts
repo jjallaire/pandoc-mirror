@@ -50,7 +50,7 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'Image',
           node: 'image',
           pandocAttr: IMAGE_ATTR,
@@ -63,7 +63,7 @@ const extension: IExtension = {
               alt: collectText(tok.c[IMAGE_ALT]),
             };
           },
-        },
+        }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.write(
             '![' +

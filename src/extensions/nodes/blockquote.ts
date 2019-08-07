@@ -16,10 +16,10 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'BlockQuote',
           block: 'blockquote',
-        },
+        }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.wrapBlock('> ', undefined, node, () => state.renderContent(node));
         },

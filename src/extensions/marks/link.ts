@@ -36,7 +36,7 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'Link',
           mark: 'link',
           getAttrs: (tok: IPandocToken) => {
@@ -47,7 +47,7 @@ const extension: IExtension = {
             };
           },
           getChildren: tok => tok.c[LINK_CHILDREN],
-        },
+        }],
         to: {
           open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             return isPlainURL(mark, parent, index, 1) ? '<' : '[';

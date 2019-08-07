@@ -33,7 +33,7 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        from: {
+        from: [{
           token: 'CodeBlock',
           block: 'code_block',
           getAttrs: (tok: IPandocToken) => ({
@@ -41,7 +41,7 @@ const extension: IExtension = {
             params: tok.c[CODE_BLOCK_ATTR][CODE_BLOCK_ATTR_PARAMS].join(' '),
           }),
           getText: (tok: IPandocToken) => tok.c[CODE_BLOCK_TEXT],
-        },
+        }],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.write('```' + (node.attrs.params || '') + '\n');
           state.text(node.textContent, false);

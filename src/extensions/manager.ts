@@ -75,11 +75,11 @@ export class ExtensionManager {
   public pandocReaders(): IPandocReader[] {
     const readers: IPandocReader[] = [];
     this.marks().forEach((mark: IMark) => {
-      readers.push(mark.pandoc.from);
+      readers.push(...mark.pandoc.from);
     });
     this.nodes().forEach((node: INode) => {
       if (node.pandoc.from) {
-        readers.push(node.pandoc.from);
+        readers.push(...node.pandoc.from);
       }
     });
 

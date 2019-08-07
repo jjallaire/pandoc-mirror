@@ -33,7 +33,7 @@ export interface IMark {
   name: string;
   spec: MarkSpec;
   pandoc: {
-    from: IPandocReader;
+    from: IPandocReader[];
     to: IPandocMarkWriter;
   };
 }
@@ -42,7 +42,7 @@ export interface INode {
   name: string;
   spec: NodeSpec;
   pandoc: {
-    from?: IPandocReader;
+    from?: IPandocReader[];
     to: PandocNodeWriterFn;
   };
 }
