@@ -1,7 +1,6 @@
 import { Schema, Node } from 'prosemirror-model';
-import { EditorState, Transaction, Plugin, PluginKey, NodeSelection } from 'prosemirror-state';
+import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { undo, redo, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap, joinUp, joinDown, lift, selectParentNode, setBlockType } from 'prosemirror-commands';
 import { gapCursor } from 'prosemirror-gapcursor';
@@ -190,8 +189,6 @@ export class Editor {
 
   public commands(): IEditorCommands {
     const allCommands: Command[] = [
-      new Command('undo', null, undo),
-      new Command('redo', null, redo),
       new BlockCommand('paragraph', null, this.schema.nodes.paragraph, this.schema.nodes.paragraph),
       ...this.extensions.commands(this.schema, this.ui),
     ];
@@ -239,7 +236,6 @@ export class Editor {
 
   private createPlugins(): Plugin[] {
     return [
-      history(),
       ...this.keymapPlugins(),
       this.inputRulesPlugin(),
       gapCursor(),
@@ -262,11 +258,6 @@ export class Editor {
     const keys: { [key: string]: CommandFn } = {};
     function bindKey(key: string, cmd: CommandFn) {
       keys[key] = cmd;
-    }
-    bindKey('Mod-z', undo);
-    bindKey('Shift-Mod-z', redo);
-    if (!mac) {
-      bindKey('Mod-y', redo);
     }
     bindKey('Backspace', undoInputRule);
     bindKey('Alt-ArrowUp', joinUp);
