@@ -3,7 +3,7 @@ import { NodeSelection, EditorState, Transaction } from 'prosemirror-state';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension, Command, IPandocToken, IEditorUI, IImageEditor } from '../../api';
-import { canInsertNode } from '../../../utils/node';
+import { canInsertNode } from '../../utils/node';
 
 import { imagePlugin } from './plugin';
 import { imageDialog } from './dialog';

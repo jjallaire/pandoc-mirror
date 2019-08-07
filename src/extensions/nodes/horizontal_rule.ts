@@ -2,7 +2,7 @@ import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension, Command } from '../api';
-import { commandInsertNode } from 'src/utils/command';
+import { commandInsertNode } from '../utils/command';
 
 const extension: IExtension = {
   nodes: [

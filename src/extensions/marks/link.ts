@@ -3,7 +3,7 @@ import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps, IPandocToken } from '../api';
-import { markIsActive, getMarkAttrs, getMarkRange } from '../../utils/mark';
+import { markIsActive, getMarkAttrs, getMarkRange } from '../utils/mark';
 
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 

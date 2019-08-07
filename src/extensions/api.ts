@@ -15,9 +15,9 @@ import { EditorView } from 'prosemirror-view';
 
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
-import { nodeIsActive } from '../utils/node';
-import { markIsActive } from '../utils/mark';
-import { commandToggleList, commandToggleBlockType, commandToggleWrap } from '../utils/command';
+import { nodeIsActive } from './utils/node';
+import { markIsActive } from './utils/mark';
+import { commandToggleList, commandToggleBlockType, commandToggleWrap } from './utils/command';
 
 export interface IExtension {
   marks?: IMark[];

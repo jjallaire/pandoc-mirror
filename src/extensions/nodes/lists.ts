@@ -3,7 +3,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { IExtension, NodeCommand, IPandocToken } from '../api';
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { commandToggleList } from '../../utils/command';
+import { commandToggleList } from '../utils/command';
 import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
 
 const LIST_ORDER = 0;
