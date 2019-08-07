@@ -31,7 +31,7 @@ const extension: IExtension = {
         },
       },
       pandoc: {
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderContent(node);
         },
       },
@@ -60,7 +60,7 @@ const extension: IExtension = {
             list: 'bullet_list',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
         },
       },
@@ -106,7 +106,7 @@ const extension: IExtension = {
             getChildren: (tok: IPandocToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           const start = node.attrs.order || 1;
           const maxW = String(start + node.childCount - 1).length;
           const space = state.repeat(' ', maxW + 2);
@@ -119,7 +119,7 @@ const extension: IExtension = {
     },
   ],
 
-  keymap: (schema: Schema, mac: boolean) => {
+  keymap: (schema: Schema) => {
     return {
       'Shift-Ctrl-8': wrapInList(schema.nodes.bullet_list),
       'Shift-Ctrl-9': wrapInList(schema.nodes.ordered_list),

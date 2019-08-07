@@ -51,7 +51,7 @@ const extension: IExtension = {
           },
         ],
         to: {
-          open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+          open(_state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             return isPlainURL(mark, parent, index, 1) ? '<' : '[';
           },
           close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {

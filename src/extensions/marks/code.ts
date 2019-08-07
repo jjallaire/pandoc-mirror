@@ -23,10 +23,10 @@ const extension: IExtension = {
           },
         ],
         to: {
-          open(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+          open(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
             return backticksFor(parent.child(index), -1);
           },
-          close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+          close(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
             return backticksFor(parent.child(index - 1), 1);
           },
         },

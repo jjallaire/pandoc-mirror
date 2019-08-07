@@ -66,7 +66,7 @@ const extension: IExtension = {
             },
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(
             '![' +
               state.esc(node.attrs.alt || '') +

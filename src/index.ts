@@ -218,6 +218,7 @@ export class Editor {
   private createPlugins(): Plugin[] {
     return [
       ...this.keymapPlugins(),
+      ...this.extensions.plugins(this.schema, this.ui),
       inputRules({ rules: this.extensions.inputRules(this.schema) }),
       new Plugin({
         key: new PluginKey('editable'),
@@ -225,7 +226,6 @@ export class Editor {
           editable: this.hooks.isEditable,
         },
       }),
-      ...this.extensions.plugins(this.schema, this.ui),
     ];
   }
 

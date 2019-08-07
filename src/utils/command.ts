@@ -1,13 +1,12 @@
 import { Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Node, NodeType } from 'prosemirror-model';
-import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
+import { findParentNode } from 'prosemirror-utils';
 import { wrapInList, liftListItem } from 'prosemirror-schema-list';
 import { EditorView } from 'prosemirror-view';
 import { setBlockType, wrapIn, lift } from 'prosemirror-commands';
 
 import { nodeIsActive, canInsertNode } from './node';
-import { Command } from 'src/extensions/api';
 
 export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
 

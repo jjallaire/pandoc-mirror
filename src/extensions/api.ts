@@ -12,7 +12,7 @@ import {
 import { InputRule } from 'prosemirror-inputrules';
 import { toggleMark } from 'prosemirror-commands';
 
-import { MarkdownSerializer, MarkdownSerializerState } from 'prosemirror-markdown';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 import { CommandFn } from '../utils/command';
 

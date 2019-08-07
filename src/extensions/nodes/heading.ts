@@ -47,7 +47,7 @@ const extension: IExtension = {
             getChildren: (tok: IPandocToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(state.repeat('#', node.attrs.level) + ' ');
           state.renderInline(node);
           state.closeBlock(node);

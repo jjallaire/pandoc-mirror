@@ -22,7 +22,7 @@ const extension: IExtension = {
             node: 'horizontal_rule',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');
           state.closeBlock(node);
         },

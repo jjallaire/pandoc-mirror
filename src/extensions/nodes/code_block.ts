@@ -1,4 +1,4 @@
-import { Schema, Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 import { IExtension, IPandocToken, BlockCommand } from '../api';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
@@ -44,7 +44,7 @@ const extension: IExtension = {
             getText: (tok: IPandocToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write('```' + (node.attrs.params || '') + '\n');
           state.text(node.textContent, false);
           state.ensureNewLine();
@@ -55,7 +55,7 @@ const extension: IExtension = {
     },
   ],
 
-  keymap: (schema: Schema, mac: boolean) => {
+  keymap: (schema: Schema) => {
     return {
       'Shift-Ctrl-\\': setBlockType(schema.nodes.code_block),
     };

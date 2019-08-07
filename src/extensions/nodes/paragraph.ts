@@ -11,7 +11,7 @@ const extension: IExtension = {
         content: 'inline*',
         group: 'block',
         parseDOM: [{ tag: 'p' }],
-        toDOM(node: ProsemirrorNode): any {
+        toDOM() {
           return ['p', 0];
         },
       },

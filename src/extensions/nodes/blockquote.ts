@@ -1,4 +1,4 @@
-import { Schema, Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { IExtension, WrapCommand } from '../api';
 import { wrappingInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
@@ -22,7 +22,7 @@ const extension: IExtension = {
             block: 'blockquote',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.wrapBlock('> ', undefined, node, () => state.renderContent(node));
         },
       },
