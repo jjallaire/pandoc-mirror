@@ -15,6 +15,7 @@ import {
   IPandocMarkWriter,
 } from './api';
 
+import behaviorSmarty from './behaviors/smarty';
 import behaviorHistory from './behaviors/history';
 
 import markEm from './marks/em';
@@ -36,6 +37,7 @@ export class ExtensionManager {
   public static create(): ExtensionManager {
     const manager = new ExtensionManager();
     manager.register([
+      behaviorSmarty,
       behaviorHistory,
       markEm,
       markStrong,

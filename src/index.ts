@@ -282,13 +282,7 @@ export class Editor {
   }
 
   private inputRulesPlugin(): Plugin {
-    // base input rules
-    let rules: InputRule[] = [...smartQuotes, ellipsis, emDash];
-
-    // add rules from extensions
-    rules = rules.concat(this.extensions.inputRules(this.schema));
-
-    // return plugin
+    const rules = this.extensions.inputRules(this.schema);
     return inputRules({ rules });
   }
 }
