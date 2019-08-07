@@ -8,6 +8,7 @@ export function pandocReaders(extensions: ExtensionManager): IPandocReader[] {
     { token: 'Plain', block: 'paragraph' },
     { token: 'Str', text: true, getText: (tok: IPandocToken) => tok.c },
     { token: 'Space', text: true, getText: (tok: IPandocToken) => ' ' },
+    { token: 'SoftBreak', text: true, getText: (tok: IPandocToken) => ' '}
   ];
 
   // add readers from extensions

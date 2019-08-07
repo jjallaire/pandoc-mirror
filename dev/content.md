@@ -7,6 +7,9 @@ This is *italic* text.
 This is hard break.  
 Next line after hard break.
 
+This is soft break.
+Next line after soft break.
+
 ***
 
 - Unordered
