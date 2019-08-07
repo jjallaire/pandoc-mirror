@@ -6,7 +6,6 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TODO: serializer (discuss LaTex with jonathan)
 // TODO: debugging tools (selected node/mark view, markdown output view)
 
 // TOOD: error handling for pandoc
