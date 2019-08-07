@@ -1,4 +1,6 @@
-import { Schema, Node } from 'prosemirror-model';
+import OrderedMap from 'orderedmap';
+
+import { Schema, Node, NodeSpec, MarkSpec } from 'prosemirror-model';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
@@ -10,8 +12,7 @@ import { markdownFromDoc } from './pandoc/from_doc';
 
 import { ExtensionManager } from './extensions/manager';
 
-import { editorSchema, emptyDoc } from './schema';
-import { Command, IEditorUI } from './extensions/api';
+import { Command, IEditorUI, INode, IMark } from './extensions/api';
 import { CommandFn } from './utils/command';
 
 // standard prosemirror + additional built-in styles
@@ -85,12 +86,12 @@ export class Editor {
     this.extensions = ExtensionManager.create();
 
     // create schema
-    this.schema = editorSchema(this.extensions);
+    this.schema = this.editorSchema();
 
     // create state
     this.state = EditorState.create({
       schema: this.schema,
-      doc: emptyDoc(this.schema),
+      doc: this.emptyDoc(),
       plugins: this.createPlugins(),
     });
 
@@ -215,6 +216,41 @@ export class Editor {
     }
   }
 
+  private editorSchema() : Schema {
+    // build in doc node + nodes from extensions
+    const nodes: { [name: string]: NodeSpec } = {
+      doc: {
+        content: 'block+',
+      },
+    };
+    this.extensions.nodes().forEach((node: INode) => {
+      nodes[node.name] = node.spec;
+    });
+
+    // marks from extensions
+    const marks: { [name: string]: MarkSpec } = {};
+    this.extensions.marks().forEach((mark: IMark) => {
+      marks[mark.name] = mark.spec;
+    });
+
+    // return schema
+    return new Schema({
+      nodes: OrderedMap.from(nodes),
+      marks: OrderedMap.from(marks),
+    });
+  }
+
+  private emptyDoc() : Node {
+    return this.schema.nodeFromJSON({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+        },
+      ],
+    });
+  }
+
   private createPlugins(): Plugin[] {
     return [
       ...this.keymapPlugins(),
@@ -249,3 +285,6 @@ export class Editor {
     return [keymap(commandKeys), keymap(extensionKeys)];
   }
 }
+
+
+
