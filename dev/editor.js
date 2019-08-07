@@ -63,10 +63,18 @@ const layout = $('#layout').w2layout({
 const toolbar = layout.get('main').toolbar
 initToolbar(toolbar, editor)
 
+// subscribe to updates
+editor.subscribe(PandocMirror.kEventUpdate, () => {
+  console.log(editor.getContent());
+})
+
+
 // get content and load it into the editor
 axios.get('content.md') .then(result => {
   editor.setContent(result.data)
 })
+
+
 
 
 

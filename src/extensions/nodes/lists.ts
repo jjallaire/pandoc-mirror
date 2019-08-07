@@ -10,6 +10,8 @@ const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
 const LIST_ATTRIB_ORDER = 0;
 
+const ORDER_START = 0;
+
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
     super(name, null, listType, {}, commandToggleList(listType, listItemType));
@@ -96,7 +98,7 @@ const extension: IExtension = {
           token: 'OrderedList',
           list: 'ordered_list',
           getAttrs: (tok: IPandocToken) => ({
-            order: tok.c[LIST_ORDER],
+            order: tok.c[LIST_ORDER][ORDER_START],
           }),
           getChildren: (tok: IPandocToken) => tok.c[LIST_CHILDREN],
         },
