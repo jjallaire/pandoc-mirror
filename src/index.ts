@@ -2,27 +2,27 @@ import { Schema, Node } from 'prosemirror-model';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { baseKeymap, joinUp, joinDown, lift, selectParentNode, setBlockType } from 'prosemirror-commands';
+import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from 'prosemirror-commands';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { inputRules, InputRule, smartQuotes, emDash, ellipsis, undoInputRule } from 'prosemirror-inputrules';
+import { inputRules,  undoInputRule } from 'prosemirror-inputrules';
 
 import { IPandocEngine } from './pandoc/engine';
-import { pandocReaders } from './pandoc/readers';
 import { markdownToDoc } from './pandoc/to_doc';
 import { markdownFromDoc } from './pandoc/from_doc';
 
 import { ExtensionManager } from './extensions/manager';
 
 import { editorSchema, emptyDoc } from './schema';
-import { Command, IEditorUI, BlockCommand } from './extensions/api';
+import { Command, IEditorUI } from './extensions/api';
 import { CommandFn } from './utils/command';
 
 // standard prosemirror + additional built-in styles
 // (these styles are about behavior not appearance)
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+import 'prosemirror-gapcursor/style/gapcursor.css';
+
 
 // re-exports from extension api
 export { IEditorUI, IImageEditor, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api';
@@ -140,7 +140,12 @@ export class Editor {
 
   public setContent(content: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(content, this.schema, this.pandoc, pandocReaders(this.extensions)).then((doc: Node) => {
+    return markdownToDoc(
+        content, 
+        this.schema, 
+        this.pandoc, 
+        this.extensions.pandocReaders()).then((doc: Node) => {
+
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -162,11 +167,6 @@ export class Editor {
     const markWriters = this.extensions.pandocMarkWriters();
     const nodeWriters = this.extensions.pandocNodeWriters();
 
-    // add built in node writers
-    nodeWriters.text = (state: MarkdownSerializerState, node: Node, parent: Node, index: number) => {
-      state.text(node.text as string);
-    };
-
     // generate markdown
     return markdownFromDoc(this.state.doc, markWriters, nodeWriters);
   }
@@ -184,21 +184,18 @@ export class Editor {
   }
 
   public commands(): IEditorCommands {
-    const allCommands: Command[] = [
-      ...this.extensions.commands(this.schema, this.ui),
-    ];
-
-    return allCommands.reduce((commands: IEditorCommands, command: Command) => {
-      return {
-        ...commands,
-        [command.name]: {
-          name: command.name,
-          isActive: () => command.isActive(this.state),
-          isEnabled: () => command.isEnabled(this.state),
-          execute: () => command.execute(this.state, this.view.dispatch, this.view),
-        },
-      };
-    }, {});
+    return this.extensions.commands(this.schema, this.ui)
+      .reduce((commands: IEditorCommands, command: Command) => {
+        return {
+          ...commands,
+          [command.name]: {
+            name: command.name,
+            isActive: () => command.isActive(this.state),
+            isEnabled: () => command.isEnabled(this.state),
+            execute: () => command.execute(this.state, this.view.dispatch, this.view),
+          },
+        };
+      }, {});
   }
 
   private dispatchTransaction(transaction: Transaction) {
@@ -232,7 +229,7 @@ export class Editor {
   private createPlugins(): Plugin[] {
     return [
       ...this.keymapPlugins(),
-      this.inputRulesPlugin(),
+      inputRules({ rules: this.extensions.inputRules(this.schema) }),
       gapCursor(),
       dropCursor(),
       new Plugin({
@@ -274,8 +271,4 @@ export class Editor {
     return [keymap(keys), keymap(extensionKeys), keymap(baseKeymap)];
   }
 
-  private inputRulesPlugin(): Plugin {
-    const rules = this.extensions.inputRules(this.schema);
-    return inputRules({ rules });
-  }
 }

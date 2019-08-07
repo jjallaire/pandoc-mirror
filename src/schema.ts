@@ -6,28 +6,24 @@ import { ExtensionManager } from './extensions/manager';
 import { IMark, INode } from './extensions/api';
 
 export function editorSchema(extensions: ExtensionManager): Schema {
-  // get nodes from extensions (combine with base nodes)
+  
+  // build in doc node + nodes from extensions
   const nodes: { [name: string]: NodeSpec } = {
     doc: {
       content: 'block+',
-    },
-    text: {
-      group: 'inline',
-      toDOM(node: Node): any {
-        return node.text;
-      },
-    },
+    }
   };
   extensions.nodes().forEach((node: INode) => {
     nodes[node.name] = node.spec;
   });
 
-  // get marks from extensions
+  // marks from extensions
   const marks: { [name: string]: MarkSpec } = {};
   extensions.marks().forEach((mark: IMark) => {
     marks[mark.name] = mark.spec;
   });
 
+  // return schema
   return new Schema({
     nodes: OrderedMap.from(nodes),
     marks: OrderedMap.from(marks),
