@@ -12,8 +12,6 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 
 // TOOD: error handling for pandoc
 
-// TODO: handle SoftBreak (source preservation issue, maybe need to use spans?)
-
 // TODO: handle duplicate ids when block elements are split (required once
 //       we support ids on divs)
 // TODO: handle section divs (when active headers imply an enclosing node, perhaps

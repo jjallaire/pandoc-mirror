@@ -2,10 +2,7 @@ import { Schema, Node } from 'prosemirror-model';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { baseKeymap, joinUp, joinDown, lift, selectParentNode } from 'prosemirror-commands';
-import { gapCursor } from 'prosemirror-gapcursor';
-import { dropCursor } from 'prosemirror-dropcursor';
-import { inputRules,  undoInputRule } from 'prosemirror-inputrules';
+import { inputRules } from 'prosemirror-inputrules';
 
 import { IPandocEngine } from './pandoc/engine';
 import { markdownToDoc } from './pandoc/to_doc';
@@ -21,7 +18,6 @@ import { CommandFn } from './utils/command';
 // (these styles are about behavior not appearance)
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
-import 'prosemirror-gapcursor/style/gapcursor.css';
 
 
 // re-exports from extension api
@@ -230,8 +226,6 @@ export class Editor {
     return [
       ...this.keymapPlugins(),
       inputRules({ rules: this.extensions.inputRules(this.schema) }),
-      gapCursor(),
-      dropCursor(),
       new Plugin({
         key: new PluginKey('editable'),
         props: {
@@ -243,32 +237,24 @@ export class Editor {
   }
 
   private keymapPlugins(): Plugin[] {
-    // detect mac
-    const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
-
-    // start with standard editing keys
-    const keys: { [key: string]: CommandFn } = {};
-    function bindKey(key: string, cmd: CommandFn) {
-      keys[key] = cmd;
-    }
-    bindKey('Backspace', undoInputRule);
-    bindKey('Alt-ArrowUp', joinUp);
-    bindKey('Alt-ArrowDown', joinDown);
-    bindKey('Mod-BracketLeft', lift);
-    bindKey('Escape', selectParentNode);
-
+   
     // command keys from extensions
+    const commandKeys: { [key: string]: CommandFn } = {};
     const commands: Command[] = this.extensions.commands(this.schema, this.ui);
     commands.forEach((command: Command) => {
       if (command.keymap) {
-        command.keymap.forEach((key: string) => bindKey(key, command.execute));
+        command.keymap.forEach((key: string) => {
+          commandKeys[key] = command.execute;
+        });
       }
     });
 
     // keymap from extensions
+    const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
     const extensionKeys = this.extensions.keymap(this.schema, mac);
 
-    return [keymap(keys), keymap(extensionKeys), keymap(baseKeymap)];
+    // return plugins
+    return [keymap(commandKeys), keymap(extensionKeys)];
   }
 
 }

@@ -15,6 +15,8 @@ import {
   IPandocMarkWriter,
 } from './api';
 
+import behaviorBasekeys from './behaviors/basekeys';
+import behaviorCursor from './behaviors/cursor';
 import behaviorSmarty from './behaviors/smarty';
 import behaviorHistory from './behaviors/history';
 
@@ -39,12 +41,20 @@ export class ExtensionManager {
   public static create(): ExtensionManager {
     const manager = new ExtensionManager();
     manager.register([
+      
+      // behaviors
+      behaviorBasekeys,
+      behaviorCursor,
       behaviorSmarty,
       behaviorHistory,
+
+      // marks
       markEm,
       markStrong,
       markCode,
       markLink,
+
+      // nodes
       nodeText,
       nodeParagraph,
       nodeHeading,
@@ -54,6 +64,7 @@ export class ExtensionManager {
       nodeLists,
       nodeHardBreak,
       nodeImage,
+      
     ]);
     return manager;
   }
