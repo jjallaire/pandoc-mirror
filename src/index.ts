@@ -133,9 +133,9 @@ export class Editor {
     };
   }
 
-  public setContent(content: string, emitUpdate = true) {
+  public setMarkdown(markdown: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(content, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
+    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -152,7 +152,7 @@ export class Editor {
     });
   }
 
-  public getContent(): string {
+  public getMarkdown(): string {
     // get mark and node writers from extensions
     const markWriters = this.extensions.pandocMarkWriters();
     const nodeWriters = this.extensions.pandocNodeWriters();

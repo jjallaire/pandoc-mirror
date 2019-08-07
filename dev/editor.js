@@ -65,13 +65,13 @@ initToolbar(toolbar, editor)
 
 // subscribe to updates
 editor.subscribe(PandocMirror.kEventUpdate, () => {
-  console.log(editor.getContent());
+  console.log(editor.getMarkdown());
 })
 
 
 // get content and load it into the editor
 axios.get('content.md') .then(result => {
-  editor.setContent(result.data)
+  editor.setMarkdown(result.data)
 })
 
 

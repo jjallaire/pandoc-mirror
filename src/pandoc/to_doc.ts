@@ -6,9 +6,10 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TODO: make everythhing an extension (pargraph, text, etc.)
-
 // TODO: debugging tools (selected node/mark view, markdown output view)
+
+// TODO: parse and forward Attr for elements that support them (results in id, class,
+// and data-attribs in PM schema)
 
 // TOOD: error handling for pandoc
 
@@ -17,8 +18,7 @@ import { IPandocReader, IPandocToken } from 'src/extensions/api';
 // TODO: handle section divs (when active headers imply an enclosing node, perhaps
 //       though this could be implemented via node decorator?
 
-// TODO: parse and forward Attr for elements that support them (results in id, class,
-// and data-attribs in PM schema)
+
 
 // TODO: support pandoc {} syntax for fenced code regions
 
