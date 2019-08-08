@@ -1,9 +1,10 @@
 import { Schema, NodeType, Node as ProsemirrorNode } from 'prosemirror-model';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
-import { IExtension, NodeCommand, IPandocToken } from '../api';
+import { IExtension } from '../api/extension';
+import { NodeCommand, commandToggleList } from '../api/command';
+import { IPandocToken } from '../api/pandoc';
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { commandToggleList } from '../utils/command';
 import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
 
 const LIST_ORDER = 0;

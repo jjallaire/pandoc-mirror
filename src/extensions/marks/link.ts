@@ -2,9 +2,11 @@ import { Schema, MarkType, Mark, Node as ProsemirrorNode, Fragment } from 'prose
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { IExtension, Command, IPandocToken } from '../api';
+import { IExtension } from '../api/extension';
+import { Command } from '../api/command';
+import { IPandocToken } from '../api/pandoc';
 import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from '../api/ui';
-import { markIsActive, getMarkAttrs, getMarkRange } from '../utils/mark';
+import { markIsActive, getMarkAttrs, getMarkRange } from '../api/mark';
 
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
@@ -48,7 +50,7 @@ const extension: IExtension = {
                 title: target[TARGET_TITLE] || null,
               };
             },
-            getChildren: tok => tok.c[LINK_CHILDREN],
+            getChildren: (tok: IPandocToken) => tok.c[LINK_CHILDREN],
           },
         ],
         to: {

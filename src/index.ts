@@ -33,9 +33,11 @@ import { IPandocEngine } from './pandoc/engine';
 import { markdownToDoc } from './pandoc/to_doc';
 import { markdownFromDoc } from './pandoc/from_doc';
 
-import { ExtensionManager } from './extensions/manager';
+import { Extensions } from './extensions/index';
 
-import { Command, CommandFn, INode, IMark } from './extensions/api';
+import { INode } from './extensions/api/node';
+import { IMark } from './extensions/api/mark';
+import { Command, CommandFn } from './extensions/api/command';
 import { IEditorUI } from './extensions/api/ui';
 
 // standard prosemirror + additional built-in styles
@@ -82,7 +84,7 @@ export class Editor {
   private schema: Schema;
   private state: EditorState;
   private view: EditorView;
-  private extensions: ExtensionManager;
+  private extensions: Extensions;
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
@@ -103,7 +105,7 @@ export class Editor {
     };
 
     // create extensions
-    this.extensions = ExtensionManager.create();
+    this.extensions = Extensions.create();
 
     // create schema
     this.schema = this.editorSchema();

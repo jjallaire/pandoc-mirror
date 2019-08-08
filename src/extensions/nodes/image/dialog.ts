@@ -1,6 +1,6 @@
 import { IImageProps, IImageEditor } from '../../api/ui';
 
-import { insertAndSelectNode } from '../../utils/node';
+import { insertAndSelectNode } from '../../api/node';
 
 import { Node, NodeType } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';

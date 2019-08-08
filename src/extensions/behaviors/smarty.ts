@@ -1,6 +1,5 @@
-import { IExtension } from '../api';
+import { IExtension } from '../api/extension';
 import { smartQuotes, ellipsis, emDash } from 'prosemirror-inputrules';
-import { Schema } from 'prosemirror-model';
 
 const extension: IExtension = {
   inputRules: () => {

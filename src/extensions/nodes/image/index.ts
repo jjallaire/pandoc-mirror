@@ -2,9 +2,11 @@ import { Schema, Node as ProsemirrorNode, NodeType } from 'prosemirror-model';
 import { NodeSelection, EditorState, Transaction } from 'prosemirror-state';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
-import { IExtension, Command, IPandocToken } from '../../api';
+import { IExtension } from '../../api/extension';
+import { Command } from '../../api/command';
+import { IPandocToken } from '../../api/pandoc';
 import { IEditorUI, IImageEditor } from '../../api/ui';
-import { canInsertNode } from '../../utils/node';
+import { canInsertNode } from '../../api/node';
 
 import { imagePlugin } from './plugin';
 import { imageDialog } from './dialog';
@@ -46,7 +48,7 @@ const extension: IExtension = {
             },
           },
         ],
-        toDOM(node) {
+        toDOM(node: ProsemirrorNode) {
           return ['img', node.attrs];
         },
       },

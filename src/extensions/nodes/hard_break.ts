@@ -4,7 +4,8 @@ import { EditorView } from 'prosemirror-view';
 import { chainCommands, exitCode } from 'prosemirror-commands';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
-import { IExtension, CommandFn } from '../api';
+import { IExtension } from '../api/extension';
+import { CommandFn } from '../api/command';
 
 const extension: IExtension = {
   nodes: [

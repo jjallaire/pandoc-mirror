@@ -1,5 +1,6 @@
 import { Schema } from 'prosemirror-model';
-import { IExtension, MarkCommand } from '../api';
+import { IExtension } from '../api/extension';
+import { MarkCommand } from '../api/command';
 
 const extension: IExtension = {
   marks: [

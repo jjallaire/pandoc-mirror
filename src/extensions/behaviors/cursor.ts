@@ -1,4 +1,4 @@
-import { IExtension } from '../api';
+import { IExtension } from '../api/extension';
 
 import { gapCursor } from 'prosemirror-gapcursor';
 import { dropCursor } from 'prosemirror-dropcursor';

@@ -4,17 +4,14 @@ import { Plugin } from 'prosemirror-state';
 
 import { InputRule } from 'prosemirror-inputrules';
 
-import {
-  IExtension,
-  IMark,
-  INode,
-  Command,
-  CommandFn,
-  IPandocReader,
-  PandocNodeWriterFn,
-  IPandocMarkWriter,
-} from './api';
+import { IPandocReader, IPandocMarkWriter, PandocNodeWriterFn } from './api/pandoc';
+
+import { IExtension } from './api/extension';
 import { IEditorUI } from './api/ui';
+import { IMark } from './api/mark';
+import { INode } from './api/node';
+
+import { Command, CommandFn } from './api/command';
 
 import behaviorBasekeys from './behaviors/basekeys';
 import behaviorCursor from './behaviors/cursor';
@@ -36,9 +33,9 @@ import nodeLists from './nodes/lists';
 import nodeHardBreak from './nodes/hard_break';
 import nodeImage from './nodes/image/index';
 
-export class ExtensionManager {
-  public static create(): ExtensionManager {
-    const manager = new ExtensionManager();
+export class Extensions {
+  public static create(): Extensions {
+    const manager = new Extensions();
     manager.register([
       // behaviors
       behaviorBasekeys,
