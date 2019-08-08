@@ -61,6 +61,16 @@ export interface IEditorConfig {
   hooks?: IEditorHooks;
 }
 
+export { 
+  IEditorUI, 
+  ILinkEditor, 
+  ILinkEditResult, 
+  ILinkProps, 
+  IImageEditor,
+  IImageEditResult,
+  IImageProps
+ } from './extensions/api/ui';
+
 export interface IEditorCommand {
   name: string;
   isEnabled: () => boolean;

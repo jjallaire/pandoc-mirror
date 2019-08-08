@@ -25,4 +25,4 @@ export interface IImageProps {
   class?: string;
 }
 
-type IImageEditResult = IImageProps;
+export type IImageEditResult = IImageProps;
