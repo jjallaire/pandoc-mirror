@@ -120,16 +120,13 @@ export class Editor {
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
-    
+
     // initialize references
     this.parent = config.parent;
     this.pandoc = config.pandoc;
     this.ui = config.ui;
     this.options = config.options || {};
-
-    // initialize hooks
     this.hooks = config.hooks || {};
-    this.initHooks();
 
     // initialize custom events
     this.events = this.initEvents();
@@ -262,12 +259,6 @@ export class Editor {
     this.parent.dispatchEvent(this.events.update);
   }
 
-  private initHooks() {
-    if (this.hooks.isEditable === undefined) {
-      this.hooks.isEditable = () => true;
-    }
-  }
-
   private initEvents() {
     return {
       [kEventUpdate]: new Event(kEventUpdate),
@@ -336,7 +327,7 @@ export class Editor {
       new Plugin({
         key: new PluginKey('editable'),
         props: {
-          editable: this.hooks.isEditable,
+          editable: this.hooks.isEditable || (() => true)
         },
       }),
     ];
