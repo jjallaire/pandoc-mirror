@@ -83,14 +83,14 @@ export interface IEditorConfig {
   hooks?: IEditorHooks;
 }
 
-export { 
-  IEditorUI, 
-  IImageEditor, 
-  IImageEditResult, 
-  IImageProps, 
-  ILinkEditor, 
-  ILinkEditResult, 
-  ILinkProps 
+export {
+  IEditorUI,
+  IImageEditor,
+  IImageEditResult,
+  IImageProps,
+  ILinkEditor,
+  ILinkEditResult,
+  ILinkProps,
 } from './api/ui';
 
 export interface IEditorCommand {
@@ -120,7 +120,6 @@ export class Editor {
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
-
     // initialize references
     this.parent = config.parent;
     this.pandoc = config.pandoc;
@@ -327,7 +326,7 @@ export class Editor {
       new Plugin({
         key: new PluginKey('editable'),
         props: {
-          editable: this.hooks.isEditable || (() => true)
+          editable: this.hooks.isEditable || (() => true),
         },
       }),
     ];

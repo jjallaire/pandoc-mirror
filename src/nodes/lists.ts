@@ -6,7 +6,6 @@ import { commandToggleList, NodeCommand } from 'api/command';
 import { IExtension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
-
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
 const LIST_ATTRIB_ORDER = 0;

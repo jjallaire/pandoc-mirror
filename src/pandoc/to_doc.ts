@@ -2,7 +2,6 @@ import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
 import { IPandocReader, IPandocToken } from 'api/pandoc';
 import { IPandocEngine } from './engine';
 
-
 export function markdownToDoc(
   markdown: string,
   schema: Schema,

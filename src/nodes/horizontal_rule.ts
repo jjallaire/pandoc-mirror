@@ -3,7 +3,6 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Command, commandInsertNode } from 'api/command';
 import { IExtension } from 'api/extension';
 
-
 const extension: IExtension = {
   nodes: [
     {

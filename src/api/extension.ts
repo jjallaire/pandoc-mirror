@@ -17,7 +17,6 @@ export interface IExtension {
 }
 
 export class ExtensionManager {
-  
   private extensions: IExtension[];
 
   public constructor() {

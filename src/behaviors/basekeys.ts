@@ -4,8 +4,6 @@ import { keymap } from 'prosemirror-keymap';
 import { CommandFn } from 'api/command';
 import { IExtension } from 'api/extension';
 
-
-
 const extension: IExtension = {
   plugins: () => {
     const keys: { [key: string]: CommandFn } = {};

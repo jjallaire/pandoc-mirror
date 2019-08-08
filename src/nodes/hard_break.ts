@@ -6,7 +6,6 @@ import { EditorView } from 'prosemirror-view';
 import { CommandFn } from 'api/command';
 import { IExtension } from 'api/extension';
 
-
 const extension: IExtension = {
   nodes: [
     {

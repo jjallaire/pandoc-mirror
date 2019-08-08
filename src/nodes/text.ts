@@ -3,7 +3,6 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { IExtension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
-
 const extension: IExtension = {
   nodes: [
     {

@@ -3,7 +3,6 @@ import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 import { IPandocReader, PandocNodeWriterFn } from './pandoc';
 
-
 export interface INode {
   name: string;
   spec: NodeSpec;

@@ -5,7 +5,6 @@ import { BlockCommand } from 'api/command';
 import { IExtension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
-
 const HEADING_LEVEL = 0;
 const HEADING_CHILDREN = 2;
 

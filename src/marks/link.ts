@@ -8,8 +8,6 @@ import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
 import { IPandocToken } from 'api/pandoc';
 import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from 'api/ui';
 
-
-
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
 const LINK_CHILDREN = 1;

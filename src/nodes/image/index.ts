@@ -9,8 +9,6 @@ import { IEditorUI, IImageEditor } from 'api/ui';
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
 
-
-
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
 

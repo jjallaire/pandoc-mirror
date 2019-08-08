@@ -3,8 +3,6 @@ import { EditorState, Transaction } from 'prosemirror-state';
 import { insertAndSelectNode } from 'api/node';
 import { IImageEditor, IImageProps } from 'api/ui';
 
-
-
 export function imageDialog(
   node: Node | null,
   nodeType: NodeType,
