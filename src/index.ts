@@ -43,7 +43,7 @@ import { Command, CommandFn } from './api/command';
 import { IMark } from './api/mark';
 import { INode } from './api/node';
 import { IEditorUI } from './api/ui';
-import { Extensions } from './extensions/index';
+import { Extensions } from './extensions';
 import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
 import { markdownToDoc } from './pandoc/to_doc';
