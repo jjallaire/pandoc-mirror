@@ -11,10 +11,10 @@ import {
   Command,
   CommandFn,
   IPandocReader,
-  IEditorUI,
   PandocNodeWriterFn,
   IPandocMarkWriter,
 } from './api';
+import { IEditorUI } from './api/ui';
 
 import behaviorBasekeys from './behaviors/basekeys';
 import behaviorCursor from './behaviors/cursor';

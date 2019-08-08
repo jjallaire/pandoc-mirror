@@ -2,7 +2,8 @@ import { Schema, Node as ProsemirrorNode, NodeType } from 'prosemirror-model';
 import { NodeSelection, EditorState, Transaction } from 'prosemirror-state';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 
-import { IExtension, Command, IPandocToken, IEditorUI, IImageEditor } from '../../api';
+import { IExtension, Command, IPandocToken } from '../../api';
+import { IEditorUI, IImageEditor } from '../../api/ui';
 import { canInsertNode } from '../../utils/node';
 
 import { imagePlugin } from './plugin';

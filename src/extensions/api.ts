@@ -18,6 +18,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { nodeIsActive } from './utils/node';
 import { markIsActive } from './utils/mark';
 import { commandToggleList, commandToggleBlockType, commandToggleWrap } from './utils/command';
+import { IEditorUI } from './api/ui';
 
 export interface IExtension {
   marks?: IMark[];
@@ -162,31 +163,3 @@ export class WrapCommand extends NodeCommand {
     super(name, keymap, wrapType, {}, commandToggleWrap(wrapType));
   }
 }
-
-export interface IEditorUI {
-  onEditLink: ILinkEditor;
-  onEditImage: IImageEditor;
-}
-
-export type ILinkEditor = (link: ILinkProps) => Promise<ILinkEditResult | null>;
-export type IImageEditor = (image: IImageProps) => Promise<IImageEditResult | null>;
-
-export interface ILinkProps {
-  href: string;
-  title?: string;
-}
-
-export interface ILinkEditResult {
-  action: 'edit' | 'remove';
-  link: ILinkProps;
-}
-
-export interface IImageProps {
-  src: string | null;
-  title?: string;
-  alt?: string;
-  id?: string;
-  class?: string;
-}
-
-type IImageEditResult = IImageProps;

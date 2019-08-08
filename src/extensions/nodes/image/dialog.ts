@@ -1,4 +1,4 @@
-import { IImageProps, IImageEditor } from '../../api';
+import { IImageProps, IImageEditor } from '../../api/ui';
 
 import { insertAndSelectNode } from '../../utils/node';
 

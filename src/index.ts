@@ -1,4 +1,3 @@
-
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
@@ -22,7 +21,6 @@
 
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
-
 import OrderedMap from 'orderedmap';
 
 import { Schema, Node, NodeSpec, MarkSpec } from 'prosemirror-model';
@@ -37,15 +35,13 @@ import { markdownFromDoc } from './pandoc/from_doc';
 
 import { ExtensionManager } from './extensions/manager';
 
-import { Command, CommandFn, IEditorUI, INode, IMark } from './extensions/api';
+import { Command, CommandFn, INode, IMark } from './extensions/api';
+import { IEditorUI } from './extensions/api/ui';
 
 // standard prosemirror + additional built-in styles
 // (these styles are about behavior not appearance)
 import 'prosemirror-view/style/prosemirror.css';
 import './styles/prosemirror.css';
-
-// re-exports from extension api
-export { IEditorUI, IImageEditor, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api';
 
 export interface IEditorOptions {
   autoFocus?: boolean;
@@ -240,7 +236,7 @@ export class Editor {
     }
   }
 
-  private editorSchema() : Schema {
+  private editorSchema(): Schema {
     // build in doc node + nodes from extensions
     const nodes: { [name: string]: NodeSpec } = {
       doc: {
@@ -264,7 +260,7 @@ export class Editor {
     });
   }
 
-  private emptyDoc() : Node {
+  private emptyDoc(): Node {
     return this.schema.nodeFromJSON({
       type: 'doc',
       content: [
@@ -309,6 +305,3 @@ export class Editor {
     return [keymap(commandKeys), keymap(extensionKeys)];
   }
 }
-
-
-

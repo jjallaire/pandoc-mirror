@@ -2,7 +2,8 @@ import { Schema, MarkType, Mark, Node as ProsemirrorNode, Fragment } from 'prose
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { IExtension, Command, IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps, IPandocToken } from '../api';
+import { IExtension, Command, IPandocToken } from '../api';
+import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from '../api/ui';
 import { markIsActive, getMarkAttrs, getMarkRange } from '../utils/mark';
 
 import { MarkdownSerializerState } from 'prosemirror-markdown';

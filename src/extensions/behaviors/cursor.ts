@@ -7,10 +7,7 @@ import 'prosemirror-gapcursor/style/gapcursor.css';
 
 const extension: IExtension = {
   plugins: () => {
-    return [
-      gapCursor(), 
-      dropCursor()
-    ];
+    return [gapCursor(), dropCursor()];
   },
 };
 

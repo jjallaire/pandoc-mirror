@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { imageDialog } from './dialog';
 
-import { IImageEditor } from '../../api';
+import { IImageEditor } from '../../api/ui';
 
 export function imagePlugin(nodeType: NodeType, onEditImage: IImageEditor) {
   return new Plugin({
