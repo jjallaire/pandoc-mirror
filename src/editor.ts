@@ -41,7 +41,7 @@ import { Command, CommandFn } from './api/command';
 import { IMark } from './api/mark';
 import { INode } from './api/node';
 import { IEditorUI } from './api/ui';
-import { ExtensionManager } from 'api/extension';
+import { ExtensionManager, IExtension } from 'api/extension';
 
 import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
@@ -73,6 +73,7 @@ export interface IEditorConfig {
   ui: IEditorUI;
   options?: IEditorOptions;
   hooks?: IEditorHooks;
+  extensions?: IExtension[];
 }
 
 export interface IEditorOptions {
@@ -131,7 +132,7 @@ export class Editor {
     this.events = this.initEvents();
 
     // create extensions
-    this.extensions = this.initExtensions();
+    this.extensions = this.initExtensions(config);
 
     // create schema
     this.schema = this.initSchema();
@@ -265,8 +266,12 @@ export class Editor {
     };
   }
 
-  private initExtensions() {
+  private initExtensions(config: IEditorConfig) {
+    
+    // create extension manager
     const manager = new ExtensionManager();
+
+    // register built-in extensions
     manager.register([
       // behaviors
       behaviorBasekeys,
@@ -291,6 +296,13 @@ export class Editor {
       nodeHardBreak,
       nodeImage,
     ]);
+
+    // register external extensions
+    if (config.extensions) {
+      manager.register(config.extensions);
+    }
+
+    // return manager
     return manager;
   }
 
