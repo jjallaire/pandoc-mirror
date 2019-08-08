@@ -10,9 +10,9 @@ const child_process = require('child_process')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
-  entry: path.join(__dirname, '/src/index.ts'),
+  entry: path.join(__dirname, '/src/editor.ts'),
   output: {
-    filename: 'index.js',
+    filename: 'editor.js',
     path: path.join(__dirname, '/dist'),
     library: "PandocMirror",
     libraryTarget: "var"
