@@ -1,37 +1,37 @@
-import { Schema } from 'prosemirror-model';
-
-import { Plugin } from 'prosemirror-state';
-
 import { InputRule } from 'prosemirror-inputrules';
-
-import { IPandocReader, IPandocMarkWriter, PandocNodeWriterFn } from './api/pandoc';
-
+import { Schema } from 'prosemirror-model';
+import { Plugin } from 'prosemirror-state';
+import { Command, CommandFn } from './api/command';
 import { IExtension } from './api/extension';
-import { IEditorUI } from './api/ui';
 import { IMark } from './api/mark';
 import { INode } from './api/node';
-
-import { Command, CommandFn } from './api/command';
-
+import { IPandocMarkWriter, IPandocReader, PandocNodeWriterFn } from './api/pandoc';
+import { IEditorUI } from './api/ui';
 import behaviorBasekeys from './behaviors/basekeys';
 import behaviorCursor from './behaviors/cursor';
-import behaviorSmarty from './behaviors/smarty';
 import behaviorHistory from './behaviors/history';
-
-import markEm from './marks/em';
-import markStrong from './marks/strong';
+import behaviorSmarty from './behaviors/smarty';
 import markCode from './marks/code';
+import markEm from './marks/em';
 import markLink from './marks/link';
-
-import nodeText from './nodes/text';
-import nodeParagraph from './nodes/paragraph';
-import nodeHeading from './nodes/heading';
+import markStrong from './marks/strong';
 import nodeBlockquote from './nodes/blockquote';
 import nodeCodeBlock from './nodes/code_block';
-import nodeHorizontalRule from './nodes/horizontal_rule';
-import nodeLists from './nodes/lists';
 import nodeHardBreak from './nodes/hard_break';
+import nodeHeading from './nodes/heading';
+import nodeHorizontalRule from './nodes/horizontal_rule';
 import nodeImage from './nodes/image/index';
+import nodeLists from './nodes/lists';
+import nodeParagraph from './nodes/paragraph';
+import nodeText from './nodes/text';
+
+
+
+
+
+
+
+
 
 export class Extensions {
   public static create(): Extensions {

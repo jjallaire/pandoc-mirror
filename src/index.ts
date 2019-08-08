@@ -22,28 +22,22 @@
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
 import OrderedMap from 'orderedmap';
-
-import { Schema, Node, NodeSpec, MarkSpec } from 'prosemirror-model';
-import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { keymap } from 'prosemirror-keymap';
 import { inputRules } from 'prosemirror-inputrules';
-
-import { IPandocEngine } from './pandoc/engine';
-import { markdownToDoc } from './pandoc/to_doc';
-import { markdownFromDoc } from './pandoc/from_doc';
-
-import { Extensions } from './extensions/index';
-
-import { INode } from './extensions/api/node';
-import { IMark } from './extensions/api/mark';
-import { Command, CommandFn } from './extensions/api/command';
-import { IEditorUI } from './extensions/api/ui';
-
-// standard prosemirror + additional built-in styles
-// (these styles are about behavior not appearance)
+import { keymap } from 'prosemirror-keymap';
+import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 import 'prosemirror-view/style/prosemirror.css';
+import { Command, CommandFn } from './extensions/api/command';
+import { IMark } from './extensions/api/mark';
+import { INode } from './extensions/api/node';
+import { IEditorUI } from './extensions/api/ui';
+import { Extensions } from './extensions/index';
+import { IPandocEngine } from './pandoc/engine';
+import { markdownFromDoc } from './pandoc/from_doc';
+import { markdownToDoc } from './pandoc/to_doc';
 import './styles/prosemirror.css';
+
 
 export interface IEditorOptions {
   autoFocus?: boolean;
@@ -61,15 +55,7 @@ export interface IEditorConfig {
   hooks?: IEditorHooks;
 }
 
-export { 
-  IEditorUI, 
-  ILinkEditor, 
-  ILinkEditResult, 
-  ILinkProps, 
-  IImageEditor,
-  IImageEditResult,
-  IImageProps
- } from './extensions/api/ui';
+export { IEditorUI, IImageEditor, IImageEditResult, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api/ui';
 
 export interface IEditorCommand {
   name: string;

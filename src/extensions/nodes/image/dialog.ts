@@ -1,9 +1,9 @@
-import { IImageProps, IImageEditor } from '../../api/ui';
-
-import { insertAndSelectNode } from '../../api/node';
-
 import { Node, NodeType } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
+import { insertAndSelectNode } from '../../api/node';
+import { IImageEditor, IImageProps } from '../../api/ui';
+
+
 
 export function imageDialog(
   node: Node | null,

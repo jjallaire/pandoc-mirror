@@ -1,8 +1,8 @@
-import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
-import { IExtension } from '../api/extension';
-import { WrapCommand } from '../api/command';
 import { wrappingInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { WrapCommand } from '../api/command';
+import { IExtension } from '../api/extension';
 
 const extension: IExtension = {
   nodes: [

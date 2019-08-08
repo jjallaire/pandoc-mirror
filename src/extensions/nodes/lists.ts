@@ -1,11 +1,11 @@
-import { Schema, NodeType, Node as ProsemirrorNode } from 'prosemirror-model';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
-
-import { IExtension } from '../api/extension';
-import { NodeCommand, commandToggleList } from '../api/command';
-import { IPandocToken } from '../api/pandoc';
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
+import { commandToggleList, NodeCommand } from '../api/command';
+import { IExtension } from '../api/extension';
+import { IPandocToken } from '../api/pandoc';
+
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;

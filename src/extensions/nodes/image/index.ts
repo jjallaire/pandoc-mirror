@@ -1,15 +1,15 @@
-import { Schema, Node as ProsemirrorNode, NodeType } from 'prosemirror-model';
-import { NodeSelection, EditorState, Transaction } from 'prosemirror-state';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-
-import { IExtension } from '../../api/extension';
+import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { Command } from '../../api/command';
+import { IExtension } from '../../api/extension';
+import { canInsertNode } from '../../api/node';
 import { IPandocToken } from '../../api/pandoc';
 import { IEditorUI, IImageEditor } from '../../api/ui';
-import { canInsertNode } from '../../api/node';
-
-import { imagePlugin } from './plugin';
 import { imageDialog } from './dialog';
+import { imagePlugin } from './plugin';
+
+
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;

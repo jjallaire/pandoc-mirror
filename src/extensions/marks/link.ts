@@ -1,14 +1,14 @@
-import { Schema, MarkType, Mark, Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-
-import { IExtension } from '../api/extension';
 import { Command } from '../api/command';
+import { IExtension } from '../api/extension';
+import { getMarkAttrs, getMarkRange, markIsActive } from '../api/mark';
 import { IPandocToken } from '../api/pandoc';
 import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from '../api/ui';
-import { markIsActive, getMarkAttrs, getMarkRange } from '../api/mark';
 
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;

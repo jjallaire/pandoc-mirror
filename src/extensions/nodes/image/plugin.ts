@@ -1,10 +1,10 @@
-import { Plugin, PluginKey } from 'prosemirror-state';
 import { Node, NodeType } from 'prosemirror-model';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-
+import { IImageEditor } from '../../api/ui';
 import { imageDialog } from './dialog';
 
-import { IImageEditor } from '../../api/ui';
+
 
 export function imagePlugin(nodeType: NodeType, onEditImage: IImageEditor) {
   return new Plugin({

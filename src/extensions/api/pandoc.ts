@@ -1,5 +1,5 @@
-import { Mark, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface IPandocReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)

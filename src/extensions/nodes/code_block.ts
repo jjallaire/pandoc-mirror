@@ -1,9 +1,9 @@
-import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { BlockCommand } from '../api/command';
 import { IExtension } from '../api/extension';
 import { IPandocToken } from '../api/pandoc';
-import { BlockCommand } from '../api/command';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;

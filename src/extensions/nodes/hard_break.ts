@@ -1,11 +1,11 @@
-import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
 import { chainCommands, exitCode } from 'prosemirror-commands';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-
-import { IExtension } from '../api/extension';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { EditorState, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 import { CommandFn } from '../api/command';
+import { IExtension } from '../api/extension';
+
 
 const extension: IExtension = {
   nodes: [

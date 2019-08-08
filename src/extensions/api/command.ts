@@ -4,8 +4,8 @@ import { liftListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
 import { EditorView } from 'prosemirror-view';
-import { canInsertNode, nodeIsActive } from './node';
 import { markIsActive } from './mark';
+import { canInsertNode, nodeIsActive } from './node';
 
 export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
 

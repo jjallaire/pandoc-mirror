@@ -1,10 +1,10 @@
-import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-
-import { IExtension } from '../api/extension';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { BlockCommand } from '../api/command';
+import { IExtension } from '../api/extension';
 import { IPandocToken } from '../api/pandoc';
+
 
 const HEADING_LEVEL = 0;
 const HEADING_CHILDREN = 2;

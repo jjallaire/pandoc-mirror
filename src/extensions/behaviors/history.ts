@@ -1,8 +1,8 @@
-import { undo, redo, history } from 'prosemirror-history';
-
+import { history, redo, undo } from 'prosemirror-history';
+import { Command } from '../api/command';
 import { IExtension } from '../api/extension';
 
-import { Command } from '../api/command';
+
 
 const extension: IExtension = {
   commands: () => {
