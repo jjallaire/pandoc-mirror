@@ -67,20 +67,20 @@ import nodeText from './nodes/text';
 
 import './styles/prosemirror.css';
 
-export interface IEditorOptions {
-  autoFocus?: boolean;
-}
-
-export interface IEditorHooks {
-  isEditable?: () => boolean;
-}
-
 export interface IEditorConfig {
   parent: HTMLElement;
   pandoc: IPandocEngine;
   ui: IEditorUI;
   options?: IEditorOptions;
   hooks?: IEditorHooks;
+}
+
+export interface IEditorOptions {
+  autoFocus?: boolean;
+}
+
+export interface IEditorHooks {
+  isEditable?: () => boolean;
 }
 
 export {
