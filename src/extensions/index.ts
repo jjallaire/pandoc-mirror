@@ -1,12 +1,12 @@
 import { InputRule } from 'prosemirror-inputrules';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
-import { Command, CommandFn } from './api/command';
-import { IExtension } from './api/extension';
-import { IMark } from './api/mark';
-import { INode } from './api/node';
-import { IPandocMarkWriter, IPandocReader, PandocNodeWriterFn } from './api/pandoc';
-import { IEditorUI } from './api/ui';
+import { Command, CommandFn } from 'extensions/api/command';
+import { IExtension } from 'extensions/api/extension';
+import { IMark } from 'extensions/api/mark';
+import { INode } from 'extensions/api/node';
+import { IPandocMarkWriter, IPandocReader, PandocNodeWriterFn } from 'extensions/api/pandoc';
+import { IEditorUI } from 'extensions/api/ui';
 import behaviorBasekeys from './behaviors/basekeys';
 import behaviorCursor from './behaviors/cursor';
 import behaviorHistory from './behaviors/history';
@@ -24,13 +24,6 @@ import nodeImage from './nodes/image/index';
 import nodeLists from './nodes/lists';
 import nodeParagraph from './nodes/paragraph';
 import nodeText from './nodes/text';
-
-
-
-
-
-
-
 
 
 export class Extensions {

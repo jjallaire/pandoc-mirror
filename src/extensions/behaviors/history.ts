@@ -1,6 +1,6 @@
 import { history, redo, undo } from 'prosemirror-history';
-import { Command } from '../api/command';
-import { IExtension } from '../api/extension';
+import { Command } from 'extensions/api/command';
+import { IExtension } from 'extensions/api/extension';
 
 
 

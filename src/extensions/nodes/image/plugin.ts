@@ -1,7 +1,7 @@
 import { Node, NodeType } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { IImageEditor } from '../../api/ui';
+import { IImageEditor } from 'extensions/api/ui';
 import { imageDialog } from './dialog';
 
 

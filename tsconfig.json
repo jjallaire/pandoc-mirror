@@ -5,7 +5,7 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "sourceMap": true,
     "esModuleInterop": true,
     "lib": [

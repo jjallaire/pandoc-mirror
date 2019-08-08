@@ -1,7 +1,7 @@
 import { Node, NodeType } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
-import { insertAndSelectNode } from '../../api/node';
-import { IImageEditor, IImageProps } from '../../api/ui';
+import { insertAndSelectNode } from 'extensions/api/node';
+import { IImageEditor, IImageProps } from 'extensions/api/ui';
 
 
 

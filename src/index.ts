@@ -21,6 +21,17 @@
 
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
+// TODO: add import ordering to tsformat
+
+// TODO: clarify whether to make prosemirror types part of deps
+
+// move extensions dir into the root (index.ts => extensions.ts)
+// use 'api/' for all api imports
+// jsdoc comments for api
+// editor should take both an array of extensions as well as a keymap
+// (do we need names for keymap entries in that case?)
+
+
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';

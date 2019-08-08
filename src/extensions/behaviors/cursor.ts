@@ -1,7 +1,7 @@
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import 'prosemirror-gapcursor/style/gapcursor.css';
-import { IExtension } from '../api/extension';
+import { IExtension } from 'extensions/api/extension';
 
 
 
