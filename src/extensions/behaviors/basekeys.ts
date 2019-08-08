@@ -1,8 +1,8 @@
 import { baseKeymap, joinDown, joinUp, lift, selectParentNode } from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { CommandFn } from 'extensions/api/command';
-import { IExtension } from 'extensions/api/extension';
+import { CommandFn } from 'api/command';
+import { IExtension } from 'api/extension';
 
 
 

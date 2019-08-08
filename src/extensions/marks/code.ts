@@ -1,8 +1,8 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { MarkCommand } from 'extensions/api/command';
-import { IExtension } from 'extensions/api/extension';
-import { IPandocToken } from 'extensions/api/pandoc';
+import { MarkCommand } from 'api/command';
+import { IExtension } from 'api/extension';
+import { IPandocToken } from 'api/pandoc';
 
 
 const CODE_TEXT = 1;

@@ -1,5 +1,5 @@
 import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
-import { IPandocReader, IPandocToken } from 'src/extensions/api/pandoc';
+import { IPandocReader, IPandocToken } from 'api/pandoc';
 import { IPandocEngine } from './engine';
 
 

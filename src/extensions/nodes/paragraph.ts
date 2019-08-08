@@ -1,7 +1,7 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { BlockCommand } from 'extensions/api/command';
-import { IExtension } from 'extensions/api/extension';
+import { BlockCommand } from 'api/command';
+import { IExtension } from 'api/extension';
 
 
 const extension: IExtension = {

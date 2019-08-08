@@ -1,6 +1,6 @@
 import { MarkdownSerializer } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { IPandocMarkWriter, PandocNodeWriterFn } from '../extensions/api/pandoc';
+import { IPandocMarkWriter, PandocNodeWriterFn } from '../api/pandoc';
 
 
 export function markdownFromDoc(

@@ -39,10 +39,10 @@ import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import 'prosemirror-view/style/prosemirror.css';
-import { Command, CommandFn } from './extensions/api/command';
-import { IMark } from './extensions/api/mark';
-import { INode } from './extensions/api/node';
-import { IEditorUI } from './extensions/api/ui';
+import { Command, CommandFn } from './api/command';
+import { IMark } from './api/mark';
+import { INode } from './api/node';
+import { IEditorUI } from './api/ui';
 import { Extensions } from './extensions/index';
 import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
@@ -66,7 +66,7 @@ export interface IEditorConfig {
   hooks?: IEditorHooks;
 }
 
-export { IEditorUI, IImageEditor, IImageEditResult, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './extensions/api/ui';
+export { IEditorUI, IImageEditor, IImageEditResult, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './api/ui';
 
 export interface IEditorCommand {
   name: string;

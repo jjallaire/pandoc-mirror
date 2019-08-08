@@ -1,11 +1,11 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
-import { Command } from 'extensions/api/command';
-import { IExtension } from 'extensions/api/extension';
-import { canInsertNode } from 'extensions/api/node';
-import { IPandocToken } from 'extensions/api/pandoc';
-import { IEditorUI, IImageEditor } from 'extensions/api/ui';
+import { Command } from 'api/command';
+import { IExtension } from 'api/extension';
+import { canInsertNode } from 'api/node';
+import { IPandocToken } from 'api/pandoc';
+import { IEditorUI, IImageEditor } from 'api/ui';
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
 
