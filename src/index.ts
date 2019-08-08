@@ -25,12 +25,9 @@
 
 // TODO: clarify whether to make prosemirror types part of deps
 
-// move extensions dir into the root (index.ts => extensions.ts)
-// use 'api/' for all api imports
 // jsdoc comments for api
 // editor should take both an array of extensions as well as a keymap
 // (do we need names for keymap entries in that case?)
-
 
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
@@ -39,16 +36,36 @@ import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import 'prosemirror-view/style/prosemirror.css';
+
 import { Command, CommandFn } from './api/command';
 import { IMark } from './api/mark';
 import { INode } from './api/node';
 import { IEditorUI } from './api/ui';
-import { Extensions } from './extensions';
+import { ExtensionManager } from 'api/extension';
+
 import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
 import { markdownToDoc } from './pandoc/to_doc';
-import './styles/prosemirror.css';
 
+import behaviorBasekeys from './behaviors/basekeys';
+import behaviorCursor from './behaviors/cursor';
+import behaviorHistory from './behaviors/history';
+import behaviorSmarty from './behaviors/smarty';
+import markCode from './marks/code';
+import markEm from './marks/em';
+import markLink from './marks/link';
+import markStrong from './marks/strong';
+import nodeBlockquote from './nodes/blockquote';
+import nodeCodeBlock from './nodes/code_block';
+import nodeHardBreak from './nodes/hard_break';
+import nodeHeading from './nodes/heading';
+import nodeHorizontalRule from './nodes/horizontal_rule';
+import nodeImage from './nodes/image/index';
+import nodeLists from './nodes/lists';
+import nodeParagraph from './nodes/paragraph';
+import nodeText from './nodes/text';
+
+import './styles/prosemirror.css';
 
 export interface IEditorOptions {
   autoFocus?: boolean;
@@ -66,7 +83,15 @@ export interface IEditorConfig {
   hooks?: IEditorHooks;
 }
 
-export { IEditorUI, IImageEditor, IImageEditResult, IImageProps, ILinkEditor, ILinkEditResult, ILinkProps } from './api/ui';
+export { 
+  IEditorUI, 
+  IImageEditor, 
+  IImageEditResult, 
+  IImageProps, 
+  ILinkEditor, 
+  ILinkEditResult, 
+  ILinkProps 
+} from './api/ui';
 
 export interface IEditorCommand {
   name: string;
@@ -91,11 +116,12 @@ export class Editor {
   private schema: Schema;
   private state: EditorState;
   private view: EditorView;
-  private extensions: Extensions;
+  private extensions: ExtensionManager;
   private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: IEditorConfig) {
-    // maintain references to config
+    
+    // initialize references
     this.parent = config.parent;
     this.pandoc = config.pandoc;
     this.ui = config.ui;
@@ -106,22 +132,19 @@ export class Editor {
     this.initHooks();
 
     // initialize custom events
-    this.events = {
-      [kEventUpdate]: new Event(kEventUpdate),
-      [kEventSelectionChange]: new Event(kEventSelectionChange),
-    };
+    this.events = this.initEvents();
 
     // create extensions
-    this.extensions = Extensions.create();
+    this.extensions = this.initExtensions();
 
     // create schema
-    this.schema = this.editorSchema();
+    this.schema = this.initSchema();
 
     // create state
     this.state = EditorState.create({
       schema: this.schema,
       doc: this.emptyDoc(),
-      plugins: this.createPlugins(),
+      plugins: this.initPlugins(),
     });
 
     // create view
@@ -245,7 +268,43 @@ export class Editor {
     }
   }
 
-  private editorSchema(): Schema {
+  private initEvents() {
+    return {
+      [kEventUpdate]: new Event(kEventUpdate),
+      [kEventSelectionChange]: new Event(kEventSelectionChange),
+    };
+  }
+
+  private initExtensions() {
+    const manager = new ExtensionManager();
+    manager.register([
+      // behaviors
+      behaviorBasekeys,
+      behaviorCursor,
+      behaviorSmarty,
+      behaviorHistory,
+
+      // marks
+      markEm,
+      markStrong,
+      markCode,
+      markLink,
+
+      // nodes
+      nodeText,
+      nodeParagraph,
+      nodeHeading,
+      nodeBlockquote,
+      nodeHorizontalRule,
+      nodeCodeBlock,
+      nodeLists,
+      nodeHardBreak,
+      nodeImage,
+    ]);
+    return manager;
+  }
+
+  private initSchema(): Schema {
     // build in doc node + nodes from extensions
     const nodes: { [name: string]: NodeSpec } = {
       doc: {
@@ -269,18 +328,7 @@ export class Editor {
     });
   }
 
-  private emptyDoc(): Node {
-    return this.schema.nodeFromJSON({
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-        },
-      ],
-    });
-  }
-
-  private createPlugins(): Plugin[] {
+  private initPlugins(): Plugin[] {
     return [
       ...this.keymapPlugins(),
       ...this.extensions.plugins(this.schema, this.ui),
@@ -312,5 +360,16 @@ export class Editor {
 
     // return plugins
     return [keymap(commandKeys), keymap(extensionKeys)];
+  }
+
+  private emptyDoc(): Node {
+    return this.schema.nodeFromJSON({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+        },
+      ],
+    });
   }
 }
