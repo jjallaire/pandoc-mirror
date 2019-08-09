@@ -1,10 +1,11 @@
 import { Node, NodeType } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { IImageEditor } from 'api/ui';
+
+import { ImageEditorFn } from 'api/ui';
 import { imageDialog } from './dialog';
 
-export function imagePlugin(nodeType: NodeType, onEditImage: IImageEditor) {
+export function imagePlugin(nodeType: NodeType, onEditImage: ImageEditorFn) {
   return new Plugin({
     key: new PluginKey('image'),
     props: {
@@ -16,7 +17,7 @@ export function imagePlugin(nodeType: NodeType, onEditImage: IImageEditor) {
   });
 }
 
-function doubleClickOn(nodeType: NodeType, onEditImage: IImageEditor) {
+function doubleClickOn(nodeType: NodeType, onEditImage: ImageEditorFn) {
   return (view: EditorView, pos: number, node: Node) => {
     if (node.type === nodeType) {
       imageDialog(node, nodeType, view.state, view.dispatch, onEditImage);

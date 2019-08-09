@@ -1,9 +1,10 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { IPandocToken } from 'api/pandoc';
+import { PandocAstToken } from 'api/pandoc';
 
 const HEADING_LEVEL = 0;
 const HEADING_CHILDREN = 2;
@@ -42,10 +43,10 @@ const extension: Extension = {
           {
             token: 'Header',
             block: 'heading',
-            getAttrs: (tok: IPandocToken) => ({
+            getAttrs: (tok: PandocAstToken) => ({
               level: tok.c[HEADING_LEVEL],
             }),
-            getChildren: (tok: IPandocToken) => tok.c[HEADING_CHILDREN],
+            getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
           },
         ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

@@ -1,13 +1,14 @@
 import { Node, NodeSpec, NodeType } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
-import { IPandocReader, PandocNodeWriterFn } from './pandoc';
 
-export interface INode {
+import { PandocAstReader, PandocNodeWriterFn } from './pandoc';
+
+export interface PandocNode {
   name: string;
   spec: NodeSpec;
   pandoc: {
-    from?: IPandocReader[];
+    from?: PandocAstReader[];
     to: PandocNodeWriterFn;
   };
 }

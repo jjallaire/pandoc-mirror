@@ -1,9 +1,10 @@
 import { setBlockType } from 'prosemirror-commands';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { IPandocToken } from 'api/pandoc';
+import { PandocAstToken } from 'api/pandoc';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -39,11 +40,11 @@ const extension: Extension = {
           {
             token: 'CodeBlock',
             block: 'code_block',
-            getAttrs: (tok: IPandocToken) => ({
+            getAttrs: (tok: PandocAstToken) => ({
               // TODO: enhance for pandoc {} syntax
               params: tok.c[CODE_BLOCK_ATTR][CODE_BLOCK_ATTR_PARAMS].join(' '),
             }),
-            getText: (tok: IPandocToken) => tok.c[CODE_BLOCK_TEXT],
+            getText: (tok: PandocAstToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

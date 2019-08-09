@@ -1,23 +1,23 @@
-export interface IEditorUI {
-  onEditLink: ILinkEditor;
-  onEditImage: IImageEditor;
+export interface EditorUI {
+  onEditLink: LinkEditorFn;
+  onEditImage: ImageEditorFn;
 }
 
-export type ILinkEditor = (link: ILinkProps) => Promise<ILinkEditResult | null>;
+export type LinkEditorFn = (link: LinkProps) => Promise<LinkEditResult | null>;
 
-export type IImageEditor = (image: IImageProps) => Promise<IImageEditResult | null>;
+export type ImageEditorFn = (image: ImageProps) => Promise<ImageEditResult | null>;
 
-export interface ILinkProps {
+export interface LinkProps {
   href: string;
   title?: string;
 }
 
-export interface ILinkEditResult {
+export interface LinkEditResult {
   action: 'edit' | 'remove';
-  link: ILinkProps;
+  link: LinkProps;
 }
 
-export interface IImageProps {
+export interface ImageProps {
   src: string | null;
   title?: string;
   alt?: string;
@@ -25,4 +25,4 @@ export interface IImageProps {
   class?: string;
 }
 
-export type IImageEditResult = IImageProps;
+export type ImageEditResult = ImageProps;

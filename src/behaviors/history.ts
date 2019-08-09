@@ -1,4 +1,5 @@
 import { history, redo, undo } from 'prosemirror-history';
+
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 

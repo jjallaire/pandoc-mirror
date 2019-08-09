@@ -1,7 +1,8 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
+
 import { Extension } from 'api/extension';
-import { IPandocToken } from 'api/pandoc';
+import { PandocAstToken } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -15,7 +16,7 @@ const extension: Extension = {
       },
       pandoc: {
         from: [
-          { token: 'Str', text: true, getText: (tok: IPandocToken) => tok.c },
+          { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
           { token: 'Space', text: true, getText: () => ' ' },
           { token: 'SoftBreak', text: true, getText: () => ' ' },
         ],

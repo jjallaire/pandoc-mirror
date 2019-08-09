@@ -1,11 +1,13 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
+
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
-import { IPandocToken } from 'api/pandoc';
-import { IEditorUI, IImageEditor } from 'api/ui';
+import { PandocAstToken } from 'api/pandoc';
+import { EditorUI, ImageEditorFn } from 'api/ui';
+
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
 
@@ -56,7 +58,7 @@ const extension: Extension = {
             token: 'Image',
             node: 'image',
             pandocAttr: IMAGE_ATTR,
-            getAttrs: (tok: IPandocToken) => {
+            getAttrs: (tok: PandocAstToken) => {
               const target = tok.c[IMAGE_TARGET];
               return {
                 src: target[TARGET_URL],
@@ -81,16 +83,16 @@ const extension: Extension = {
     },
   ],
 
-  commands: (schema: Schema, ui: IEditorUI) => {
+  commands: (schema: Schema, ui: EditorUI) => {
     return [new Command('image', null, imageCommand(schema.nodes.image, ui.onEditImage))];
   },
 
-  plugins: (schema: Schema, ui: IEditorUI) => {
+  plugins: (schema: Schema, ui: EditorUI) => {
     return [imagePlugin(schema.nodes.image, ui.onEditImage)];
   },
 };
 
-function imageCommand(nodeType: NodeType, onEditImage: IImageEditor) {
+function imageCommand(nodeType: NodeType, onEditImage: ImageEditorFn) {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void) => {
     if (!canInsertNode(state, nodeType)) {
       return false;
@@ -115,7 +117,7 @@ function imageCommand(nodeType: NodeType, onEditImage: IImageEditor) {
 // elements (ignores marks, useful for ast elements
 // that support marks but whose prosemirror equivalent
 // does not, e.g. image alt text)
-function collectText(c: IPandocToken[]): string {
+function collectText(c: PandocAstToken[]): string {
   return c
     .map(elem => {
       if (elem.t === 'Str') {

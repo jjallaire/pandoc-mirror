@@ -1,12 +1,11 @@
 import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
-import { IPandocReader, IPandocToken } from 'api/pandoc';
-import { IPandocEngine } from './engine';
+import { PandocEngine, PandocAstReader, PandocAstToken } from 'api/pandoc';
 
 export function markdownToDoc(
   markdown: string,
   schema: Schema,
-  pandoc: IPandocEngine,
-  pandocReaders: IPandocReader[],
+  pandoc: PandocEngine,
+  pandocReaders: PandocAstReader[],
 ): Promise<Node> {
   return pandoc.markdownToAst(markdown).then(ast => {
     const parser: Parser = new Parser(schema, pandocReaders);
@@ -18,7 +17,7 @@ class Parser {
   private schema: Schema;
   private handlers: { [token: string]: ParserTokenHandler };
 
-  constructor(schema: Schema, readers: IPandocReader[]) {
+  constructor(schema: Schema, readers: PandocAstReader[]) {
     this.schema = schema;
     this.handlers = this.createHandlers(readers);
   }
@@ -29,7 +28,7 @@ class Parser {
     return state.topNode();
   }
 
-  private parseTokens(state: ParserState, tokens: IPandocToken[]) {
+  private parseTokens(state: ParserState, tokens: PandocAstToken[]) {
     for (const tok of tokens) {
       const handler = this.handlers[tok.t];
       if (handler) {
@@ -41,14 +40,14 @@ class Parser {
   }
 
   // create parser token handler functions based on the passed readers
-  private createHandlers(readers: IPandocReader[]) {
+  private createHandlers(readers: PandocAstReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
       // resolve children (provide default impl)
-      const getChildren = reader.getChildren || ((tok: IPandocToken) => tok.c);
+      const getChildren = reader.getChildren || ((tok: PandocAstToken) => tok.c);
 
       // resolve getAttrs (enhance for pandocAttr if requested)
-      const getAttrs = (tok: IPandocToken) => {
+      const getAttrs = (tok: PandocAstToken) => {
         const attrs = reader.getAttrs ? reader.getAttrs(tok) : {};
         if (reader.pandocAttr !== undefined) {
           const pandocAttr = tok.c[reader.pandocAttr as number];
@@ -60,7 +59,7 @@ class Parser {
 
       // text
       if (reader.text) {
-        handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
+        handlers[reader.token] = (state: ParserState, tok: PandocAstToken) => {
           if (reader.getText) {
             const text = reader.getText(tok);
             state.addText(text);
@@ -72,7 +71,7 @@ class Parser {
         if (!this.schema.marks[reader.mark]) {
           continue;
         }
-        handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
+        handlers[reader.token] = (state: ParserState, tok: PandocAstToken) => {
           const markType = this.schema.marks[reader.mark as string];
           const mark = markType.create(getAttrs(tok));
           state.openMark(mark);
@@ -90,7 +89,7 @@ class Parser {
           continue;
         }
         const nodeType = this.schema.nodes[reader.block];
-        handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
+        handlers[reader.token] = (state: ParserState, tok: PandocAstToken) => {
           state.openNode(nodeType, getAttrs(tok));
           if (reader.getText) {
             state.addText(reader.getText(tok));
@@ -106,7 +105,7 @@ class Parser {
           continue;
         }
         const nodeType = this.schema.nodes[reader.node];
-        handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
+        handlers[reader.token] = (state: ParserState, tok: PandocAstToken) => {
           let content: Node[] = [];
           if (reader.getText) {
             content = [this.schema.text(reader.getText(tok))];
@@ -122,7 +121,7 @@ class Parser {
         const nodeType = this.schema.nodes[reader.list];
         const listItem = 'list_item';
         const listItemNodeType = this.schema.nodes[listItem];
-        handlers[reader.token] = (state: ParserState, tok: IPandocToken) => {
+        handlers[reader.token] = (state: ParserState, tok: PandocAstToken) => {
           const children = getChildren(tok);
           const tight = children.length && children[0][0].t === 'Plain';
           const attrs = getAttrs(tok);
@@ -130,7 +129,7 @@ class Parser {
             attrs.tight = 'true';
           }
           state.openNode(nodeType, attrs);
-          children.forEach((child: IPandocToken[]) => {
+          children.forEach((child: PandocAstToken[]) => {
             state.openNode(listItemNodeType, {});
             this.parseTokens(state, child);
             state.closeNode();
@@ -223,4 +222,4 @@ interface IParserStackElement {
   content: Node[];
 }
 
-type ParserTokenHandler = (state: ParserState, tok: IPandocToken) => void;
+type ParserTokenHandler = (state: ParserState, tok: PandocAstToken) => void;

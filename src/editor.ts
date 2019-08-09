@@ -37,13 +37,13 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import 'prosemirror-view/style/prosemirror.css';
 
-import { Command, CommandFn } from './api/command';
-import { IMark } from './api/mark';
-import { INode } from './api/node';
-import { IEditorUI } from './api/ui';
+import { Command, CommandFn } from 'api/command';
+import { PandocMark } from 'api/mark';
+import { PandocNode } from 'api/node';
+import { EditorUI } from 'api/ui';
 import { ExtensionManager, Extension } from 'api/extension';
+import { PandocEngine } from 'api/pandoc';
 
-import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
 import { markdownToDoc } from './pandoc/to_doc';
 
@@ -67,41 +67,38 @@ import nodeText from './nodes/text';
 
 import './styles/prosemirror.css';
 
-export interface IEditorConfig {
+export interface EditorConfig {
   parent: HTMLElement;
-  pandoc: IPandocEngine;
-  ui: IEditorUI;
-  options?: IEditorOptions;
-  hooks?: IEditorHooks;
+  pandoc: PandocEngine;
+  ui: EditorUI;
+  options?: EditorOptions;
+  hooks?: EditorHooks;
   extensions?: Extension[];
 }
 
-export interface IEditorOptions {
+export interface EditorOptions {
   autoFocus?: boolean;
 }
 
-export interface IEditorHooks {
+export interface EditorHooks {
   isEditable?: () => boolean;
 }
 
 export {
-  IEditorUI,
-  IImageEditor,
-  IImageEditResult,
-  IImageProps,
-  ILinkEditor,
-  ILinkEditResult,
-  ILinkProps,
-} from './api/ui';
+  EditorUI,
+  ImageEditorFn,
+  ImageEditResult,
+  ImageProps,
+  LinkEditorFn,
+  LinkEditResult,
+  LinkProps,
+} from 'api/ui';
 
-export interface IEditorCommand {
+export interface EditorCommand {
   name: string;
   isEnabled: () => boolean;
   isActive: () => boolean;
   execute: () => void;
-}
-export interface IEditorCommands {
-  [name: string]: IEditorCommand;
 }
 
 export const kEventUpdate = 'update';
@@ -109,10 +106,10 @@ export const kEventSelectionChange = 'selectionChange';
 
 export class Editor {
   private parent: HTMLElement;
-  private pandoc: IPandocEngine;
-  private ui: IEditorUI;
-  private options: IEditorOptions;
-  private hooks: IEditorHooks;
+  private pandoc: PandocEngine;
+  private ui: EditorUI;
+  private options: EditorOptions;
+  private hooks: EditorHooks;
   private events: { [key: string]: Event };
   private schema: Schema;
   private state: EditorState;
@@ -120,7 +117,7 @@ export class Editor {
   private extensions: ExtensionManager;
   private onClickBelow: (ev: MouseEvent) => void;
 
-  constructor(config: IEditorConfig) {
+  constructor(config: EditorConfig) {
     // initialize references
     this.parent = config.parent;
     this.pandoc = config.pandoc;
@@ -185,7 +182,7 @@ export class Editor {
 
   public setMarkdown(markdown: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
+    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocAstReaders()).then((doc: Node) => {
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -223,18 +220,19 @@ export class Editor {
     (this.view.dom as HTMLElement).blur();
   }
 
-  public commands(): IEditorCommands {
-    return this.extensions.commands(this.schema, this.ui).reduce((commands: IEditorCommands, command: Command) => {
-      return {
-        ...commands,
-        [command.name]: {
-          name: command.name,
-          isActive: () => command.isActive(this.state),
-          isEnabled: () => command.isEnabled(this.state),
-          execute: () => command.execute(this.state, this.view.dispatch, this.view),
-        },
-      };
-    }, {});
+  public commands(): { [name: string]: EditorCommand } {
+    return this.extensions.commands(this.schema, this.ui).reduce(
+      (commands: { [name: string]: EditorCommand }, command: Command) => {
+        return {
+          ...commands,
+          [command.name]: {
+            name: command.name,
+            isActive: () => command.isActive(this.state),
+            isEnabled: () => command.isEnabled(this.state),
+            execute: () => command.execute(this.state, this.view.dispatch, this.view),
+          },
+        };
+      }, {});
   }
 
   private dispatchTransaction(transaction: Transaction) {
@@ -266,7 +264,7 @@ export class Editor {
     };
   }
 
-  private initExtensions(config: IEditorConfig) {
+  private initExtensions(config: EditorConfig) {
     
     // create extension manager
     const manager = new ExtensionManager();
@@ -313,13 +311,13 @@ export class Editor {
         content: 'block+',
       },
     };
-    this.extensions.nodes().forEach((node: INode) => {
+    this.extensions.pandocNodes().forEach((node: PandocNode) => {
       nodes[node.name] = node.spec;
     });
 
     // marks from extensions
     const marks: { [name: string]: MarkSpec } = {};
-    this.extensions.marks().forEach((mark: IMark) => {
+    this.extensions.pandocMarks().forEach((mark: PandocMark) => {
       marks[mark.name] = mark.spec;
     });
 

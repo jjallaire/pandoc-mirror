@@ -3,18 +3,18 @@ import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
 import { Command, CommandFn } from './command';
-import { IMark } from './mark';
-import { INode } from './node';
-import { IEditorUI } from './ui';
-import { IPandocReader, IPandocMarkWriter, PandocNodeWriterFn } from './pandoc';
+import { PandocMark } from './mark';
+import { PandocNode } from './node';
+import { EditorUI } from './ui';
+import { PandocAstReader, PandocMarkWriter, PandocNodeWriterFn } from './pandoc';
 
 export interface Extension {
-  marks?: IMark[];
-  nodes?: INode[];
+  marks?: PandocMark[];
+  nodes?: PandocNode[];
   keymap?: (schema: Schema, mac: boolean) => { [key: string]: CommandFn };
-  commands?: (schema: Schema, ui: IEditorUI) => Command[];
+  commands?: (schema: Schema, ui: EditorUI) => Command[];
   inputRules?: (schema: Schema) => InputRule[];
-  plugins?: (schema: Schema, ui: IEditorUI) => Plugin[];
+  plugins?: (schema: Schema, ui: EditorUI) => Plugin[];
 }
 
 export class ExtensionManager {
@@ -28,20 +28,20 @@ export class ExtensionManager {
     this.extensions.push(...extensions);
   }
 
-  public marks(): IMark[] {
-    return this.collect<IMark>((extension: Extension) => extension.marks);
+  public pandocMarks(): PandocMark[] {
+    return this.collect<PandocMark>((extension: Extension) => extension.marks);
   }
 
-  public nodes(): INode[] {
-    return this.collect<INode>((extension: Extension) => extension.nodes);
+  public pandocNodes(): PandocNode[] {
+    return this.collect<PandocNode>((extension: Extension) => extension.nodes);
   }
 
-  public pandocReaders(): IPandocReader[] {
-    const readers: IPandocReader[] = [];
-    this.marks().forEach((mark: IMark) => {
+  public pandocAstReaders(): PandocAstReader[] {
+    const readers: PandocAstReader[] = [];
+    this.pandocMarks().forEach((mark: PandocMark) => {
       readers.push(...mark.pandoc.from);
     });
-    this.nodes().forEach((node: INode) => {
+    this.pandocNodes().forEach((node: PandocNode) => {
       if (node.pandoc.from) {
         readers.push(...node.pandoc.from);
       }
@@ -50,9 +50,9 @@ export class ExtensionManager {
     return readers;
   }
 
-  public pandocMarkWriters(): { [key: string]: IPandocMarkWriter } {
-    const writers: { [key: string]: IPandocMarkWriter } = {};
-    this.marks().forEach((mark: IMark) => {
+  public pandocMarkWriters(): { [key: string]: PandocMarkWriter } {
+    const writers: { [key: string]: PandocMarkWriter } = {};
+    this.pandocMarks().forEach((mark: PandocMark) => {
       writers[mark.name] = mark.pandoc.to;
     });
     return writers;
@@ -60,7 +60,7 @@ export class ExtensionManager {
 
   public pandocNodeWriters(): { [key: string]: PandocNodeWriterFn } {
     const writers: { [key: string]: PandocNodeWriterFn } = {};
-    this.nodes().forEach((node: INode) => {
+    this.pandocNodes().forEach((node: PandocNode) => {
       writers[node.name] = node.pandoc.to;
     });
     return writers;
@@ -76,7 +76,7 @@ export class ExtensionManager {
     return keys;
   }
 
-  public commands(schema: Schema, ui: IEditorUI): Command[] {
+  public commands(schema: Schema, ui: EditorUI): Command[] {
     return this.collect<Command>((extension: Extension) => {
       if (extension.commands) {
         return extension.commands(schema, ui);
@@ -86,7 +86,7 @@ export class ExtensionManager {
     });
   }
 
-  public plugins(schema: Schema, ui: IEditorUI): Plugin[] {
+  public plugins(schema: Schema, ui: EditorUI): Plugin[] {
     return this.collect<Plugin>((extension: Extension) => {
       if (extension.plugins) {
         return extension.plugins(schema, ui);

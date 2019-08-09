@@ -8,8 +8,6 @@ import { EditorView } from 'prosemirror-view';
 import { markIsActive } from './mark';
 import { canInsertNode, nodeIsActive } from './node';
 
-export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
-
 export class Command {
   public name: string;
   public keymap: string[] | null;
@@ -118,6 +116,8 @@ export function toggleList(listType: NodeType, itemType: NodeType): CommandFn {
     return wrapInList(listType)(state, dispatch);
   };
 }
+
+export type CommandFn = (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => boolean;
 
 export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}): CommandFn {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void) => {

@@ -1,7 +1,12 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
-export interface IPandocReader {
+export interface PandocEngine {
+  markdownToAst(markdown: string): Promise<object>;
+  astToMarkdown(ast: object): Promise<string>;
+}
+
+export interface PandocAstReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)
   token: string;
 
@@ -17,17 +22,17 @@ export interface IPandocReader {
   pandocAttr?: number;
 
   // functions for getting attributes and children
-  getAttrs?: (tok: IPandocToken) => any;
-  getChildren?: (tok: IPandocToken) => any[];
-  getText?: (tok: IPandocToken) => string;
+  getAttrs?: (tok: PandocAstToken) => any;
+  getChildren?: (tok: PandocAstToken) => any[];
+  getText?: (tok: PandocAstToken) => string;
 }
 
-export interface IPandocToken {
+export interface PandocAstToken {
   t: string;
   c: any;
 }
 
-export interface IPandocMarkWriter {
+export interface PandocMarkWriter {
   open: string | PandocMarkWriterFn;
   close: string | PandocMarkWriterFn;
   mixable?: boolean;

@@ -1,8 +1,9 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { IPandocToken } from 'api/pandoc';
+import { PandocAstToken } from 'api/pandoc';
 
 const CODE_TEXT = 1;
 
@@ -21,7 +22,7 @@ const extension: Extension = {
           {
             token: 'Code',
             mark: 'code',
-            getText: (tok: IPandocToken) => tok.c[CODE_TEXT],
+            getText: (tok: PandocAstToken) => tok.c[CODE_TEXT],
           },
         ],
         to: {

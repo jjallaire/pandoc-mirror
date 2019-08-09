@@ -1,5 +1,6 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+
 import { Command, insertNode } from 'api/command';
 import { Extension } from 'api/extension';
 

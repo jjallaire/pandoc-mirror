@@ -2,9 +2,10 @@ import { wrappingInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
+
 import { toggleList, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { IPandocToken } from 'api/pandoc';
+import { PandocAstToken } from 'api/pandoc';
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
@@ -100,10 +101,10 @@ const extension: Extension = {
           {
             token: 'OrderedList',
             list: 'ordered_list',
-            getAttrs: (tok: IPandocToken) => ({
+            getAttrs: (tok: PandocAstToken) => ({
               order: tok.c[LIST_ORDER][ORDER_START],
             }),
-            getChildren: (tok: IPandocToken) => tok.c[LIST_CHILDREN],
+            getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
           },
         ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

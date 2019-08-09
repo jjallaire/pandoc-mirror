@@ -2,11 +2,12 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
-import { IPandocToken } from 'api/pandoc';
-import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from 'api/ui';
+import { PandocAstToken } from 'api/pandoc';
+import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -41,14 +42,14 @@ const extension: Extension = {
           {
             token: 'Link',
             mark: 'link',
-            getAttrs: (tok: IPandocToken) => {
+            getAttrs: (tok: PandocAstToken) => {
               const target = tok.c[LINK_TARGET];
               return {
                 href: target[TARGET_URL],
                 title: target[TARGET_TITLE] || null,
               };
             },
-            getChildren: (tok: IPandocToken) => tok.c[LINK_CHILDREN],
+            getChildren: (tok: PandocAstToken) => tok.c[LINK_CHILDREN],
           },
         ],
         to: {
@@ -70,12 +71,12 @@ const extension: Extension = {
     },
   ],
 
-  commands: (schema: Schema, ui: IEditorUI) => {
+  commands: (schema: Schema, ui: EditorUI) => {
     return [new Command('link', ['Shift-Mod-k', 'Shift-Mod-Z'], linkCommand(schema.marks.link, ui.onEditLink))];
   },
 };
 
-function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
+function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
     // if there is no contiguous selection and no existing link mark active
     // then the command should be disabled (unknown what the link target is)
@@ -91,7 +92,7 @@ function linkCommand(markType: MarkType, onEditLink: ILinkEditor) {
       }
 
       // show edit ui
-      onEditLink(link as ILinkProps).then((result: ILinkEditResult | null) => {
+      onEditLink(link as LinkProps).then((result: LinkEditResult | null) => {
         if (result) {
           // determine the range we will edit (if the selection is empty
           // then expand from the cursor to discover the mark range,

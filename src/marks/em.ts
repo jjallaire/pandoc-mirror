@@ -1,4 +1,5 @@
 import { Schema } from 'prosemirror-model';
+
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
 

@@ -1,4 +1,5 @@
 import { ellipsis, emDash, smartQuotes } from 'prosemirror-inputrules';
+
 import { Extension } from 'api/extension';
 
 const extension: Extension = {

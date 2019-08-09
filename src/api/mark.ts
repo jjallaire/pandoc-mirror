@@ -1,13 +1,14 @@
 import { Mark, MarkSpec, MarkType, ResolvedPos } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
-import { IPandocMarkWriter, IPandocReader } from './pandoc';
 
-export interface IMark {
+import { PandocMarkWriter, PandocAstReader } from './pandoc';
+
+export interface PandocMark {
   name: string;
   spec: MarkSpec;
   pandoc: {
-    from: IPandocReader[];
-    to: IPandocMarkWriter;
+    from: PandocAstReader[];
+    to: PandocMarkWriter;
   };
 }
 

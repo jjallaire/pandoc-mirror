@@ -3,6 +3,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+
 import { CommandFn } from 'api/command';
 import { Extension } from 'api/extension';
 
