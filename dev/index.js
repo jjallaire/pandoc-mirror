@@ -40,7 +40,8 @@ let editor = new PandocMirror.Editor({
   options: {
     autoFocus: true
   },
-  hooks
+  hooks,
+  devtools: window.ProseMirrorDevTools
 });
 
 // layout ui

@@ -72,6 +72,7 @@ export interface EditorConfig {
   options?: EditorOptions;
   hooks?: EditorHooks;
   extensions?: Extension[];
+  devtools?: EditorDevTools;
 }
 
 export interface EditorOptions {
@@ -80,6 +81,11 @@ export interface EditorOptions {
 
 export interface EditorHooks {
   isEditable?: () => boolean;
+}
+
+// https://github.com/d4rkr00t/prosemirror-dev-tools
+export interface EditorDevTools {
+  applyDevTools: (view: EditorView, stateClass: any) => void;
 }
 
 export {
@@ -144,6 +150,11 @@ export class Editor {
       state: this.state,
       dispatchTransaction: this.dispatchTransaction.bind(this),
     });
+
+    // apply devtools if they are available
+    if (config.devtools) {
+      config.devtools.applyDevTools(this.view, { EditorState });
+    }
 
     // set some css invariants on the editor and it's container
     this.parent.style.overflowY = 'scroll';
