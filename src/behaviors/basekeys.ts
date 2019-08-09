@@ -2,9 +2,9 @@ import { baseKeymap, joinDown, joinUp, lift, selectParentNode } from 'prosemirro
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { CommandFn } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 
-const extension: IExtension = {
+const extension: Extension = {
   plugins: () => {
     const keys: { [key: string]: CommandFn } = {};
     function bindKey(key: string, cmd: CommandFn) {

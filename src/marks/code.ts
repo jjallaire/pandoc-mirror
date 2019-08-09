@@ -1,12 +1,12 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { MarkCommand } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
 const CODE_TEXT = 1;
 
-const extension: IExtension = {
+const extension: Extension = {
   marks: [
     {
       name: 'code',

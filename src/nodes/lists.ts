@@ -3,7 +3,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { toggleList, NodeCommand } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
 const LIST_ORDER = 0;
@@ -18,7 +18,7 @@ class ListCommand extends NodeCommand {
   }
 }
 
-const extension: IExtension = {
+const extension: Extension = {
   nodes: [
     {
       name: 'list_item',

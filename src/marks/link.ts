@@ -3,7 +3,7 @@ import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Command } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
 import { IPandocToken } from 'api/pandoc';
 import { IEditorUI, ILinkEditor, ILinkEditResult, ILinkProps } from 'api/ui';
@@ -13,7 +13,7 @@ const TARGET_TITLE = 1;
 const LINK_CHILDREN = 1;
 const LINK_TARGET = 2;
 
-const extension: IExtension = {
+const extension: Extension = {
   marks: [
     {
       name: 'link',

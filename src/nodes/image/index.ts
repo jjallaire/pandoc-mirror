@@ -2,7 +2,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
 import { IPandocToken } from 'api/pandoc';
 import { IEditorUI, IImageEditor } from 'api/ui';
@@ -16,7 +16,7 @@ const IMAGE_ATTR = 0;
 const IMAGE_ALT = 1;
 const IMAGE_TARGET = 2;
 
-const extension: IExtension = {
+const extension: Extension = {
   nodes: [
     {
       name: 'image',

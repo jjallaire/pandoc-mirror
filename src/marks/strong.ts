@@ -1,8 +1,8 @@
 import { Schema } from 'prosemirror-model';
 import { MarkCommand } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 
-const extension: IExtension = {
+const extension: Extension = {
   marks: [
     {
       name: 'strong',

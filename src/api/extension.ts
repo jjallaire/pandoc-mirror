@@ -1,13 +1,14 @@
 import { InputRule } from 'prosemirror-inputrules';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
+
 import { Command, CommandFn } from './command';
 import { IMark } from './mark';
 import { INode } from './node';
 import { IEditorUI } from './ui';
 import { IPandocReader, IPandocMarkWriter, PandocNodeWriterFn } from './pandoc';
 
-export interface IExtension {
+export interface Extension {
   marks?: IMark[];
   nodes?: INode[];
   keymap?: (schema: Schema, mac: boolean) => { [key: string]: CommandFn };
@@ -17,22 +18,22 @@ export interface IExtension {
 }
 
 export class ExtensionManager {
-  private extensions: IExtension[];
+  private extensions: Extension[];
 
   public constructor() {
     this.extensions = [];
   }
 
-  public register(extensions: IExtension[]): void {
+  public register(extensions: Extension[]): void {
     this.extensions.push(...extensions);
   }
 
   public marks(): IMark[] {
-    return this.collect<IMark>((extension: IExtension) => extension.marks);
+    return this.collect<IMark>((extension: Extension) => extension.marks);
   }
 
   public nodes(): INode[] {
-    return this.collect<INode>((extension: IExtension) => extension.nodes);
+    return this.collect<INode>((extension: Extension) => extension.nodes);
   }
 
   public pandocReaders(): IPandocReader[] {
@@ -76,7 +77,7 @@ export class ExtensionManager {
   }
 
   public commands(schema: Schema, ui: IEditorUI): Command[] {
-    return this.collect<Command>((extension: IExtension) => {
+    return this.collect<Command>((extension: Extension) => {
       if (extension.commands) {
         return extension.commands(schema, ui);
       } else {
@@ -86,7 +87,7 @@ export class ExtensionManager {
   }
 
   public plugins(schema: Schema, ui: IEditorUI): Plugin[] {
-    return this.collect<Plugin>((extension: IExtension) => {
+    return this.collect<Plugin>((extension: Extension) => {
       if (extension.plugins) {
         return extension.plugins(schema, ui);
       } else {
@@ -96,7 +97,7 @@ export class ExtensionManager {
   }
 
   public inputRules(schema: Schema): InputRule[] {
-    return this.collect<InputRule>((extension: IExtension) => {
+    return this.collect<InputRule>((extension: Extension) => {
       if (extension.inputRules) {
         return extension.inputRules(schema);
       } else {
@@ -105,7 +106,7 @@ export class ExtensionManager {
     });
   }
 
-  private collect<T>(collector: (extension: IExtension) => T[] | undefined) {
+  private collect<T>(collector: (extension: Extension) => T[] | undefined) {
     let items: T[] = [];
     this.extensions.forEach(extension => {
       const collected: T[] | undefined = collector(extension);

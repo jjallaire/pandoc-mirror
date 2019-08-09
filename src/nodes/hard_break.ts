@@ -4,9 +4,9 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { CommandFn } from 'api/command';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 
-const extension: IExtension = {
+const extension: Extension = {
   nodes: [
     {
       name: 'hard_break',

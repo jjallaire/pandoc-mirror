@@ -1,9 +1,9 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { IExtension } from 'api/extension';
+import { Extension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
-const extension: IExtension = {
+const extension: Extension = {
   nodes: [
     {
       name: 'text',

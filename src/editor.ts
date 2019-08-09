@@ -41,7 +41,7 @@ import { Command, CommandFn } from './api/command';
 import { IMark } from './api/mark';
 import { INode } from './api/node';
 import { IEditorUI } from './api/ui';
-import { ExtensionManager, IExtension } from 'api/extension';
+import { ExtensionManager, Extension } from 'api/extension';
 
 import { IPandocEngine } from './pandoc/engine';
 import { markdownFromDoc } from './pandoc/from_doc';
@@ -73,7 +73,7 @@ export interface IEditorConfig {
   ui: IEditorUI;
   options?: IEditorOptions;
   hooks?: IEditorHooks;
-  extensions?: IExtension[];
+  extensions?: Extension[];
 }
 
 export interface IEditorOptions {
