@@ -6,7 +6,7 @@
 // TODO: parse and forward Attr for elements that support them (results in id, class,
 // and data-attribs in PM schema)
 
-// TOOD: error handling for pandoc
+// TOOD: error handling for pandoc engine
 
 // TODO: handle duplicate ids when block elements are split (required once
 //       we support ids on divs)
@@ -14,6 +14,7 @@
 //       though this could be implemented via node decorator?
 
 // TODO: support pandoc {} syntax for fenced code regions
+// TODO: embedeed codemirror editor
 
 // TODO: support for image figures (where alt text is displayed in a <p> below the image).
 // note that alt text supports arbitrary markup so need a structured way to allow
@@ -21,11 +22,8 @@
 
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
-// TODO: add import ordering to tsformat
-
 // TODO: clarify whether to make prosemirror types part of deps
 
-// jsdoc comments for api
 // editor should take both an array of extensions as well as a keymap
 // (do we need names for keymap entries in that case?)
 
