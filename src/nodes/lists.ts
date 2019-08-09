@@ -2,7 +2,7 @@ import { wrappingInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
-import { commandToggleList, NodeCommand } from 'api/command';
+import { toggleList, NodeCommand } from 'api/command';
 import { IExtension } from 'api/extension';
 import { IPandocToken } from 'api/pandoc';
 
@@ -14,7 +14,7 @@ const ORDER_START = 0;
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
-    super(name, null, listType, {}, commandToggleList(listType, listItemType));
+    super(name, null, listType, {}, toggleList(listType, listItemType));
   }
 }
 

@@ -62,23 +62,23 @@ export class NodeCommand extends Command {
 
 export class ListCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, listType: NodeType, listItemType: NodeType) {
-    super(name, keymap, listType, {}, commandToggleList(listType, listItemType));
+    super(name, keymap, listType, {}, toggleList(listType, listItemType));
   }
 }
 
 export class BlockCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, blockType: NodeType, toggleType: NodeType, attrs = {}) {
-    super(name, keymap, blockType, attrs, commandToggleBlockType(blockType, toggleType, attrs));
+    super(name, keymap, blockType, attrs, toggleBlockType(blockType, toggleType, attrs));
   }
 }
 
 export class WrapCommand extends NodeCommand {
   constructor(name: string, keymap: string[] | null, wrapType: NodeType) {
-    super(name, keymap, wrapType, {}, commandToggleWrap(wrapType));
+    super(name, keymap, wrapType, {}, toggleWrap(wrapType));
   }
 }
 
-export function commandToggleList(listType: NodeType, itemType: NodeType): CommandFn {
+export function toggleList(listType: NodeType, itemType: NodeType): CommandFn {
   function isList(node: Node, schema: Schema) {
     return (
       node.type === schema.nodes.bullet_list ||
@@ -119,7 +119,7 @@ export function commandToggleList(listType: NodeType, itemType: NodeType): Comma
   };
 }
 
-export function commandToggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}): CommandFn {
+export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}): CommandFn {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void) => {
     const isActive = nodeIsActive(state, type, attrs);
 
@@ -131,7 +131,7 @@ export function commandToggleBlockType(type: NodeType, toggletype: NodeType, att
   };
 }
 
-export function commandToggleWrap(type: NodeType): CommandFn {
+export function toggleWrap(type: NodeType): CommandFn {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
     const isActive = nodeIsActive(state, type);
 
@@ -143,7 +143,7 @@ export function commandToggleWrap(type: NodeType): CommandFn {
   };
 }
 
-export function commandInsertNode(nodeType: NodeType, attrs = {}): CommandFn {
+export function insertNode(nodeType: NodeType, attrs = {}): CommandFn {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void) => {
     if (!canInsertNode(state, nodeType)) {
       return false;

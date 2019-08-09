@@ -27,12 +27,6 @@ export interface IPandocToken {
   c: any;
 }
 
-export type PandocMarkWriterFn = (
-  state: MarkdownSerializerState,
-  mark: Mark,
-  parent: Fragment,
-  index: number,
-) => string;
 export interface IPandocMarkWriter {
   open: string | PandocMarkWriterFn;
   close: string | PandocMarkWriterFn;
@@ -40,6 +34,14 @@ export interface IPandocMarkWriter {
   escape?: boolean;
   expelEnclosingWhitespace?: boolean;
 }
+
+export type PandocMarkWriterFn = (
+  state: MarkdownSerializerState,
+  mark: Mark,
+  parent: Fragment,
+  index: number,
+) => string;
+
 
 export type PandocNodeWriterFn = (
   state: MarkdownSerializerState,

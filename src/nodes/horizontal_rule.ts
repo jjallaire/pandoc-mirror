@@ -1,6 +1,6 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { Command, commandInsertNode } from 'api/command';
+import { Command, insertNode } from 'api/command';
 import { IExtension } from 'api/extension';
 
 const extension: IExtension = {
@@ -30,7 +30,7 @@ const extension: IExtension = {
   ],
 
   commands: (schema: Schema) => {
-    return [new Command('horizontal_rule', ['Mod-_'], commandInsertNode(schema.nodes.horizontal_rule))];
+    return [new Command('horizontal_rule', ['Mod-_'], insertNode(schema.nodes.horizontal_rule))];
   },
 };
 
