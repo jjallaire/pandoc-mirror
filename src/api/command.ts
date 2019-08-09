@@ -4,6 +4,7 @@ import { liftListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
 import { EditorView } from 'prosemirror-view';
+
 import { markIsActive } from './mark';
 import { canInsertNode, nodeIsActive } from './node';
 
