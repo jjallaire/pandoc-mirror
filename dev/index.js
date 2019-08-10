@@ -37,6 +37,9 @@ const markdown = document.createElement('pre')
 markdown.id = 'markdown'
 document.body.append(markdown)
 
+// initialize layout
+const layout = initLayout(container, markdown)
+
 // create editor
 let editor = new PandocMirror.Editor({
   parent: container, 
@@ -47,47 +50,6 @@ let editor = new PandocMirror.Editor({
   },
   hooks,
   devtools: window.ProseMirrorDevTools
-});
-
-// layout ui
-const layout = $('#layout').w2layout({
-  name: 'layout',
-  padding: 0,
-  panels: [
-    { 
-      type: 'main', 
-      overflow: 'scroll',
-      toolbar: { items: [] },
-      content: {
-        render: function() {
-          $(container).appendTo($(this.box))
-        }
-      }
-    },
-    {
-      type: 'right',
-      size: 400,
-      style: 'border-left: 1px solid silver; background-color: #fafafa;',
-      resizable: true,
-      overflow: 'scroll',
-      content: {
-        render: function() {
-          $(markdown).appendTo($(this.box))
-        }
-      },
-      toolbar: { 
-        items: [
-          { type: 'break '},
-          { type: 'html',
-            html: '&nbsp;Markdown' },
-          { type: 'spacer' },
-          { type: 'button',
-            icon: 'fa fa-close' },
-        ],
-        style: 'border-left: 1px solid silver;'
-      },
-    }
-  ]
 });
 
 // initialize toolbar
