@@ -47,16 +47,36 @@ let editor = new PandocMirror.Editor({
 // layout ui
 const layout = $('#layout').w2layout({
   name: 'layout',
-  panels: [{ 
-    type: 'main', 
-    overflow: 'scroll',
-    toolbar: { items: [] },
-    content: {
-      render: function() {
-        $(container).appendTo($(this.box))
+  padding: 0,
+  panels: [
+    { 
+      type: 'main', 
+      overflow: 'scroll',
+      toolbar: { items: [] },
+      content: {
+        render: function() {
+          $(container).appendTo($(this.box))
+        }
       }
+    },
+    {
+      type: 'right',
+      size: 400,
+      style: 'border-left: 1px solid silver; background-color: #fafafa;',
+      resizable: true,
+      overflow: 'scroll',
+      toolbar: { 
+        items: [
+          { type: 'break '},
+          { type: 'html',
+            html: '&nbsp;Markdown' },
+          { type: 'spacer' },
+          { type: 'button',
+            icon: 'fa fa-close' },
+        ],
+        style: 'border-left: 1px solid silver;'
+      },
     }
-  },
   ]
 });
 
