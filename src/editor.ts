@@ -56,6 +56,7 @@ import markStrong from './marks/strong';
 import nodeBlockquote from './nodes/blockquote';
 import nodeCodeBlock from './nodes/code_block';
 import nodeHardBreak from './nodes/hard_break';
+import nodeSoftBreak from './nodes/soft_break';
 import nodeHeading from './nodes/heading';
 import nodeHorizontalRule from './nodes/horizontal_rule';
 import nodeImage from './nodes/image/index';
@@ -301,6 +302,7 @@ export class Editor {
       nodeCodeBlock,
       nodeLists,
       nodeHardBreak,
+      nodeSoftBreak,
       nodeImage,
     ]);
 
