@@ -18,6 +18,7 @@ function initLayout(container, markdown) {
       },
       {
         type: 'right',
+        hidden: true,
         size: 400,
         style: 'border-left: 1px solid silver; background-color: #fafafa;',
         resizable: true,

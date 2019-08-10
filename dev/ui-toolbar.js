@@ -77,7 +77,8 @@ const initToolbar = function(toolbar, editor) {
   toolbar.add({
     type: 'button',
     id: 'show_markdown',
-    hidden: true,
+    tooltip: 'Show markdown',
+    hidden: false,
     icon: 'fa fa-angle-double-left',
     onClick: () => { 
       layout.show('right');
