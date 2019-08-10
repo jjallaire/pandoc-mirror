@@ -34,7 +34,9 @@ function initLayout(container, markdown) {
               html: '&nbsp;Markdown' },
             { type: 'spacer' },
             { type: 'button',
-              icon: 'fa fa-close' },
+              icon: 'fa fa-angle-double-right',
+              onClick: () => layout.sizeTo('right', 20)
+             },
           ],
           style: 'border-left: 1px solid silver;'
         },
