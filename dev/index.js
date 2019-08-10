@@ -32,6 +32,11 @@ const container = document.createElement('div')
 container.id = 'container'
 document.body.append(container)
 
+// create markdown container
+const markdown = document.createElement('pre')
+markdown.id = 'markdown'
+document.body.append(markdown)
+
 // create editor
 let editor = new PandocMirror.Editor({
   parent: container, 
@@ -65,6 +70,11 @@ const layout = $('#layout').w2layout({
       style: 'border-left: 1px solid silver; background-color: #fafafa;',
       resizable: true,
       overflow: 'scroll',
+      content: {
+        render: function() {
+          $(markdown).appendTo($(this.box))
+        }
+      },
       toolbar: { 
         items: [
           { type: 'break '},
@@ -84,11 +94,10 @@ const layout = $('#layout').w2layout({
 const toolbar = layout.get('main').toolbar
 initToolbar(toolbar, editor)
 
-// subscribe to updates
+// update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
-  console.log(editor.getMarkdown());
+  $(markdown).text((editor.getMarkdown()));
 })
-
 
 // get content and load it into the editor
 axios.get('content.md') .then(result => {

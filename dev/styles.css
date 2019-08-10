@@ -8,7 +8,7 @@
   bottom: 0;
 }
 
-#container {
+#container, #markdown {
   position: absolute;
   left: 0;
   right: 0;
@@ -17,6 +17,12 @@
   padding: 8px;
   background-color: white;
 }
+
+#markdown {
+  margin: 0;
+  font-size: 0.8em;
+}
+
 
 .w2ui-toolbar table.w2ui-button .w2ui-tb-image > span {
   color: grey;
