@@ -1,12 +1,14 @@
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TODO: debugging tools (selected node/mark view, markdown output view)
+// TODO: debugging tools (markdown output view)
 
 // TODO: parse and forward Attr for elements that support them (results in id, class,
 // and data-attribs in PM schema)
 
 // TOOD: error handling for pandoc engine
+
+// TODO: consider emiting pandoc ast
 
 // TODO: handle duplicate ids when block elements are split (required once
 //       we support ids on divs)
@@ -24,8 +26,7 @@
 
 // TODO: clarify whether to make prosemirror types part of deps
 
-// editor should take both an array of extensions as well as a keymap
-// (do we need names for keymap entries in that case?)
+// TODO: allow overriding of editor keys
 
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
