@@ -17,8 +17,7 @@ const extension: Extension = {
       pandoc: {
         from: [
           { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
-          { token: 'Space', text: true, getText: () => ' ' },
-          { token: 'SoftBreak', text: true, getText: () => ' ' },
+          { token: 'Space', text: true, getText: () => ' ' }
         ],
         to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.text(node.text as string);
