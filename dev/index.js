@@ -54,7 +54,7 @@ let editor = new PandocMirror.Editor({
 
 // initialize toolbar
 const toolbar = layout.get('main').toolbar
-initToolbar(toolbar, editor)
+initToolbar(toolbar, editor, layout)
 
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {

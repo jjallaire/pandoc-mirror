@@ -35,7 +35,10 @@ function initLayout(container, markdown) {
             { type: 'spacer' },
             { type: 'button',
               icon: 'fa fa-angle-double-right',
-              onClick: () => layout.sizeTo('right', 20)
+              onClick: () => { 
+                layout.hide('right')
+                layout.get('main').toolbar.show('show_markdown')
+              }
              },
           ],
           style: 'border-left: 1px solid silver;'

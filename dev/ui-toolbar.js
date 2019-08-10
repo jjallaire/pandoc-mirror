@@ -50,6 +50,7 @@ const initToolbar = function(toolbar, editor) {
 
   // initialize toolbar
   const kBreak = [ { type: 'break' } ]
+  const kSpacer = [ { type: 'spacer' } ]
   toolbar.add(button('undo', 'fa-undo'))
   toolbar.add(button('redo', 'fa-repeat'))
   toolbar.add(kBreak)
@@ -72,6 +73,17 @@ const initToolbar = function(toolbar, editor) {
   toolbar.add(button('blockquote', 'fa-quote-right')),
   toolbar.add(kBreak)
   toolbar.add(button('image', 'fa-image'))
+  toolbar.add(kSpacer)
+  toolbar.add({
+    type: 'button',
+    id: 'show_markdown',
+    hidden: true,
+    icon: 'fa fa-angle-double-left',
+    onClick: () => { 
+      layout.show('right');
+      toolbar.hide('show_markdown')
+    }
+  })
 
   // click handlers for radio menus
   toolbar.onClick = (event) => {
