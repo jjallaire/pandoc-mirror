@@ -12,7 +12,7 @@ const extension: Extension = {
       name: 'soft_break',
       spec: {
         inline: true,
-        content: "text",
+        content: "text*",
         group: 'inline',
         parseDOM: [{tag: "span[class='soft-break']"}],
         toDOM() {
