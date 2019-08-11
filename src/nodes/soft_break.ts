@@ -20,14 +20,14 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'SoftBreak',
             node: 'soft_break',
             getText: (tok: PandocAstToken) => ' '
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           state.text('\n');
         },
       },

@@ -17,8 +17,8 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        ast_reader: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderInline(node);
           state.closeBlock(node);
         },

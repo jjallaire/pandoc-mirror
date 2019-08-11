@@ -38,7 +38,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Link',
             mark: 'link',
@@ -52,7 +52,7 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[LINK_CHILDREN],
           },
         ],
-        to: {
+        markdown_writer: {
           open(_state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             return isPlainURL(mark, parent, index, 1) ? '<' : '[';
           },

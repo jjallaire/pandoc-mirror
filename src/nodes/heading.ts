@@ -39,7 +39,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Header',
             block: 'heading',
@@ -49,7 +49,7 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(state.repeat('#', node.attrs.level) + ' ');
           state.renderInline(node);
           state.closeBlock(node);

@@ -32,7 +32,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderContent(node);
         },
       },
@@ -55,13 +55,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'BulletList',
             list: 'bullet_list',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
         },
       },
@@ -97,7 +97,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'OrderedList',
             list: 'ordered_list',
@@ -107,7 +107,7 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           const start = node.attrs.order || 1;
           const maxW = String(start + node.childCount - 1).length;
           const space = state.repeat(' ', maxW + 2);

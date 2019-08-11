@@ -7,8 +7,8 @@ export interface PandocMark {
   name: string;
   spec: MarkSpec;
   pandoc: {
-    from: PandocAstReader[];
-    to: PandocMarkWriter;
+    ast_reader: PandocAstReader[];
+    markdown_writer: PandocMarkWriter;
   };
 }
 

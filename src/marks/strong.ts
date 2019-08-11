@@ -21,13 +21,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Strong',
             mark: 'strong',
           },
         ],
-        to: {
+        markdown_writer: {
           open: '**',
           close: '**',
           mixable: true,

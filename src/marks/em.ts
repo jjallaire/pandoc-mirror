@@ -18,13 +18,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Emph',
             mark: 'em',
           },
         ],
-        to: {
+        markdown_writer: {
           open: '*',
           close: '*',
           mixable: true,

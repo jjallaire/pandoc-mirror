@@ -21,13 +21,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'LineBreak',
             node: 'hard_break',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           for (let i = index + 1; i < parent.childCount; i++) {
             if (parent.child(i).type !== node.type) {
               state.write('  \n');

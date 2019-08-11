@@ -39,11 +39,11 @@ export class ExtensionManager {
   public pandocAstReaders(): PandocAstReader[] {
     const readers: PandocAstReader[] = [];
     this.pandocMarks().forEach((mark: PandocMark) => {
-      readers.push(...mark.pandoc.from);
+      readers.push(...mark.pandoc.ast_reader);
     });
     this.pandocNodes().forEach((node: PandocNode) => {
-      if (node.pandoc.from) {
-        readers.push(...node.pandoc.from);
+      if (node.pandoc.ast_reader) {
+        readers.push(...node.pandoc.ast_reader);
       }
     });
 
@@ -53,7 +53,7 @@ export class ExtensionManager {
   public pandocMarkWriters(): { [key: string]: PandocMarkWriter } {
     const writers: { [key: string]: PandocMarkWriter } = {};
     this.pandocMarks().forEach((mark: PandocMark) => {
-      writers[mark.name] = mark.pandoc.to;
+      writers[mark.name] = mark.pandoc.markdown_writer;
     });
     return writers;
   }
@@ -61,7 +61,7 @@ export class ExtensionManager {
   public pandocNodeWriters(): { [key: string]: PandocNodeWriterFn } {
     const writers: { [key: string]: PandocNodeWriterFn } = {};
     this.pandocNodes().forEach((node: PandocNode) => {
-      writers[node.name] = node.pandoc.to;
+      writers[node.name] = node.pandoc.markdown_writer;
     });
     return writers;
   }

@@ -36,7 +36,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'CodeBlock',
             block: 'code_block',
@@ -47,7 +47,7 @@ const extension: Extension = {
             getText: (tok: PandocAstToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write('```' + (node.attrs.params || '') + '\n');
           state.text(node.textContent, false);
           state.ensureNewLine();

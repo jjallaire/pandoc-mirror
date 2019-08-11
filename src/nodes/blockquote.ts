@@ -18,13 +18,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'BlockQuote',
             block: 'blockquote',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.wrapBlock('> ', undefined, node, () => state.renderContent(node));
         },
       },

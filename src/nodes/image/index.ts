@@ -58,7 +58,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Image',
             node: 'image',
@@ -74,7 +74,7 @@ const extension: Extension = {
             },
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(
             '![' +
               state.esc(node.attrs.alt || '') +

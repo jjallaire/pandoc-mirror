@@ -18,14 +18,14 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'Code',
             mark: 'code',
             getText: (tok: PandocAstToken) => tok.c[CODE_TEXT],
           },
         ],
-        to: {
+        markdown_writer: {
           open(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
             return backticksFor(parent.child(index), -1);
           },

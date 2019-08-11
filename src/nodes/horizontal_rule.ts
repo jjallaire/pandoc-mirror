@@ -16,13 +16,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           {
             token: 'HorizontalRule',
             node: 'horizontal_rule',
           },
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');
           state.closeBlock(node);
         },

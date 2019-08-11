@@ -15,11 +15,11 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        from: [
+        ast_reader: [
           { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
           { token: 'Space', text: true, getText: () => ' ' }
         ],
-        to: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
+        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.text(node.text as string);
         },
       },
