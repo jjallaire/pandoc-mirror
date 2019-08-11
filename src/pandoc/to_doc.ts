@@ -52,7 +52,7 @@ class Parser {
         if (reader.pandocAttr !== undefined) {
           const pandocAttr = tok.c[reader.pandocAttr as number];
           attrs.id = pandocAttr[0] || undefined;
-          attrs.class = pandocAttr[1].length > 0 ? pandocAttr[1].join(' ') : undefined;
+          attrs.class = pandocAttr[1];
         }
         return attrs;
       };

@@ -30,7 +30,7 @@ const extension: Extension = {
           alt: { default: null },
           title: { default: null },
           id: { default: null },
-          class: { default: null },
+          class: { default: [] },
         },
         group: 'inline',
         draggable: true,
@@ -39,18 +39,22 @@ const extension: Extension = {
             tag: 'img[src]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
+              const clz = el.getAttribute('class');
               return {
                 src: el.getAttribute('src'),
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
                 id: el.getAttribute('id') || null,
-                class: el.getAttribute('class') || null,
+                class: clz ? clz.split(/\s+/) : [],
               };
             },
           },
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['img', node.attrs];
+          return ['img', { 
+            ...node.attrs,
+            class: node.attrs.class ? node.attrs.class.join(' ') : null
+          }];
         },
       },
       pandoc: {
@@ -83,13 +87,13 @@ const extension: Extension = {
             state.write('{');
             if (node.attrs.id) {
               state.write('#' + state.esc(node.attrs.id));
-              if (node.attrs.class) {
+              if (node.attrs.class.length > 0) {
                 state.write(' ');
               }
             }
             if (node.attrs.class) {
-              const classes = state.esc(node.attrs.class).split(' ').map((clz : string) => '.' + clz);
-              state.write(classes.join(' '));
+              const classes = node.attrs.class.map((clz : string) => '.' + clz);
+              state.write(state.esc(classes.join(' ')));
             }
             state.write('}');
           }
