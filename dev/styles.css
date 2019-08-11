@@ -18,6 +18,10 @@
   background-color: white;
 }
 
+#container {
+  padding-top: 0;
+}
+
 #markdown {
   margin: 0;
   font-size: 0.8em;
