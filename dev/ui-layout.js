@@ -18,7 +18,7 @@ function initLayout(container, markdown) {
       },
       {
         type: 'right',
-        size: 400,
+        size: 450,
         style: 'border-left: 1px solid silver; background-color: #fafafa;',
         resizable: true,
         overflow: 'scroll',
