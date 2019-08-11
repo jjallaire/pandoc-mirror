@@ -88,7 +88,7 @@ const extension: Extension = {
         toDOM(node) {
           const attrs: { [key: string]: string } = {};
           if (node.attrs.order !== 1) {
-            attrs.start = node.attrs.order[LIST_ATTRIB_ORDER];
+            attrs.start = node.attrs.order;
           }
           if (node.attrs.tight) {
             attrs['data-tight'] = 'true';
