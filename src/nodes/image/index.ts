@@ -2,7 +2,7 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 
-import { Command } from 'api/command';
+import { Command, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
 import { PandocAstToken } from 'api/pandoc';
@@ -10,6 +10,7 @@ import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
+import { write } from 'fs';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -78,6 +79,20 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
+          if (node.attrs.id || node.attrs.class) {
+            state.write('{');
+            if (node.attrs.id) {
+              state.write('#' + state.esc(node.attrs.id));
+              if (node.attrs.class) {
+                state.write(' ');
+              }
+            }
+            if (node.attrs.class) {
+              const classes = state.esc(node.attrs.class).split(' ').map((clz : string) => '.' + clz);
+              state.write(classes.join(' '));
+            }
+            state.write('}');
+          }
         },
       },
     },
