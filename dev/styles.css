@@ -21,9 +21,15 @@
 #markdown {
   margin: 0;
   font-size: 0.8em;
+  background-color: #fafafa;
 }
 
 
 .w2ui-toolbar table.w2ui-button .w2ui-tb-image > span {
   color: grey;
+}
+
+#tb_layout_right_toolbar_item_markdown_caption {
+  color: rgb(54, 55, 85);
+  font-weight: 600;
 }

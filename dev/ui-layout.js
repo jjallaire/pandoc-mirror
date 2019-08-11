@@ -31,7 +31,9 @@ function initLayout(container, markdown) {
           items: [
             { type: 'break '},
             { type: 'html',
-              html: '&nbsp;Markdown' },
+              id: 'markdown_caption',
+              style: 'color: rgb(54, 55, 85); font-weight: 600;',
+              html: '&nbsp;Preview' },
             { type: 'spacer' },
             { type: 'button',
               icon: 'fa fa-angle-double-right',
