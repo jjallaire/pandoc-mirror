@@ -22,7 +22,7 @@ This is a link to [Google](https://www.google.com)
 
 This is an image:
 
-![](google.png){#myImage .foo .bar}
+![](google.png){#myImage .foo .bar width=100 height=200}
 
 ```r
 Here is a code block.

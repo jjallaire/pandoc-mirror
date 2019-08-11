@@ -1,6 +1,10 @@
 import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
 import { PandocEngine, PandocAstReader, PandocAstToken } from 'api/pandoc';
 
+const PANDOC_ATTR_ID = 0;
+const PANDOC_ATTR_CLASSES = 1;
+const PANDOC_ATTR_KEYVAULE = 2;
+
 export function markdownToDoc(
   markdown: string,
   schema: Schema,
@@ -51,8 +55,9 @@ class Parser {
         const attrs = reader.getAttrs ? reader.getAttrs(tok) : {};
         if (reader.pandocAttr !== undefined) {
           const pandocAttr = tok.c[reader.pandocAttr as number];
-          attrs.id = pandocAttr[0] || undefined;
-          attrs.classes = pandocAttr[1];
+          attrs.id = pandocAttr[PANDOC_ATTR_ID] || undefined;
+          attrs.classes = pandocAttr[PANDOC_ATTR_CLASSES];
+          attrs.keyvalue = pandocAttr[PANDOC_ATTR_KEYVAULE];
         }
         return attrs;
       };

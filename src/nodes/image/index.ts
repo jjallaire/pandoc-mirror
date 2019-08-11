@@ -4,13 +4,19 @@ import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 
 import { Command, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { canInsertNode } from 'api/node';
+import { 
+  canInsertNode, 
+  nodeAttrSpec, 
+  nodeAttrParseDOM, 
+  nodeAttrToDOM, 
+  nodeAttrWriteMarkdown 
+} from 'api/node';
 import { PandocAstToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
-import { write } from 'fs';
+
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -29,8 +35,7 @@ const extension: Extension = {
           src: {},
           alt: { default: null },
           title: { default: null },
-          id: { default: null },
-          classes: { default: [] },
+          ...nodeAttrSpec
         },
         group: 'inline',
         draggable: true,
@@ -44,8 +49,7 @@ const extension: Extension = {
                 src: el.getAttribute('src'),
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
-                id: el.getAttribute('id') || null,
-                classes: clz ? clz.split(/\s+/) : [],
+                ...nodeAttrParseDOM(el)
               };
             },
           },
@@ -53,7 +57,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return ['img', { 
             ...node.attrs,
-            class: node.attrs.classes ? node.attrs.classes.join(' ') : null
+            ...nodeAttrToDOM(node)
           }];
         },
       },
@@ -83,20 +87,7 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          if (node.attrs.id || node.attrs.classes) {
-            state.write('{');
-            if (node.attrs.id) {
-              state.write('#' + state.esc(node.attrs.id));
-              if (node.attrs.classes.length > 0) {
-                state.write(' ');
-              }
-            }
-            if (node.attrs.classes) {
-              const classes = node.attrs.classes.map((clz : string) => '.' + clz);
-              state.write(state.esc(classes.join(' ')));
-            }
-            state.write('}');
-          }
+          nodeAttrWriteMarkdown(state, node);
         },
       },
     },
