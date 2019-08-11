@@ -19,7 +19,7 @@ export function imageDialog(
       title: node.attrs.title,
       alt: node.attrs.alt,
       id: node.attrs.id,
-      class: node.attrs.class,
+      classes: node.attrs.classes,
     };
   } else {
     image = nodeType.create(image).attrs as ImageProps;

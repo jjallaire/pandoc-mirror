@@ -1,8 +1,6 @@
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TODO: debugging tools (markdown output view)
-
 // TODO: parse and forward Attr for elements that support them (results in id, class,
 // and data-attribs in PM schema)
 

@@ -30,7 +30,7 @@ const extension: Extension = {
           alt: { default: null },
           title: { default: null },
           id: { default: null },
-          class: { default: [] },
+          classes: { default: [] },
         },
         group: 'inline',
         draggable: true,
@@ -45,7 +45,7 @@ const extension: Extension = {
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
                 id: el.getAttribute('id') || null,
-                class: clz ? clz.split(/\s+/) : [],
+                classes: clz ? clz.split(/\s+/) : [],
               };
             },
           },
@@ -53,7 +53,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return ['img', { 
             ...node.attrs,
-            class: node.attrs.class ? node.attrs.class.join(' ') : null
+            class: node.attrs.classes ? node.attrs.classes.join(' ') : null
           }];
         },
       },
@@ -83,16 +83,16 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          if (node.attrs.id || node.attrs.class) {
+          if (node.attrs.id || node.attrs.classes) {
             state.write('{');
             if (node.attrs.id) {
               state.write('#' + state.esc(node.attrs.id));
-              if (node.attrs.class.length > 0) {
+              if (node.attrs.classes.length > 0) {
                 state.write(' ');
               }
             }
-            if (node.attrs.class) {
-              const classes = node.attrs.class.map((clz : string) => '.' + clz);
+            if (node.attrs.classes) {
+              const classes = node.attrs.classes.map((clz : string) => '.' + clz);
               state.write(state.esc(classes.join(' ')));
             }
             state.write('}');

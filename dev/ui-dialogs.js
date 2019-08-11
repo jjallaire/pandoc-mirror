@@ -48,11 +48,11 @@ const editImage = function(image) {
         { field: 'class', type: 'text' },
       ],
       buttons: null,
-      record: { ...image, class: image.class.join(' ') }, 
+      record: { ...image, class: image.classes.join(' ') }, 
       actions: {
         save: (result) => {
-          const clz = result.class ? result.class.split(/\s+/) : []
-          resolve( { ...result, class: clz })
+          const classes = result.class ? result.class.split(/\s+/) : []
+          resolve( { ...result, classes })
         }
       },
       options: {

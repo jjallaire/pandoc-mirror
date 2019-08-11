@@ -22,7 +22,7 @@ export interface ImageProps {
   title?: string;
   alt?: string;
   id?: string;
-  class?: string[];
+  classes?: string[];
 }
 
 export type ImageEditResult = ImageProps;
