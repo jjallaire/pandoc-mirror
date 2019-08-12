@@ -13,7 +13,9 @@ export const pandocAttrSpec = {
 };
 
 export function pandocAttrAvailable(attrs: any) {
-  return attrs.id || attrs.classes || attrs.keyvalue;
+  return attrs.id || 
+         (attrs.classes && attrs.classes.length > 0) || 
+         (attrs.keyvalue && attrs.keyvalue.length > 0);
 }
 
 export function pandocAttrParseDOM(el: Element) {
@@ -45,14 +47,14 @@ export function pandocAttrMarkdown(state: MarkdownSerializerState, attrs: any) {
   if (pandocAttrAvailable(attrs)) {
     md = md.concat('{');
     if (attrs.id) {
-      md = md.concat('#' + state.esc(attrs.id));
+      md = md.concat('#' + attrs.id);
       if (attrs.classes.length > 0) {
         md = md.concat(' ');
       }
     }
     if (attrs.classes) {
       const classes = attrs.classes.map((clz: string) => '.' + clz);
-      md = md.concat(state.esc(classes.join(' ')));
+      md = md.concat(classes.join(' '));
     }
     md = md.concat('}');
   }
