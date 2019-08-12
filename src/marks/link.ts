@@ -86,7 +86,7 @@ const extension: Extension = {
                   ')';
 
             if (pandocAttrAvailable(mark.attrs)) {
-              link = link.concat(pandocAttrMarkdown(state, mark.attrs));
+              link = link.concat(pandocAttrMarkdown(mark.attrs));
             }
             return link;
           },

@@ -50,7 +50,7 @@ const extension: Extension = {
           close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             let code = backticksFor(parent.child(index - 1), 1);
             if (pandocAttrAvailable(mark.attrs)) {
-              code = code.concat(pandocAttrMarkdown(state, mark.attrs));
+              code = code.concat(pandocAttrMarkdown(mark.attrs));
             }
             return code;
           },

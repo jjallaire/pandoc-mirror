@@ -18,11 +18,12 @@ export function pandocAttrAvailable(attrs: any) {
          (attrs.keyvalue && attrs.keyvalue.length > 0);
 }
 
-export function pandocAttrParseDOM(el: Element) {
-  const clz = el.getAttribute('class');
+export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
+  const pandocAttr = tok.c[index];
   return {
-    id: el.getAttribute('id') || null,
-    classes: clz ? clz.split(/\s+/) : [],
+    id: pandocAttr[PANDOC_ATTR_ID] || undefined,
+    classes: pandocAttr[PANDOC_ATTR_CLASSES],
+    keyvalue: pandocAttr[PANDOC_ATTR_KEYVAULE]
   };
 }
 
@@ -33,16 +34,15 @@ export function pandocAttrToDOM(attrs: any) {
   };
 }
 
-export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
-  const pandocAttr = tok.c[index];
+export function pandocAttrParseDOM(el: Element) {
+  const clz = el.getAttribute('class');
   return {
-    id: pandocAttr[PANDOC_ATTR_ID] || undefined,
-    classes: pandocAttr[PANDOC_ATTR_CLASSES],
-    keyvalue: pandocAttr[PANDOC_ATTR_KEYVAULE]
+    id: el.getAttribute('id') || null,
+    classes: clz ? clz.split(/\s+/) : [],
   };
 }
 
-export function pandocAttrMarkdown(state: MarkdownSerializerState, attrs: any) {
+export function pandocAttrMarkdown(attrs: any) {
   let md = '';
   if (pandocAttrAvailable(attrs)) {
     md = md.concat('{');

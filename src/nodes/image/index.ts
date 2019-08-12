@@ -88,7 +88,7 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          state.write(pandocAttrMarkdown(state, node.attrs));
+          state.write(pandocAttrMarkdown(node.attrs));
         },
       },
     },
