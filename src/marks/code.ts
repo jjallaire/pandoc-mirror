@@ -3,8 +3,17 @@ import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-mod
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { 
+  pandocAttrSpec, 
+  pandocAttrParseDOM, 
+  pandocAttrToDOM, 
+  pandocAttrMarkdown, 
+  pandocAttrReadAST, 
+  pandocAttrAvailable
+} from "api/pandoc_attr";
 import { PandocAstToken } from 'api/pandoc';
 
+const CODE_ATTR = 0;
 const CODE_TEXT = 1;
 
 const extension: Extension = {
@@ -12,9 +21,15 @@ const extension: Extension = {
     {
       name: 'code',
       spec: {
-        parseDOM: [{ tag: 'code' }],
-        toDOM() {
-          return ['code'];
+        attrs: pandocAttrSpec,
+        parseDOM: [{ 
+          tag: 'code',
+          getAttrs(dom: Node | string) {
+            return pandocAttrParseDOM(dom as Element);
+          },
+        }],
+        toDOM(mark: Mark) {
+          return ['code', pandocAttrToDOM(mark.attrs)];
         },
       },
       pandoc: {
@@ -23,14 +38,21 @@ const extension: Extension = {
             token: 'Code',
             mark: 'code',
             getText: (tok: PandocAstToken) => tok.c[CODE_TEXT],
+            getAttrs: (tok: PandocAstToken) => {
+              return pandocAttrReadAST(tok, CODE_ATTR);
+            },
           },
         ],
         markdown_writer: {
           open(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
             return backticksFor(parent.child(index), -1);
           },
-          close(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
-            return backticksFor(parent.child(index - 1), 1);
+          close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
+            let code = backticksFor(parent.child(index - 1), 1);
+            if (pandocAttrAvailable(mark.attrs)) {
+              code = code.concat(pandocAttrMarkdown(state, mark.attrs));
+            }
+            return code;
           },
         },
       },

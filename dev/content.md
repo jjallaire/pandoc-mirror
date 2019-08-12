@@ -32,4 +32,4 @@ Another line of code.
 
 > This is a blockquote. See how it runs!
 
-This is `code` text.
+This is `code`{.example} text.
