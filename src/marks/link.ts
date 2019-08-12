@@ -9,9 +9,9 @@ import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
 import { PandocAstToken } from 'api/pandoc';
 import { 
   pandocAttrSpec, 
-  pandocAttrParseDOM, 
-  pandocAttrToDOM, 
-  pandocAttrMarkdown, 
+  pandocAttrParseDom, 
+  pandocAttrToDomAttr, 
+  pandocAttrToMarkdown, 
   pandocAttrReadAST, 
   pandocAttrAvailable
 } from "api/pandoc_attr";
@@ -43,7 +43,7 @@ const extension: Extension = {
               return { 
                 href: el.getAttribute('href'), 
                 title: el.getAttribute('title'),
-                ...pandocAttrParseDOM(el)
+                ...pandocAttrParseDom(el)
               };
             },
           },
@@ -51,7 +51,7 @@ const extension: Extension = {
         toDOM(mark: Mark) {
           return ['a', {
             ...mark.attrs,
-            ...pandocAttrToDOM(mark.attrs)
+            ...pandocAttrToDomAttr(mark.attrs)
           }];
         },
       },
@@ -86,7 +86,7 @@ const extension: Extension = {
                   ')';
 
             if (pandocAttrAvailable(mark.attrs)) {
-              link = link.concat(pandocAttrMarkdown(mark.attrs));
+              link = link.concat(pandocAttrToMarkdown(mark.attrs));
             }
             return link;
           },

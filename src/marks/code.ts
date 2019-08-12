@@ -5,9 +5,9 @@ import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { 
   pandocAttrSpec, 
-  pandocAttrParseDOM, 
-  pandocAttrToDOM, 
-  pandocAttrMarkdown, 
+  pandocAttrParseDom, 
+  pandocAttrToDomAttr, 
+  pandocAttrToMarkdown, 
   pandocAttrReadAST, 
   pandocAttrAvailable
 } from "api/pandoc_attr";
@@ -25,11 +25,11 @@ const extension: Extension = {
         parseDOM: [{ 
           tag: 'code',
           getAttrs(dom: Node | string) {
-            return pandocAttrParseDOM(dom as Element);
+            return pandocAttrParseDom(dom as Element);
           },
         }],
         toDOM(mark: Mark) {
-          return ['code', pandocAttrToDOM(mark.attrs)];
+          return ['code', pandocAttrToDomAttr(mark.attrs)];
         },
       },
       pandoc: {
@@ -50,7 +50,7 @@ const extension: Extension = {
           close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
             let code = backticksFor(parent.child(index - 1), 1);
             if (pandocAttrAvailable(mark.attrs)) {
-              code = code.concat(pandocAttrMarkdown(mark.attrs));
+              code = code.concat(pandocAttrToMarkdown(mark.attrs));
             }
             return code;
           },

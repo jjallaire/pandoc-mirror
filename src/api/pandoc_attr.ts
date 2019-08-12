@@ -27,14 +27,14 @@ export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
   };
 }
 
-export function pandocAttrToDOM(attrs: any) {
+export function pandocAttrToDomAttr(attrs: any) {
   return {
     id: attrs.id,
     class: attrs.classes ? attrs.classes.join(' ') : null
   };
 }
 
-export function pandocAttrParseDOM(el: Element) {
+export function pandocAttrParseDom(el: Element) {
   const clz = el.getAttribute('class');
   return {
     id: el.getAttribute('id') || null,
@@ -42,7 +42,7 @@ export function pandocAttrParseDOM(el: Element) {
   };
 }
 
-export function pandocAttrMarkdown(attrs: any) {
+export function pandocAttrToMarkdown(attrs: any) {
   let md = '';
   if (pandocAttrAvailable(attrs)) {
     md = md.concat('{');

@@ -7,9 +7,9 @@ import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
 import { 
   pandocAttrSpec, 
-  pandocAttrParseDOM, 
-  pandocAttrToDOM, 
-  pandocAttrMarkdown, 
+  pandocAttrParseDom, 
+  pandocAttrToDomAttr, 
+  pandocAttrToMarkdown, 
   pandocAttrReadAST 
 } from "api/pandoc_attr";
 import { PandocAstToken } from 'api/pandoc';
@@ -50,7 +50,7 @@ const extension: Extension = {
                 src: el.getAttribute('src'),
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
-                ...pandocAttrParseDOM(el)
+                ...pandocAttrParseDom(el)
               };
             },
           },
@@ -58,7 +58,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return ['img', { 
             ...node.attrs,
-            ...pandocAttrToDOM(node.attrs)
+            ...pandocAttrToDomAttr(node.attrs)
           }];
         },
       },
@@ -88,7 +88,7 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          state.write(pandocAttrMarkdown(node.attrs));
+          state.write(pandocAttrToMarkdown(node.attrs));
         },
       },
     },
