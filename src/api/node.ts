@@ -3,7 +3,6 @@ import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 
 import { PandocAstReader, PandocNodeWriterFn } from './pandoc';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 export interface PandocNode {
   name: string;
@@ -55,41 +54,4 @@ export function insertAndSelectNode(node: Node, state: EditorState, dispatch: (t
 }
 
 
-export const nodeAttrSpec = {
-  id: { default: null },
-  classes: { default: [] },
-  keyvalue: { default: [] }
-};
-
-export function nodeAttrParseDOM(el: Element) {
-  const clz = el.getAttribute('class');
-  return {
-    id: el.getAttribute('id') || null,
-    classes: clz ? clz.split(/\s+/) : [],
-  };
-}
-
-export function nodeAttrToDOM(node: Node) {
-  return { 
-    id: node.attrs.id,
-    class: node.attrs.classes ? node.attrs.classes.join(' ') : null
-  };
-}
-
-export function nodeAttrWriteMarkdown(state: MarkdownSerializerState, node: Node) {
-  if (node.attrs.id || node.attrs.classes) {
-    state.write('{');
-    if (node.attrs.id) {
-      state.write('#' + state.esc(node.attrs.id));
-      if (node.attrs.classes.length > 0) {
-        state.write(' ');
-      }
-    }
-    if (node.attrs.classes) {
-      const classes = node.attrs.classes.map((clz : string) => '.' + clz);
-      state.write(state.esc(classes.join(' ')));
-    }
-    state.write('}');
-  }
-}
 

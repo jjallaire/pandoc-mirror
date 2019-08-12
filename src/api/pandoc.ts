@@ -17,10 +17,6 @@ export interface PandocAstReader {
   mark?: string;
   text?: boolean;
 
-  // indication that the token has pandoc attributes in it's content
-  // (i.e. [id, classes[], key,value[]])
-  pandocAttr?: number;
-
   // functions for getting attributes and children
   getAttrs?: (tok: PandocAstToken) => any;
   getChildren?: (tok: PandocAstToken) => any[];

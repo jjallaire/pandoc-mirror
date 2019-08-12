@@ -44,15 +44,13 @@ const editImage = function(image) {
         { field: 'src', type: 'text', required: true },
         { field: 'title', type: 'text' },
         { field: 'alt', type: 'text' },
-        { field: 'id', type: 'text' },
-        { field: 'class', type: 'text' },
+        ...pandocAttrFields
       ],
       buttons: null,
-      record: { ...image, class: image.classes.join(' ') }, 
+      record: { ...image, ...pandocAttrRecord(image) }, 
       actions: {
         save: (result) => {
-          const classes = result.class ? result.class.split(/\s+/) : []
-          resolve( { ...result, classes })
+          resolve( { ...result, ...pandocAttrResult(result) })
         }
       },
       options: {
@@ -62,7 +60,6 @@ const editImage = function(image) {
 
   })
 }
-
 
 // based on http://w2ui.com/web/demos/#!forms/forms-8
 function showDialog( { id, title, fields, buttons, record, actions, options } ) {
@@ -167,4 +164,19 @@ function showDialog( { id, title, fields, buttons, record, actions, options } ) 
     ...options
   });
 }
+
+const pandocAttrFields = [
+  { field: 'id', type: 'text' },
+  { field: 'class', type: 'text' },
+];
+
+function pandocAttrRecord(record) {
+  return { id: record.id, class: record.classes.join(' ') }
+}
+
+function pandocAttrResult(result) {
+  const classes = result.class ? result.class.split(/\s+/) : []
+  return { id: result.id, classes };
+}
+
 

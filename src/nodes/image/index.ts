@@ -5,12 +5,8 @@ import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { Command, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { 
-  canInsertNode, 
-  nodeAttrSpec, 
-  nodeAttrParseDOM, 
-  nodeAttrToDOM, 
-  nodeAttrWriteMarkdown 
-} from 'api/node';
+  canInsertNode} from 'api/node';
+import { pandocAttrSpec, pandocAttrParseDOM, pandocAttrToDOM, pandocAttrWriteMarkdown, pandocAttrReadAST } from "api/pandoc_attr";
 import { PandocAstToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
@@ -35,7 +31,7 @@ const extension: Extension = {
           src: {},
           alt: { default: null },
           title: { default: null },
-          ...nodeAttrSpec
+          ...pandocAttrSpec
         },
         group: 'inline',
         draggable: true,
@@ -49,7 +45,7 @@ const extension: Extension = {
                 src: el.getAttribute('src'),
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
-                ...nodeAttrParseDOM(el)
+                ...pandocAttrParseDOM(el)
               };
             },
           },
@@ -57,7 +53,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return ['img', { 
             ...node.attrs,
-            ...nodeAttrToDOM(node)
+            ...pandocAttrToDOM(node)
           }];
         },
       },
@@ -66,7 +62,6 @@ const extension: Extension = {
           {
             token: 'Image',
             node: 'image',
-            pandocAttr: IMAGE_ATTR,
             getAttrs: (tok: PandocAstToken) => {
               const target = tok.c[IMAGE_TARGET];
               return {
@@ -74,6 +69,7 @@ const extension: Extension = {
                 title: target[TARGET_TITLE] || null,
                 // TODO: support for figures
                 alt: collectText(tok.c[IMAGE_ALT]),
+                ...pandocAttrReadAST(tok, IMAGE_ATTR)
               };
             },
           },
@@ -87,7 +83,7 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          nodeAttrWriteMarkdown(state, node);
+          pandocAttrWriteMarkdown(state, node);
         },
       },
     },

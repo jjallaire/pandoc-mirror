@@ -1,10 +1,6 @@
 import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
 import { PandocEngine, PandocAstReader, PandocAstToken } from 'api/pandoc';
 
-const PANDOC_ATTR_ID = 0;
-const PANDOC_ATTR_CLASSES = 1;
-const PANDOC_ATTR_KEYVAULE = 2;
-
 export function markdownToDoc(
   markdown: string,
   schema: Schema,
@@ -50,17 +46,8 @@ class Parser {
       // resolve children (provide default impl)
       const getChildren = reader.getChildren || ((tok: PandocAstToken) => tok.c);
 
-      // resolve getAttrs (enhance for pandocAttr if requested)
-      const getAttrs = (tok: PandocAstToken) => {
-        const attrs = reader.getAttrs ? reader.getAttrs(tok) : {};
-        if (reader.pandocAttr !== undefined) {
-          const pandocAttr = tok.c[reader.pandocAttr as number];
-          attrs.id = pandocAttr[PANDOC_ATTR_ID] || undefined;
-          attrs.classes = pandocAttr[PANDOC_ATTR_CLASSES];
-          attrs.keyvalue = pandocAttr[PANDOC_ATTR_KEYVAULE];
-        }
-        return attrs;
-      };
+      // resolve getAttrs (provide default imple)
+      const getAttrs = reader.getAttrs ? reader.getAttrs : (tok: PandocAstToken) => ({});
 
       // text
       if (reader.text) {
