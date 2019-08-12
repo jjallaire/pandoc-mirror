@@ -1,10 +1,8 @@
-
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
 import { PandocAstToken } from 'src/api/pandoc';
-
 
 const extension: Extension = {
   nodes: [
@@ -12,11 +10,11 @@ const extension: Extension = {
       name: 'soft_break',
       spec: {
         inline: true,
-        content: "text*",
+        content: 'text*',
         group: 'inline',
-        parseDOM: [{tag: "span[class='soft-break']"}],
+        parseDOM: [{ tag: "span[class='soft-break']" }],
         toDOM() {
-          return ["span", { class: 'soft-break'}, 0];
+          return ['span', { class: 'soft-break' }, 0];
         },
       },
       pandoc: {
@@ -24,10 +22,15 @@ const extension: Extension = {
           {
             token: 'SoftBreak',
             node: 'soft_break',
-            getText: (tok: PandocAstToken) => ' '
+            getText: (tok: PandocAstToken) => ' ',
           },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        markdown_writer: (
+          state: MarkdownSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number,
+        ) => {
           state.text('\n');
         },
       },

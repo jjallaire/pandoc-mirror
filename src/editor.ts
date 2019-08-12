@@ -86,15 +86,7 @@ export interface EditorDevTools {
   applyDevTools: (view: EditorView, stateClass: any) => void;
 }
 
-export {
-  EditorUI,
-  ImageEditorFn,
-  ImageEditResult,
-  ImageProps,
-  LinkEditorFn,
-  LinkEditResult,
-  LinkProps,
-} from 'api/ui';
+export { EditorUI, ImageEditorFn, ImageEditResult, ImageProps, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 export interface EditorCommand {
   name: string;
@@ -228,8 +220,9 @@ export class Editor {
   }
 
   public commands(): { [name: string]: EditorCommand } {
-    return this.extensions.commands(this.schema, this.ui).reduce(
-      (commands: { [name: string]: EditorCommand }, command: Command) => {
+    return this.extensions
+      .commands(this.schema, this.ui)
+      .reduce((commands: { [name: string]: EditorCommand }, command: Command) => {
         return {
           ...commands,
           [command.name]: {
@@ -272,7 +265,6 @@ export class Editor {
   }
 
   private initExtensions(config: EditorConfig) {
-    
     // create extension manager
     const manager = new ExtensionManager();
 

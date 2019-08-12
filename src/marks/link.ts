@@ -7,14 +7,14 @@ import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
 import { PandocAstToken } from 'api/pandoc';
-import { 
-  pandocAttrSpec, 
-  pandocAttrParseDom, 
-  pandocAttrToDomAttr, 
-  pandocAttrToMarkdown, 
-  pandocAttrReadAST, 
-  pandocAttrAvailable
-} from "api/pandoc_attr";
+import {
+  pandocAttrSpec,
+  pandocAttrParseDom,
+  pandocAttrToDomAttr,
+  pandocAttrToMarkdown,
+  pandocAttrReadAST,
+  pandocAttrAvailable,
+} from 'api/pandoc_attr';
 import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 const TARGET_URL = 0;
@@ -32,7 +32,7 @@ const extension: Extension = {
         attrs: {
           href: {},
           title: { default: null },
-          ...pandocAttrSpec
+          ...pandocAttrSpec,
         },
         inclusive: false,
         parseDOM: [
@@ -40,19 +40,22 @@ const extension: Extension = {
             tag: 'a[href]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
-              return { 
-                href: el.getAttribute('href'), 
+              return {
+                href: el.getAttribute('href'),
                 title: el.getAttribute('title'),
-                ...pandocAttrParseDom(el)
+                ...pandocAttrParseDom(el),
               };
             },
           },
         ],
         toDOM(mark: Mark) {
-          return ['a', {
-            ...mark.attrs,
-            ...pandocAttrToDomAttr(mark.attrs)
-          }];
+          return [
+            'a',
+            {
+              ...mark.attrs,
+              ...pandocAttrToDomAttr(mark.attrs),
+            },
+          ];
         },
       },
       pandoc: {
@@ -65,7 +68,7 @@ const extension: Extension = {
               return {
                 href: target[TARGET_URL],
                 title: target[TARGET_TITLE] || null,
-                ...pandocAttrReadAST(tok, LINK_ATTR)
+                ...pandocAttrReadAST(tok, LINK_ATTR),
               };
             },
             getChildren: (tok: PandocAstToken) => tok.c[LINK_CHILDREN],
@@ -79,11 +82,11 @@ const extension: Extension = {
             let link = isPlainURL(mark, parent, index, -1)
               ? '>'
               : '](' +
-                  state.esc(mark.attrs.href) +
-                  (mark.attrs.title
-                    ? ' ' + (state as any).quote(mark.attrs.title) // quote function not declared in @types
-                    : '') +
-                  ')';
+                state.esc(mark.attrs.href) +
+                (mark.attrs.title
+                  ? ' ' + (state as any).quote(mark.attrs.title) // quote function not declared in @types
+                  : '') +
+                ')';
 
             if (pandocAttrAvailable(mark.attrs)) {
               link = link.concat(pandocAttrToMarkdown(mark.attrs));

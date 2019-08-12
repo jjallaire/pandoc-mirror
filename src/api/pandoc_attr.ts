@@ -7,13 +7,11 @@ const PANDOC_ATTR_KEYVAULE = 2;
 export const pandocAttrSpec = {
   id: { default: null },
   classes: { default: [] },
-  keyvalue: { default: [] }
+  keyvalue: { default: [] },
 };
 
 export function pandocAttrAvailable(attrs: any) {
-  return attrs.id || 
-         (attrs.classes && attrs.classes.length > 0) || 
-         (attrs.keyvalue && attrs.keyvalue.length > 0);
+  return attrs.id || (attrs.classes && attrs.classes.length > 0) || (attrs.keyvalue && attrs.keyvalue.length > 0);
 }
 
 export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
@@ -21,14 +19,14 @@ export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
   return {
     id: pandocAttr[PANDOC_ATTR_ID] || undefined,
     classes: pandocAttr[PANDOC_ATTR_CLASSES],
-    keyvalue: pandocAttr[PANDOC_ATTR_KEYVAULE]
+    keyvalue: pandocAttr[PANDOC_ATTR_KEYVAULE],
   };
 }
 
 export function pandocAttrToDomAttr(attrs: any) {
   return {
     id: attrs.id,
-    class: attrs.classes ? attrs.classes.join(' ') : null
+    class: attrs.classes ? attrs.classes.join(' ') : null,
   };
 }
 

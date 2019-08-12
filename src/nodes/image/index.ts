@@ -5,19 +5,18 @@ import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
-import { 
-  pandocAttrSpec, 
-  pandocAttrParseDom, 
-  pandocAttrToDomAttr, 
-  pandocAttrToMarkdown, 
-  pandocAttrReadAST 
-} from "api/pandoc_attr";
+import {
+  pandocAttrSpec,
+  pandocAttrParseDom,
+  pandocAttrToDomAttr,
+  pandocAttrToMarkdown,
+  pandocAttrReadAST,
+} from 'api/pandoc_attr';
 import { PandocAstToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
-
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -36,7 +35,7 @@ const extension: Extension = {
           src: {},
           alt: { default: null },
           title: { default: null },
-          ...pandocAttrSpec
+          ...pandocAttrSpec,
         },
         group: 'inline',
         draggable: true,
@@ -50,16 +49,19 @@ const extension: Extension = {
                 src: el.getAttribute('src'),
                 title: el.getAttribute('title') || null,
                 alt: el.getAttribute('alt') || null,
-                ...pandocAttrParseDom(el)
+                ...pandocAttrParseDom(el),
               };
             },
           },
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['img', { 
-            ...node.attrs,
-            ...pandocAttrToDomAttr(node.attrs)
-          }];
+          return [
+            'img',
+            {
+              ...node.attrs,
+              ...pandocAttrToDomAttr(node.attrs),
+            },
+          ];
         },
       },
       pandoc: {
@@ -74,7 +76,7 @@ const extension: Extension = {
                 title: target[TARGET_TITLE] || null,
                 // TODO: support for figures
                 alt: collectText(tok.c[IMAGE_ALT]),
-                ...pandocAttrReadAST(tok, IMAGE_ATTR)
+                ...pandocAttrReadAST(tok, IMAGE_ATTR),
               };
             },
           },

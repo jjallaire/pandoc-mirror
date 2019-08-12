@@ -3,14 +3,14 @@ import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-mod
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { 
-  pandocAttrSpec, 
-  pandocAttrParseDom, 
-  pandocAttrToDomAttr, 
-  pandocAttrToMarkdown, 
-  pandocAttrReadAST, 
-  pandocAttrAvailable
-} from "api/pandoc_attr";
+import {
+  pandocAttrSpec,
+  pandocAttrParseDom,
+  pandocAttrToDomAttr,
+  pandocAttrToMarkdown,
+  pandocAttrReadAST,
+  pandocAttrAvailable,
+} from 'api/pandoc_attr';
 import { PandocAstToken } from 'api/pandoc';
 
 const CODE_ATTR = 0;
@@ -22,12 +22,14 @@ const extension: Extension = {
       name: 'code',
       spec: {
         attrs: pandocAttrSpec,
-        parseDOM: [{ 
-          tag: 'code',
-          getAttrs(dom: Node | string) {
-            return pandocAttrParseDom(dom as Element);
+        parseDOM: [
+          {
+            tag: 'code',
+            getAttrs(dom: Node | string) {
+              return pandocAttrParseDom(dom as Element);
+            },
           },
-        }],
+        ],
         toDOM(mark: Mark) {
           return ['code', pandocAttrToDomAttr(mark.attrs)];
         },

@@ -17,7 +17,7 @@ const extension: Extension = {
       pandoc: {
         ast_reader: [
           { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
-          { token: 'Space', text: true, getText: () => ' ' }
+          { token: 'Space', text: true, getText: () => ' ' },
         ],
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.text(node.text as string);

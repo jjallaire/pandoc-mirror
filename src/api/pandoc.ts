@@ -43,7 +43,6 @@ export type PandocMarkWriterFn = (
   index: number,
 ) => string;
 
-
 export type PandocNodeWriterFn = (
   state: MarkdownSerializerState,
   node: ProsemirrorNode,

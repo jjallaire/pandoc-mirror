@@ -52,6 +52,3 @@ export function insertAndSelectNode(node: Node, state: EditorState, dispatch: (t
   // dispatch transaction
   dispatch(tr);
 }
-
-
-
