@@ -22,8 +22,6 @@
 
 // TODO: toggleMark from prosemirror shows commands enabled even when marks: false
 
-// TODO: clarify whether to make prosemirror types part of deps
-
 // TODO: allow overriding of editor keys
 
 import OrderedMap from 'orderedmap';
