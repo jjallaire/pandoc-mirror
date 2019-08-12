@@ -1,6 +1,4 @@
-import { Node } from 'prosemirror-model';
 import { PandocAstToken } from './pandoc';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 
 const PANDOC_ATTR_ID = 0;
 const PANDOC_ATTR_CLASSES = 1;
