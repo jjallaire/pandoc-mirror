@@ -2,11 +2,16 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 
-import { Command, NodeCommand } from 'api/command';
+import { Command } from 'api/command';
 import { Extension } from 'api/extension';
+import { canInsertNode } from 'api/node';
 import { 
-  canInsertNode} from 'api/node';
-import { pandocAttrSpec, pandocAttrParseDOM, pandocAttrToDOM, pandocAttrWriteMarkdown, pandocAttrReadAST } from "api/pandoc_attr";
+  pandocAttrSpec, 
+  pandocAttrParseDOM, 
+  pandocAttrToDOM, 
+  pandocAttrWriteMarkdown, 
+  pandocAttrReadAST 
+} from "api/pandoc_attr";
 import { PandocAstToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
