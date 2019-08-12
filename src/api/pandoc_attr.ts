@@ -12,6 +12,10 @@ export const pandocAttrSpec = {
   keyvalue: { default: [] }
 };
 
+export function pandocAttrAvailable(attrs: any) {
+  return attrs.id || attrs.classes || attrs.keyvalue;
+}
+
 export function pandocAttrParseDOM(el: Element) {
   const clz = el.getAttribute('class');
   return {
@@ -20,10 +24,10 @@ export function pandocAttrParseDOM(el: Element) {
   };
 }
 
-export function pandocAttrToDOM(node: Node) {
+export function pandocAttrToDOM(attrs: any) {
   return {
-    id: node.attrs.id,
-    class: node.attrs.classes ? node.attrs.classes.join(' ') : null
+    id: attrs.id,
+    class: attrs.classes ? attrs.classes.join(' ') : null
   };
 }
 
@@ -36,19 +40,21 @@ export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
   };
 }
 
-export function pandocAttrWriteMarkdown(state: MarkdownSerializerState, node: Node) {
-  if (node.attrs.id || node.attrs.classes) {
-    state.write('{');
-    if (node.attrs.id) {
-      state.write('#' + state.esc(node.attrs.id));
-      if (node.attrs.classes.length > 0) {
-        state.write(' ');
+export function pandocAttrMarkdown(state: MarkdownSerializerState, attrs: any) {
+  let md = '';
+  if (pandocAttrAvailable(attrs)) {
+    md = md.concat('{');
+    if (attrs.id) {
+      md = md.concat('#' + state.esc(attrs.id));
+      if (attrs.classes.length > 0) {
+        md = md.concat(' ');
       }
     }
-    if (node.attrs.classes) {
-      const classes = node.attrs.classes.map((clz: string) => '.' + clz);
-      state.write(state.esc(classes.join(' ')));
+    if (attrs.classes) {
+      const classes = attrs.classes.map((clz: string) => '.' + clz);
+      md = md.concat(state.esc(classes.join(' ')));
     }
-    state.write('}');
+    md = md.concat('}');
   }
+  return md;
 }

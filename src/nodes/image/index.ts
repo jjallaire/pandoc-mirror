@@ -9,7 +9,7 @@ import {
   pandocAttrSpec, 
   pandocAttrParseDOM, 
   pandocAttrToDOM, 
-  pandocAttrWriteMarkdown, 
+  pandocAttrMarkdown, 
   pandocAttrReadAST 
 } from "api/pandoc_attr";
 import { PandocAstToken } from 'api/pandoc';
@@ -58,7 +58,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return ['img', { 
             ...node.attrs,
-            ...pandocAttrToDOM(node)
+            ...pandocAttrToDOM(node.attrs)
           }];
         },
       },
@@ -88,7 +88,7 @@ const extension: Extension = {
               (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
               ')',
           );
-          pandocAttrWriteMarkdown(state, node);
+          state.write(pandocAttrMarkdown(state, node.attrs));
         },
       },
     },

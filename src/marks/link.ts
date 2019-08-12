@@ -1,5 +1,5 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
+import { Fragment, Mark, MarkType, Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -7,10 +7,20 @@ import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
 import { PandocAstToken } from 'api/pandoc';
+import { 
+  pandocAttrSpec, 
+  pandocAttrParseDOM, 
+  pandocAttrToDOM, 
+  pandocAttrMarkdown, 
+  pandocAttrReadAST, 
+  pandocAttrAvailable
+} from "api/pandoc_attr";
 import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
+
+const LINK_ATTR = 0;
 const LINK_CHILDREN = 1;
 const LINK_TARGET = 2;
 
@@ -22,6 +32,7 @@ const extension: Extension = {
         attrs: {
           href: {},
           title: { default: null },
+          ...pandocAttrSpec
         },
         inclusive: false,
         parseDOM: [
@@ -29,12 +40,19 @@ const extension: Extension = {
             tag: 'a[href]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
-              return { href: el.getAttribute('href'), title: el.getAttribute('title') };
+              return { 
+                href: el.getAttribute('href'), 
+                title: el.getAttribute('title'),
+                ...pandocAttrParseDOM(el)
+              };
             },
           },
         ],
-        toDOM(node) {
-          return ['a', node.attrs];
+        toDOM(mark: Mark) {
+          return ['a', {
+            ...mark.attrs,
+            ...pandocAttrToDOM(mark.attrs)
+          }];
         },
       },
       pandoc: {
@@ -47,6 +65,7 @@ const extension: Extension = {
               return {
                 href: target[TARGET_URL],
                 title: target[TARGET_TITLE] || null,
+                ...pandocAttrReadAST(tok, LINK_ATTR)
               };
             },
             getChildren: (tok: PandocAstToken) => tok.c[LINK_CHILDREN],
@@ -57,7 +76,7 @@ const extension: Extension = {
             return isPlainURL(mark, parent, index, 1) ? '<' : '[';
           },
           close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
-            return isPlainURL(mark, parent, index, -1)
+            let link = isPlainURL(mark, parent, index, -1)
               ? '>'
               : '](' +
                   state.esc(mark.attrs.href) +
@@ -65,6 +84,11 @@ const extension: Extension = {
                     ? ' ' + (state as any).quote(mark.attrs.title) // quote function not declared in @types
                     : '') +
                   ')';
+
+            if (pandocAttrAvailable(mark.attrs)) {
+              link = link.concat(pandocAttrMarkdown(state, mark.attrs));
+            }
+            return link;
           },
         },
       },
@@ -127,7 +151,7 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
 }
 
 function isPlainURL(link: Mark, parent: Fragment, index: number, side: -1 | 1) {
-  if (link.attrs.title) {
+  if (link.attrs.title || pandocAttrAvailable(link.attrs)) {
     return false;
   }
   const content = parent.child(index + (side < 0 ? -1 : 0));

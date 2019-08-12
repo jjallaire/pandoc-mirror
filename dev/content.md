@@ -18,7 +18,7 @@ Next line after soft break.
 2. Ordered
 3. List
 
-This is a link to [Google](https://www.google.com)
+This is a link to [Google](https://www.google.com){#myLink .splat}
 
 This is an image:
 

@@ -9,17 +9,18 @@ const editLink = function(link) {
       title: 'Edit Link', 
       fields: [
         { field: 'href', type: 'text', required: true },
-        { field: 'title', type: 'text' }
+        { field: 'title', type: 'text' },
+        ...pandocAttrFields
       ],
       buttons: [
         { name: 'remove', text: 'Remove Link', style: 'margin-right: 40px;' }
       ],
-      record: link, 
+      record: { ...link, ...pandocAttrRecord(link) }, 
       actions: {
         save: record => {
           resolve({
             action: 'edit',
-            link: record
+            link: { ...record, ...pandocAttrResult(record) }
           })
         },
         remove: () => {
