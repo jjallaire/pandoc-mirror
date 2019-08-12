@@ -4,6 +4,9 @@
 // TODO: parse and forward Attr for elements that support them (results in id, class,
 // and data-attribs in PM schema)
 
+// TODO: including $ in id doesn't seem to work well
+// TODO: link includes extra {}
+
 // TOOD: error handling for pandoc engine
 
 // TODO: consider emiting pandoc ast
