@@ -2,8 +2,8 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
-  markdownToAst(markdown: string): Promise<object>;
-  astToMarkdown(ast: object): Promise<string>;
+  markdownToAst(format: string, markdown: string): Promise<object>;
+  astToMarkdown(format: string, ast: object): Promise<string>;
 }
 
 export interface PandocAstReader {

@@ -26,10 +26,13 @@ export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
 export function pandocAttrToDomAttr(attrs: any) {
   
   // id and class 
-  const domAttr: any = {
-    id: attrs.id,
-    class: attrs.classes ? attrs.classes.join(' ') : null,
-  };
+  const domAttr: any = {};
+  if (attrs.id) {
+    domAttr.id = attrs.id;
+  }
+  if (attrs.classes && attrs.classes.length > 0) {
+    domAttr.class = attrs.classes.join(' ');
+  }
 
   // keyvalue pairs
   attrs.keyvalue.forEach((keyvalue: [string,string]) => {

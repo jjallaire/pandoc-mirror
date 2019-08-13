@@ -7,7 +7,11 @@ export function markdownToDoc(
   pandoc: PandocEngine,
   pandocReaders: PandocAstReader[],
 ): Promise<Node> {
-  return pandoc.markdownToAst(markdown).then(ast => {
+  
+  const format = 'markdown' +
+    '-auto_identifiers'; // don't inject identifiers for headers w/o them
+
+  return pandoc.markdownToAst(format, markdown).then(ast => {
     const parser: Parser = new Parser(schema, pandocReaders);
     return parser.parse(ast);
   });

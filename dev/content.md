@@ -1,4 +1,4 @@
-### Heading 
+### Heading {#myHeading}
 
 This is **bold** text. 
 
