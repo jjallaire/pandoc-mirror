@@ -190,7 +190,7 @@ function pandocAttrRecord(record) {
 
 function pandocAttrResult(result) {
   const classes = result.class ? result.class.split(/\s+/) : []
-  const keyvalue = result.attribs.trim().split('\n').map(line => line.split('='))
+  const keyvalue = result.attribs.trim().split('\n').map(line => line.trim().split('='))
   return { 
     id: result.id, 
     classes,

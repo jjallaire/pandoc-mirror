@@ -1,10 +1,7 @@
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
-// TODO: parse and forward Attr for elements that support them (results in id, class,
-// and data-attribs in PM schema)
-
-// TOOD: error handling for pandoc engine
+// TODO: error handling for pandoc engine
 
 // TODO: consider emiting pandoc ast
 
