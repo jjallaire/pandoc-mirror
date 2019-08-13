@@ -26,7 +26,7 @@ const extension: Extension = {
           {
             tag: 'code',
             getAttrs(dom: Node | string) {
-              return pandocAttrParseDom(dom as Element);
+              return pandocAttrParseDom(dom as Element, {});
             },
           },
         ],

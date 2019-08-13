@@ -44,12 +44,14 @@ const extension: Extension = {
             tag: 'img[src]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
-              const clz = el.getAttribute('class');
-              return {
-                src: el.getAttribute('src'),
+              const attrs: { [key: string]: string | null } = {
+                src: el.getAttribute('src') || null,
                 title: el.getAttribute('title') || null,
-                alt: el.getAttribute('alt') || null,
-                ...pandocAttrParseDom(el),
+                alt: el.getAttribute('alt') || null
+              };
+              return {
+                ...attrs,
+                ...pandocAttrParseDom(el, attrs),
               };
             },
           },
@@ -58,8 +60,10 @@ const extension: Extension = {
           return [
             'img',
             {
-              ...node.attrs,
-              ...pandocAttrToDomAttr(node.attrs),
+              src: node.attrs.src,
+              title: node.attrs.title,
+              alt: node.attrs.alt,
+              ...pandocAttrToDomAttr(node.attrs)
             },
           ];
         },
@@ -75,7 +79,7 @@ const extension: Extension = {
                 src: target[TARGET_URL],
                 title: target[TARGET_TITLE] || null,
                 // TODO: support for figures
-                alt: collectText(tok.c[IMAGE_ALT]),
+                alt: collectText(tok.c[IMAGE_ALT]) || null,
                 ...pandocAttrReadAST(tok, IMAGE_ATTR),
               };
             },

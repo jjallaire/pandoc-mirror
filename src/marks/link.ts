@@ -40,11 +40,14 @@ const extension: Extension = {
             tag: 'a[href]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
-              return {
+              const attrs: { [key: string]: string | null } = {
                 href: el.getAttribute('href'),
                 title: el.getAttribute('title'),
-                ...pandocAttrParseDom(el),
               };
+              return {
+                ...attrs,
+                ...pandocAttrParseDom(el, attrs),
+              }; 
             },
           },
         ],
@@ -52,7 +55,8 @@ const extension: Extension = {
           return [
             'a',
             {
-              ...mark.attrs,
+              href: mark.attrs.href,
+              title: mark.attrs.title,
               ...pandocAttrToDomAttr(mark.attrs),
             },
           ];
