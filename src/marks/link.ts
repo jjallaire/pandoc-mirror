@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
-import { getMarkAttrs, getMarkRange, markIsActive } from 'api/mark';
+import { getMarkAttrs, markIsActive, getSelectionMarkRange } from 'api/mark';
 import { PandocAstToken } from 'api/pandoc';
 import {
   pandocAttrSpec,
@@ -125,20 +125,8 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
       // show edit ui
       onEditLink(link as LinkProps).then((result: LinkEditResult | null) => {
         if (result) {
-          // determine the range we will edit (if the selection is empty
-          // then expand from the cursor to discover the mark range,
-          // otherwise just use the selection itself)
-          interface IRange {
-            from: number;
-            to: number;
-          }
-          let range: IRange | null = null;
-          if (state.selection.empty) {
-            range = getMarkRange(state.selection.$head, markType) as IRange;
-          } else {
-            range = { from: state.selection.from, to: state.selection.to };
-          }
-
+          // determine the range we will edit 
+          const range = getSelectionMarkRange(state.selection, markType);
           const tr = state.tr;
           tr.removeMark(range.from, range.to, markType);
           if (result.action === 'edit') {

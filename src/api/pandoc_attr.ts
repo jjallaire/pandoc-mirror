@@ -1,4 +1,5 @@
 import { PandocAstToken } from './pandoc';
+import { NodeSpec, MarkSpec } from 'prosemirror-model';
 
 const PANDOC_ATTR_ID = 0;
 const PANDOC_ATTR_CLASSES = 1;
@@ -12,6 +13,11 @@ export const pandocAttrSpec = {
 
 export function pandocAttrAvailable(attrs: any) {
   return attrs.id || (attrs.classes && attrs.classes.length > 0) || (attrs.keyvalue && attrs.keyvalue.length > 0);
+}
+
+export function pandocAttrInSpec(spec: NodeSpec | MarkSpec) {
+  const keys = Object.keys(spec.attrs as object || {});
+  return keys.includes('id') && keys.includes('classes') && keys.includes('keyvalue');
 }
 
 export function pandocAttrReadAST(tok: PandocAstToken, index: number) {

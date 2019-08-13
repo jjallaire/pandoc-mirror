@@ -43,6 +43,7 @@ import behaviorBasekeys from './behaviors/basekeys';
 import behaviorCursor from './behaviors/cursor';
 import behaviorHistory from './behaviors/history';
 import behaviorSmarty from './behaviors/smarty';
+import behaviorAttrEdit from './behaviors/attr_edit';
 import markCode from './marks/code';
 import markEm from './marks/em';
 import markLink from './marks/link';
@@ -272,6 +273,7 @@ export class Editor {
       behaviorCursor,
       behaviorSmarty,
       behaviorHistory,
+      behaviorAttrEdit,
 
       // marks
       markEm,

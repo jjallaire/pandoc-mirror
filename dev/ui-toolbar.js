@@ -73,6 +73,8 @@ const initToolbar = function(toolbar, editor) {
   toolbar.add(button('blockquote', 'fa-quote-right')),
   toolbar.add(kBreak)
   toolbar.add(button('image', 'fa-image'))
+  toolbar.add(kBreak)
+  toolbar.add(button('attr_edit', 'fa-info'))
   toolbar.add(kSpacer)
   toolbar.add({
     type: 'button',

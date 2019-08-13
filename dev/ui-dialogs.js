@@ -65,6 +65,31 @@ const editImage = function(image) {
   })
 }
 
+const editAttr = function(attr) {
+
+  return new Promise(resolve => {
+
+    showDialog({
+      id: 'attrDialog', 
+      title: 'Edit Attribs', 
+      fields: pandocAttrFields,
+      buttons: null,
+      record: pandocAttrRecord(attr), 
+      actions: {
+        save: (result) => {
+          resolve(pandocAttrResult(result))
+        }
+      },
+      options: {
+        height: 300
+      }
+    });
+
+  })
+}
+
+
+
 // based on http://w2ui.com/web/demos/#!forms/forms-8
 function showDialog( { id, title, fields, buttons, record, actions, options } ) {
 
@@ -190,7 +215,7 @@ function pandocAttrRecord(record) {
 
 function pandocAttrResult(result) {
   const classes = result.class ? result.class.split(/\s+/) : []
-  const keyvalue = result.attribs.trim().split('\n').map(line => line.trim().split('='))
+  const keyvalue = result.attribs ? result.attribs.trim().split('\n').map(line => line.trim().split('=')) : []
   return { 
     id: result.id, 
     classes,

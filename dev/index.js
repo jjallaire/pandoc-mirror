@@ -8,7 +8,8 @@ let hooks = {
 // ui handlers
 let ui = {
   onEditLink: editLink, 
-  onEditImage: editImage
+  onEditImage: editImage,
+  onEditAttr: editAttr
 }
 
 // pandoc ast conversion handlers
