@@ -28,6 +28,9 @@ const editLink = function(link) {
             action: 'remove'
           })
         }
+      },
+      options: {
+        height: 360
       }
     });
   })
@@ -55,7 +58,7 @@ const editImage = function(image) {
         }
       },
       options: {
-        height: 320
+        height: 400
       }
     });
 
@@ -70,11 +73,14 @@ function showDialog( { id, title, fields, buttons, record, actions, options } ) 
 
     // generate html from fields/buttons
     const fieldsHTML = fields.reduce((html, field) => {
+      const inputHTML = field.multi_line 
+        ? `<textarea name="${field.field}" type="text" style="width: 250px; height: 80px; resize: none"/>`
+        : `<input name="${field.field}" type="${field.type}" style="width: 250px"></input>`
       const fieldHTML = `
         <div class="w2ui-field">
           <label>${field.field}</label>
           <div>
-            <input name="${field.field}" type="${field.type}" style="width: 250px">
+            ${inputHTML}
           </div>
         </div>
       `
@@ -169,15 +175,27 @@ function showDialog( { id, title, fields, buttons, record, actions, options } ) 
 const pandocAttrFields = [
   { field: 'id', type: 'text' },
   { field: 'class', type: 'text' },
+  { field: 'attribs', type: 'text', multi_line: true }
 ];
 
 function pandocAttrRecord(record) {
-  return { id: record.id, class: record.classes.join(' ') }
+  return { 
+    id: record.id, 
+    class: record.classes.join(' '),
+    attribs: record.keyvalue
+      .map(keyvalue => `${keyvalue[0]}=${keyvalue[1]}`)
+      .join('\n'),
+  }
 }
 
 function pandocAttrResult(result) {
   const classes = result.class ? result.class.split(/\s+/) : []
-  return { id: result.id, classes };
+  const keyvalue = result.attribs.trim().split('\n').map(line => line.split('='))
+  return { 
+    id: result.id, 
+    classes,
+    keyvalue
+  };
 }
 
 

@@ -14,13 +14,7 @@ export function imageDialog(
   // if we are being called with an existing node then read it's attributes
   let image: ImageProps = { src: null };
   if (node && node.type === nodeType) {
-    image = {
-      src: node.attrs.src,
-      title: node.attrs.title,
-      alt: node.attrs.alt,
-      id: node.attrs.id,
-      classes: node.attrs.classes,
-    };
+    image = node.attrs as ImageProps;
   } else {
     image = nodeType.create(image).attrs as ImageProps;
   }

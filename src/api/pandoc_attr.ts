@@ -75,7 +75,7 @@ export function pandocAttrToMarkdown(attrs: any) {
       const classes = attrs.classes.map((clz: string) => '.' + clz);
       md = md.concat(classes.join(' '));
     }
-    if (attrs.keyvalue && attrs.keyvalue.length > 1) {
+    if (attrs.keyvalue && attrs.keyvalue.length > 0) {
       md = md.concat(' ');
       md = md.concat(
         attrs.keyvalue

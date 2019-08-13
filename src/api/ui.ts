@@ -10,6 +10,9 @@ export type ImageEditorFn = (image: ImageProps) => Promise<ImageEditResult | nul
 export interface LinkProps {
   href: string;
   title?: string;
+  id?: string;
+  classes?: string[];
+  keyvalue?: [[string,string]];
 }
 
 export interface LinkEditResult {
@@ -23,6 +26,7 @@ export interface ImageProps {
   alt?: string;
   id?: string;
   classes?: string[];
+  keyvalue?: [[string,string]];
 }
 
 export type ImageEditResult = ImageProps;
