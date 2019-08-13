@@ -13,6 +13,8 @@
 // TODO: support pandoc {} syntax for fenced code regions
 // TODO: embedeed codemirror editor
 
+// TODO: support for footnotes
+
 // TODO: support for image figures (where alt text is displayed in a <p> below the image).
 // note that alt text supports arbitrary markup so need a structured way to allow
 // selection and editing of just the alt text
