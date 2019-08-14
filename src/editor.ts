@@ -1,6 +1,8 @@
 // pandoc schema:
 //  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
 
+// TODO: heading doesn't select in menu with mouse
+
 // TODO: error handling for pandoc engine
 
 // TODO: consider emiting pandoc ast
