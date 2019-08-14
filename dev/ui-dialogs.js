@@ -206,10 +206,12 @@ const pandocAttrFields = [
 function pandocAttrRecord(record) {
   return { 
     id: record.id, 
-    class: record.classes.join(' '),
-    attribs: record.keyvalue
-      .map(keyvalue => `${keyvalue[0]}=${keyvalue[1]}`)
-      .join('\n'),
+    class: record.classes 
+      ? record.classes.join(' ') 
+      : null,
+    attribs: record.keyvalue 
+      ? record.keyvalue.map(keyvalue => `${keyvalue[0]}=${keyvalue[1]}`).join('\n')
+      : null
   }
 }
 
