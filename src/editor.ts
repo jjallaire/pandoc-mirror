@@ -36,34 +36,14 @@ import { Command, CommandFn } from 'api/command';
 import { PandocMark } from 'api/mark';
 import { PandocNode } from 'api/node';
 import { EditorUI } from 'api/ui';
-import { ExtensionManager, Extension } from 'api/extension';
+import { Extension } from 'api/extension';
+import { ExtensionManager } from './extensions';
 import { PandocEngine } from 'api/pandoc';
 
 import { markdownFromDoc } from './pandoc/from_doc';
 import { markdownToDoc } from './pandoc/to_doc';
 
-import behaviorBasekeys from './behaviors/basekeys';
-import behaviorCursor from './behaviors/cursor';
-import behaviorHistory from './behaviors/history';
-import behaviorSmarty from './behaviors/smarty';
-import behaviorAttrEdit from './behaviors/attr_edit';
-import markCode from './marks/code';
-import markEm from './marks/em';
-import markLink from './marks/link';
-import markStrong from './marks/strong';
-import markStrikeout from './marks/strikeout';
-import markSuperscript from './marks/superscript';
-import markSubscript from './marks/subscript';
-import nodeBlockquote from './nodes/blockquote';
-import nodeCodeBlock from './nodes/code_block';
-import nodeHardBreak from './nodes/hard_break';
-import nodeSoftBreak from './nodes/soft_break';
-import nodeHeading from './nodes/heading';
-import nodeHorizontalRule from './nodes/horizontal_rule';
-import nodeImage from './nodes/image/index';
-import nodeLists from './nodes/lists';
-import nodeParagraph from './nodes/paragraph';
-import nodeText from './nodes/text';
+import { initExtensions } from './extensions';
 
 import './styles/prosemirror.css';
 
@@ -127,7 +107,7 @@ export class Editor {
     this.events = this.initEvents();
 
     // create extensions
-    this.extensions = this.initExtensions(config);
+    this.extensions = initExtensions(config);
 
     // create schema
     this.schema = this.initSchema();
@@ -266,50 +246,6 @@ export class Editor {
       [kEventUpdate]: new Event(kEventUpdate),
       [kEventSelectionChange]: new Event(kEventSelectionChange),
     };
-  }
-
-  private initExtensions(config: EditorConfig) {
-    // create extension manager
-    const manager = new ExtensionManager();
-
-    // register built-in extensions
-    manager.register([
-      // behaviors
-      behaviorBasekeys,
-      behaviorCursor,
-      behaviorSmarty,
-      behaviorHistory,
-      behaviorAttrEdit,
-
-      // marks
-      markEm,
-      markStrong,
-      markCode,
-      markLink,
-      markStrikeout,
-      markSuperscript,
-      markSubscript,
-
-      // nodes
-      nodeText,
-      nodeParagraph,
-      nodeHeading,
-      nodeBlockquote,
-      nodeHorizontalRule,
-      nodeCodeBlock,
-      nodeLists,
-      nodeHardBreak,
-      nodeSoftBreak,
-      nodeImage,
-    ]);
-
-    // register external extensions
-    if (config.extensions) {
-      manager.register(config.extensions);
-    }
-
-    // return manager
-    return manager;
   }
 
   private initSchema(): Schema {
