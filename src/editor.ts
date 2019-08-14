@@ -4,6 +4,7 @@
 // TODO: error handling for pandoc engine
 
 // TODO: consider emiting pandoc ast
+// TODO: superscript and subscript don't get spaces escaped (solved by emitting ast)
 
 // TODO: handle duplicate ids when block elements are split (required once
 //       we support ids on divs)
@@ -50,6 +51,9 @@ import markCode from './marks/code';
 import markEm from './marks/em';
 import markLink from './marks/link';
 import markStrong from './marks/strong';
+import markStrikeout from './marks/strikeout';
+import markSuperscript from './marks/superscript';
+import markSubscript from './marks/subscript';
 import nodeBlockquote from './nodes/blockquote';
 import nodeCodeBlock from './nodes/code_block';
 import nodeHardBreak from './nodes/hard_break';
@@ -282,6 +286,9 @@ export class Editor {
       markStrong,
       markCode,
       markLink,
+      markStrikeout,
+      markSuperscript,
+      markSubscript,
 
       // nodes
       nodeText,
