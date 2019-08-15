@@ -15,6 +15,22 @@ export function pandocAttrAvailable(attrs: any) {
   return attrs.id || (attrs.classes && attrs.classes.length > 0) || (attrs.keyvalue && attrs.keyvalue.length > 0);
 }
 
+export function pandocAttrFrom(attrs: any) {
+  
+  const pandocAttr: any = {};
+  if (attrs.id) {
+    pandocAttr.id = attrs.id;
+  }
+  if (attrs.classes) {
+    pandocAttr.classes = attrs.classes;
+  }
+  if (attrs.keyvalue) {
+    pandocAttr.keyvalue = attrs.keyvalue;
+  }
+
+  return pandocAttr;
+}
+
 export function pandocAttrInSpec(spec: NodeSpec | MarkSpec) {
   const keys = Object.keys(spec.attrs as object || {});
   return keys.includes('id') && keys.includes('classes') && keys.includes('keyvalue');

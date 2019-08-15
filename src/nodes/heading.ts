@@ -1,8 +1,13 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema, NodeType } from 'prosemirror-model';
+import { PandocAstToken } from 'api/pandoc';
+import { EditorState, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { setBlockType } from 'prosemirror-commands';
+import { findParentNode } from 'prosemirror-utils';
 
-import { BlockCommand } from 'api/command';
+import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import {
   pandocAttrSpec,
@@ -11,8 +16,9 @@ import {
   pandocAttrToMarkdown,
   pandocAttrReadAST,
   pandocAttrAvailable,
+  pandocAttrFrom,
 } from 'api/pandoc_attr';
-import { PandocAstToken } from 'api/pandoc';
+
 
 const HEADING_LEVEL = 0;
 const HEADING_ATTR = 1;
@@ -20,22 +26,6 @@ const HEADING_CHILDREN = 2;
 
 const kHeadingLevels = [1, 2, 3, 4, 5, 6];
 
-class HeadingCommand extends BlockCommand {
-  constructor(schema: Schema, level: number) {
-    super('heading' + level, ['Shift-Ctrl-' + level], schema.nodes.heading, schema.nodes.paragraph, { level });
-  }
-}
-
-// function for getting attrs
-function getHeadingAttrs(level: number) {
-  return (dom: Node | string) => {
-    const el = dom as Element;
-    return {
-      level,
-      ...pandocAttrParseDom(el, {})
-    };
-  };
-}
 
 const extension: Extension = {
 
@@ -103,5 +93,49 @@ const extension: Extension = {
     ];
   },
 };
+
+class HeadingCommand extends Command {
+
+  public nodeType: NodeType;
+  public level: number;
+
+  constructor(schema: Schema, level: number) {
+    super('heading' + level, ['Shift-Ctrl-' + level], 
+      (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
+        
+        // see if there is an active node we should transfer pandoc attrs from
+        let pandocAttr : any = {}; 
+        const predicate = (n: ProsemirrorNode) => pandocAttrAvailable(n.attrs);
+        const node = findParentNode(predicate)(state.selection);
+        if (node) {
+          pandocAttr = pandocAttrFrom(node.node.attrs);
+        }
+
+        // set the block type
+        return setBlockType(this.nodeType, { level, ...pandocAttr })(state, dispatch);
+      });
+
+    this.nodeType = schema.nodes.heading;
+    this.level = level;
+  }
+
+  public isActive(state: EditorState) {
+    const predicate = (n: ProsemirrorNode) => n.type === this.nodeType && n.attrs.level === this.level;
+    const node = findParentNode(predicate)(state.selection);
+    return !!node;
+  }
+}
+
+// function for getting attrs
+function getHeadingAttrs(level: number) {
+  return (dom: Node | string) => {
+    const el = dom as Element;
+    return {
+      level,
+      ...pandocAttrParseDom(el, {})
+    };
+  };
+}
+
 
 export default extension;
