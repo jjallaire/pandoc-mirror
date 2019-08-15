@@ -7,6 +7,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { markIsActive } from './mark';
 import { canInsertNode, nodeIsActive } from './node';
+import { pandocAttrInSpec, pandocAttrAvailable, pandocAttrFrom } from './pandoc_attr';
 
 export class Command {
   public name: string;
@@ -127,7 +128,17 @@ export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}
       return setBlockType(toggletype)(state, dispatch);
     }
 
-    return setBlockType(type, attrs)(state, dispatch);
+    // if the type has pandoc attrs then see if we can transfer from the existing node
+    let pandocAttr : any = {}; 
+    if (pandocAttrInSpec(type.spec)) {
+        const predicate = (n: Node) => pandocAttrAvailable(n.attrs);
+        const node = findParentNode(predicate)(state.selection);
+        if (node) {
+          pandocAttr = pandocAttrFrom(node.node.attrs);
+        }
+    }
+
+    return setBlockType(type, { ...attrs, ...pandocAttr })(state, dispatch);
   };
 }
 
