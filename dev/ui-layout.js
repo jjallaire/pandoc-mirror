@@ -1,18 +1,13 @@
 
 function initLayout() {
 
-  // create editor container
-  const editor = document.createElement('div')
-  editor.id = 'editor'
-  document.body.append(editor)
-
-  // create markdown container
-  const markdown = document.createElement('pre')
-  markdown.id = 'markdown'
-  document.body.append(markdown)
+  // create containers
+  const layout = createContainer('layout', 'div')
+  const editor = createContainer('editor', 'div')
+  const markdown = createContainer('markdown', 'pre')
 
   // layout ui
-  const layout = $('#layout').w2layout({
+  const w2layout = $(layout).w2layout({
     name: 'layout',
     padding: 0,
     panels: [
@@ -61,9 +56,16 @@ function initLayout() {
 
   // return layout components
   return {
-    toolbar: layout.get('main').toolbar,
+    toolbar: w2layout.get('main').toolbar,
     editor: editor,
     markdown: markdown
   }
+}
+
+function createContainer(id, type) {
+  const container = document.createElement(type)
+  container.id = id
+  document.body.append(container)
+  return container
 }
 

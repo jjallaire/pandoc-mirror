@@ -1,28 +1,21 @@
 <!doctype html>
 <html lang="en">
-<head>''
-  
+<head> 
   <meta charset="utf-8">
   <title>Pandoc Mirror</title>
-
+</head>
+<body>
   <!-- development-only external dependencies -->
-  <script src="axios/dist/axios.min.js"></script>
   <script src="jquery/dist/jquery.min.js"></script>
   <script src="lib/w2ui/w2ui-1.5.rc1.js"></script>
-  <script src="prosemirror-dev-tools/dist/umd/prosemirror-dev-tools.min.js"></script>
   <link rel="stylesheet" type="text/css" href="lib/w2ui/w2ui-1.5.rc1.css">
+  <script src="axios/dist/axios.min.js"></script>
+  <script src="prosemirror-dev-tools/dist/umd/prosemirror-dev-tools.min.js"></script>
   <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">  
-
-</head>
-
-<body>
   
-  <!-- root of layout -->
-  <div id="layout" />
-
   <!-- pandoc-mirror library -->
   <script src="editor.js"></script>
-
+  
   <!-- dev front-end for pandoc-mirror -->
   <script src="pandoc.js"></script>
   <script src="ui-layout.js"></script>
@@ -30,5 +23,4 @@
   <script src="ui-toolbar.js"></script>
   <script src="index.js"></script>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-
 </body>
