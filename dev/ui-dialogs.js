@@ -25,6 +25,7 @@ const editorUI = {
               link: { ...record, ...pandocAttrResult(record) }
             })
           },
+          cancel: () => resolve(null),
           remove: () => {
             resolve({
               action: 'remove'
@@ -57,7 +58,8 @@ const editorUI = {
         actions: {
           save: (result) => {
             resolve( { ...result, ...pandocAttrResult(result) })
-          }
+          },
+          cancel: () => resolve(null)
         },
         options: {
           height: 400
@@ -80,7 +82,8 @@ const editorUI = {
         actions: {
           save: (result) => {
             resolve(pandocAttrResult(result))
-          }
+          },
+          cancel: () => resolve(null)
         },
         options: {
           height: 300
@@ -166,7 +169,10 @@ function showDialog( { id, title, fields, buttons, record, actions, options } ) 
       } 
     }.bind(dialog),
 
-    cancel: closeDialog
+    cancel: function() {
+      closeDialog();
+      actions.cancel();
+    }.bind(dialog),
   }
 
   // hookup custom actions
