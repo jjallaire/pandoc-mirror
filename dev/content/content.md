@@ -22,7 +22,7 @@ This is a link to [Google](https://www.google.com){#myLink .splat target=_blank}
 
 This is an image:
 
-![](google.png){#myImage .foo .bar width=400 height=200 style='border: 1px solid;'}
+![](content/google.png){#myImage .foo .bar width=400 height=200 style='border: 1px solid;'}
 
 ```r
 Here is a code block.

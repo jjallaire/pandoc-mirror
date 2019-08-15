@@ -25,7 +25,7 @@ editor.subscribe(PandocMirror.kEventUpdate, () => {
 })
 
 // get content and load it into the editor
-axios.get('content.md') .then(result => {
+axios.get('content/content.md') .then(result => {
   editor.setMarkdown(result.data)
 })
 
