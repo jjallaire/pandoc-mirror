@@ -60,7 +60,6 @@ export interface EditorConfig {
   options?: EditorOptions;
   hooks?: EditorHooks;
   extensions?: Extension[];
-  devtools?: EditorDevTools;
 }
 
 export interface EditorOptions {
@@ -69,14 +68,8 @@ export interface EditorOptions {
 
 export interface EditorHooks {
   isEditable?: () => boolean;
+  applyDevTools?: (view: EditorView, stateClass: any) => void;
 }
-
-// https://github.com/d4rkr00t/prosemirror-dev-tools
-export interface EditorDevTools {
-  applyDevTools: (view: EditorView, stateClass: any) => void;
-}
-
-export { EditorUI, ImageEditorFn, ImageEditResult, ImageProps, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 export interface EditorCommand {
   name: string;
@@ -132,8 +125,8 @@ export class Editor {
     });
 
     // apply devtools if they are available
-    if (config.devtools) {
-      config.devtools.applyDevTools(this.view, { EditorState });
+    if (this.hooks.applyDevTools) {
+      this.hooks.applyDevTools(this.view, { EditorState });
     }
 
     // set some css invariants on the editor and it's container

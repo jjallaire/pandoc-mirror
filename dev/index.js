@@ -1,17 +1,5 @@
 
 
-// behavior hooks
-let hooks = {
-  isEditable: () => true
-}
-
-// ui handlers
-let ui = {
-  onEditLink: editLink, 
-  onEditImage: editImage,
-  onEditAttr: editAttr
-}
-
 // pandoc ast conversion handlers
 let pandoc = {
   markdownToAst(format, markdown) {
@@ -45,12 +33,17 @@ const layout = initLayout(container, markdown)
 let editor = new PandocMirror.Editor({
   parent: container, 
   pandoc,
-  ui,
+  ui: {
+    onEditLink: editLink, 
+    onEditImage: editImage,
+    onEditAttr: editAttr
+  },
   options: {
     autoFocus: true
   },
-  hooks,
-  devtools: window.ProseMirrorDevTools
+  hooks: {
+    applyDevTools: ProseMirrorDevTools.applyDevTools
+  }
 });
 
 // initialize toolbar
