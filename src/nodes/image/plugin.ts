@@ -18,7 +18,7 @@ export function imagePlugin(nodeType: NodeType, onEditImage: ImageEditorFn) {
 }
 
 function doubleClickOn(nodeType: NodeType, onEditImage: ImageEditorFn) {
-  return (view: EditorView, pos: number, node: Node) => {
+  return (view: EditorView, _pos: number, node: Node) => {
     if (node.type === nodeType) {
       imageDialog(node, nodeType, view.state, view.dispatch, onEditImage);
       return true;
