@@ -1,5 +1,15 @@
 
-function initLayout(container, markdown) {
+function initLayout() {
+
+  // create editor container
+  const container = document.createElement('div')
+  container.id = 'container'
+  document.body.append(container)
+
+  // create markdown container
+  const markdown = document.createElement('pre')
+  markdown.id = 'markdown'
+  document.body.append(markdown)
 
   // layout ui
   const layout = $('#layout').w2layout({
@@ -49,7 +59,11 @@ function initLayout(container, markdown) {
     ]
   });
 
-  // return layout
-  return layout
+  // return layout components
+  return {
+    toolbar: layout.get('main').toolbar,
+    container: container,
+    markdown: markdown
+  }
 }
 

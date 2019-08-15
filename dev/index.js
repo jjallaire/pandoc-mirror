@@ -1,43 +1,13 @@
 
 
-// pandoc ast conversion handlers
-let pandoc = {
-  markdownToAst(format, markdown) {
-    return axios.post("/pandoc/ast", { format , markdown })
-      .then(result => {
-      return result.data.ast;
-    })
-  },
-  astToMarkdown(format, ast) {
-    return axios.post("/pandoc/markdown", { format, ast } )
-      .then(result => {
-        return result.data.markdown;
-    })
-  }
-};
-
-// create editor container
-const container = document.createElement('div')
-container.id = 'container'
-document.body.append(container)
-
-// create markdown container
-const markdown = document.createElement('pre')
-markdown.id = 'markdown'
-document.body.append(markdown)
-
 // initialize layout
-const layout = initLayout(container, markdown)
+const layout = initLayout()
 
 // create editor
 let editor = new PandocMirror.Editor({
-  parent: container, 
-  pandoc,
-  ui: {
-    onEditLink: editLink, 
-    onEditImage: editImage,
-    onEditAttr: editAttr
-  },
+  parent: layout.container, 
+  pandoc: pandocEngine,
+  ui: editorUI,
   options: {
     autoFocus: true
   },
@@ -47,12 +17,11 @@ let editor = new PandocMirror.Editor({
 });
 
 // initialize toolbar
-const toolbar = layout.get('main').toolbar
-initToolbar(toolbar, editor, layout)
+initToolbar(layout.toolbar, editor)
 
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
-  $(markdown).text((editor.getMarkdown()));
+  $(layout.markdown).text((editor.getMarkdown()));
 })
 
 // get content and load it into the editor

@@ -1,93 +1,96 @@
 
 
-const editLink = function(link) {
+const editorUI = {
   
-  return new Promise(resolve => {
-
-    showDialog({
-      id: 'linkDialog', 
-      title: 'Edit Link', 
-      fields: [
-        { field: 'href', type: 'text', required: true },
-        { field: 'title', type: 'text' },
-        ...pandocAttrFields
-      ],
-      buttons: [
-        { name: 'remove', text: 'Remove Link', style: 'margin-right: 40px;' }
-      ],
-      record: { ...link, ...pandocAttrRecord(link) }, 
-      actions: {
-        save: record => {
-          resolve({
-            action: 'edit',
-            link: { ...record, ...pandocAttrResult(record) }
-          })
+  onEditLink(link) {
+  
+    return new Promise(resolve => {
+  
+      showDialog({
+        id: 'linkDialog', 
+        title: 'Edit Link', 
+        fields: [
+          { field: 'href', type: 'text', required: true },
+          { field: 'title', type: 'text' },
+          ...pandocAttrFields
+        ],
+        buttons: [
+          { name: 'remove', text: 'Remove Link', style: 'margin-right: 40px;' }
+        ],
+        record: { ...link, ...pandocAttrRecord(link) }, 
+        actions: {
+          save: record => {
+            resolve({
+              action: 'edit',
+              link: { ...record, ...pandocAttrResult(record) }
+            })
+          },
+          remove: () => {
+            resolve({
+              action: 'remove'
+            })
+          }
         },
-        remove: () => {
-          resolve({
-            action: 'remove'
-          })
+        options: {
+          height: 360
         }
-      },
-      options: {
-        height: 360
-      }
-    });
-  })
-}
-
-
-const editImage = function(image) {
-
-  return new Promise(resolve => {
-
-    showDialog({
-      id: 'imageDialog', 
-      title: 'Edit Image', 
-      fields: [
-        { field: 'src', type: 'text', required: true },
-        { field: 'title', type: 'text' },
-        { field: 'alt', type: 'text' },
-        ...pandocAttrFields
-      ],
-      buttons: null,
-      record: { ...image, ...pandocAttrRecord(image) }, 
-      actions: {
-        save: (result) => {
-          resolve( { ...result, ...pandocAttrResult(result) })
+      });
+    })
+  },
+  
+  
+  onEditImage(image) {
+  
+    return new Promise(resolve => {
+  
+      showDialog({
+        id: 'imageDialog', 
+        title: 'Edit Image', 
+        fields: [
+          { field: 'src', type: 'text', required: true },
+          { field: 'title', type: 'text' },
+          { field: 'alt', type: 'text' },
+          ...pandocAttrFields
+        ],
+        buttons: null,
+        record: { ...image, ...pandocAttrRecord(image) }, 
+        actions: {
+          save: (result) => {
+            resolve( { ...result, ...pandocAttrResult(result) })
+          }
+        },
+        options: {
+          height: 400
         }
-      },
-      options: {
-        height: 400
-      }
-    });
-
-  })
-}
-
-const editAttr = function(attr) {
-
-  return new Promise(resolve => {
-
-    showDialog({
-      id: 'attrDialog', 
-      title: 'Edit Attribs', 
-      fields: pandocAttrFields,
-      buttons: null,
-      record: pandocAttrRecord(attr), 
-      actions: {
-        save: (result) => {
-          resolve(pandocAttrResult(result))
+      });
+  
+    })
+  },
+  
+  onEditAttr(attr) {
+  
+    return new Promise(resolve => {
+  
+      showDialog({
+        id: 'attrDialog', 
+        title: 'Edit Attribs', 
+        fields: pandocAttrFields,
+        buttons: null,
+        record: pandocAttrRecord(attr), 
+        actions: {
+          save: (result) => {
+            resolve(pandocAttrResult(result))
+          }
+        },
+        options: {
+          height: 300
         }
-      },
-      options: {
-        height: 300
-      }
-    });
-
-  })
+      });
+  
+    })
+  }
+  
 }
-
 
 
 // based on http://w2ui.com/web/demos/#!forms/forms-8
