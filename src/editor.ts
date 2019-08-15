@@ -1,34 +1,3 @@
-// pandoc schema:
-//  https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94
-
-// TODO: focus/scroll issues after dialogs
-
-// TODO: error handling for pandoc engine
-// TODO: or perhaps the component should just take the AST and not know
-//       anything at all about markdown
-
-// TODO: consider emiting pandoc ast
-// TODO: superscript and subscript don't get spaces escaped (solved by emitting ast)
-
-// TODO: handle duplicate ids when block elements are split (required once
-//       we support ids on divs)
-
-// TODO: support pandoc {} syntax for fenced code regions
-// TODO: embedeed codemirror editor
-
-// TODO: support for footnotes
-
-// TODO: add outline notifications / navigation
-
-// TODO: support for image figures (where alt text is displayed in a <p> below the image).
-// note that alt text supports arbitrary markup so need a structured way to allow
-// selection and editing of just the alt text
-
-// TODO: toggleMark from prosemirror shows commands enabled even when marks: false
-
-// TODO: allow overriding of editor keys (need to use EditorState.reconfigure for this)
-
-// TODO: find/replace (e.g. https://github.com/mattberkowitz/prosemirror-find-replace)
 
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
