@@ -4,7 +4,7 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-focus/scroll issues after dialogs
+image dialog from double-click causes scroll to top
 
 error handling for pandoc engine (or perhaps the component should just take the AST and not know
 anything at all about markdown)
