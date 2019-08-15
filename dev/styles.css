@@ -8,7 +8,7 @@
   bottom: 0;
 }
 
-#container, #markdown {
+#editor, #markdown {
   position: absolute;
   left: 0;
   right: 0;
@@ -18,7 +18,7 @@
   background-color: white;
 }
 
-#container {
+#editor {
   padding-top: 0;
 }
 

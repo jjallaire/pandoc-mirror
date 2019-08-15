@@ -2,9 +2,9 @@
 function initLayout() {
 
   // create editor container
-  const container = document.createElement('div')
-  container.id = 'container'
-  document.body.append(container)
+  const editor = document.createElement('div')
+  editor.id = 'editor'
+  document.body.append(editor)
 
   // create markdown container
   const markdown = document.createElement('pre')
@@ -22,7 +22,7 @@ function initLayout() {
         toolbar: { items: [] },
         content: {
           render: function() {
-            $(container).appendTo($(this.box))
+            $(editor).appendTo($(this.box))
           }
         }
       },
@@ -62,7 +62,7 @@ function initLayout() {
   // return layout components
   return {
     toolbar: layout.get('main').toolbar,
-    container: container,
+    editor: editor,
     markdown: markdown
   }
 }

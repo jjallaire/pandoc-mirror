@@ -5,7 +5,7 @@ const layout = initLayout()
 
 // create editor
 let editor = new PandocMirror.Editor({
-  parent: layout.container, 
+  parent: layout.editor, 
   pandoc: pandocEngine,
   ui: editorUI,
   options: {
