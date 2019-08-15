@@ -4,6 +4,8 @@
 // TODO: focus/scroll issues after dialogs
 
 // TODO: error handling for pandoc engine
+// TODO: or perhaps the component should just take the AST and not know
+//       anything at all about markdown
 
 // TODO: consider emiting pandoc ast
 // TODO: superscript and subscript don't get spaces escaped (solved by emitting ast)
