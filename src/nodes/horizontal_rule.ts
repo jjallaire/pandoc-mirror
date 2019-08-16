@@ -30,7 +30,6 @@ const extension: Extension = {
           index: number
         ) => {
           state.openBlock("HorizontalRule", false);
-          state.closeBlock();
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');

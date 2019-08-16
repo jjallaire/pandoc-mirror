@@ -70,7 +70,15 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          //
+          state.openBlock("Header");
+          state.renderAny(node.attrs.level);
+          state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+
+          state.openContent();
+          state.renderInline(node);
+          state.closeContent();
+          
+          state.closeBlock();  
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(state.repeat('#', node.attrs.level) + ' ');

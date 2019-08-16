@@ -10,51 +10,21 @@ export function markdownFromDoc(
   options: { [key: string] : any } = {},
 ): Promise<string> {
   
+  // render to ast
+  const serializer = new AstSerializerState(nodeWriters);
+  serializer.renderContent(doc);
+  
+  // ast to markdown
   const format = 'markdown' +
     '-auto_identifiers';    // don't inject identifiers for headers w/o them
-  
-  const serializer = new AstSerializer(nodeWriters);
-
-  return pandoc.astToMarkdown(format, serializer.serialize(doc));
+  return pandoc.astToMarkdown(format, serializer.pandocAst());
 }
 
-
-interface PandocAst { 
-  "blocks" : PandocAstToken[]; 
-  "pandoc-api-version": number[];
-  "meta": any;
-}
-
-class AstSerializer {
-  private nodes: { [key: string]: PandocAstNodeWriterFn };
-
-  constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
-    this.nodes = nodes;
-  }
-
-  public serialize(doc: ProsemirrorNode) : PandocAst {
-    const state = new AstSerializerStateImpl(this.nodes);
-    state.renderContent(doc);
-    return state.pandocAst();
-  }
-}
-
-export interface AstSerializerState {
-  openBlock(type: string, children?: boolean): void;
-  closeBlock() : void;
-  render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) : void;
-  renderInline(parent: ProsemirrorNode) : void;
-  renderContent(parent: ProsemirrorNode) : void;
-}
-
-class AstSerializerStateImpl implements AstSerializerState {
+export class AstSerializerState {
 
   private ast: PandocAst; 
-  
-  private opendedBlocks: PandocAstToken[];
-
-
   private nodes: { [key: string]: PandocAstNodeWriterFn };
+  private openedContent: any[][];
 
   constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
     this.nodes = nodes;
@@ -70,8 +40,11 @@ class AstSerializerStateImpl implements AstSerializerState {
       ],
       "meta": {}
     };
-    this.opendedBlocks = [];
+    this.openedContent = [this.ast.blocks];
+  }
 
+  public pandocAst() : PandocAst {
+    return this.ast;
   }
 
   public openBlock(type: string, children = true) : void {
@@ -85,39 +58,35 @@ class AstSerializerStateImpl implements AstSerializerState {
     }
 
     // add to appropriate container
-    const container = this.opendedBlocks.length ? this.opendedBlocks[this.opendedBlocks.length-1].c : this.ast.blocks;
-    container.push(block);
+    this.activeContent().push(block);
 
-    // track opened blocks
-    this.opendedBlocks.push(block);
+    // track opened content
+    if (children) {
+      this.openedContent.push(block.c);
+    }
+
   }
 
   public closeBlock() {
-    this.opendedBlocks.pop();
+    this.closeContent();
   }
 
-  public render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) {
-    this.nodes[node.type.name](this, node, parent, index);
+  public openContent() {
+    const content: any[] = [];
+    this.activeContent().push(content);
+    this.openedContent.push(content);
   }
 
-  public renderInline(parent: ProsemirrorNode) {
+  public closeContent() {
+    this.openedContent.pop();
+  }
 
-    const block = this.activeBlock();
+  public renderAny(value: any) {
+    this.activeContent().push(value);
+  }
 
-    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
-      const strs = node.textContent.split(' ');
-      strs.forEach((value: string, i: number) => {
-        if (value) {
-          block.c.push({ t: "Str", c: value });
-          if (i < (strs.length-1)) {
-            block.c.push( { t: "Space" });
-          }
-        } else {
-          block.c.push( { t: "Space" });
-        }
-      });
-    });
-
+  public renderAttr(id: string, classes = [], keyvalue = []) {
+    this.activeContent().push([id, classes, keyvalue]);
   }
 
   public renderContent(parent: ProsemirrorNode) {
@@ -126,16 +95,42 @@ class AstSerializerStateImpl implements AstSerializerState {
     });
   }
 
-  public pandocAst() : PandocAst {
-    return this.ast;
+  public renderInline(parent: ProsemirrorNode) {
+
+    const content = this.activeContent();
+  
+    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+      const strs = node.textContent.split(' ');
+      strs.forEach((value: string, i: number) => {
+        if (value) {
+          content.push({ t: "Str", c: value });
+          if (i < (strs.length-1)) {
+            content.push( { t: "Space" });
+          }
+        } else {
+          content.push( { t: "Space" });
+        }
+      });
+    });
   }
 
-
-  private activeBlock() : PandocAstToken {
-    return this.opendedBlocks[this.opendedBlocks.length-1];
+  private activeContent() : any[] {
+    return this.openedContent[this.openedContent.length-1];
   }
+
+  private render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) {
+    this.nodes[node.type.name](this, node, parent, index);
+  }
+
   
 }
+
+interface PandocAst { 
+  blocks : PandocAstToken[]; 
+  "pandoc-api-version": number[];
+  meta: any;
+}
+
 
 
 const pandocAstDoc = {
