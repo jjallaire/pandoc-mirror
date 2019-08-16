@@ -47,41 +47,22 @@ export class AstSerializerState {
     return this.ast;
   }
 
-  public openBlock(type: string, children = true) : void {
-    
-    // create block to add
-    const block: PandocAstToken = {
-      t: type
-    };
-    if (children) {
-      block.c = [];
+  
+  public renderBlock(type: string, render?: () => void) {
+    this.openBlock(type, !!render);
+    if (render) {
+      render();
+      this.closeContent();
     }
-
-    // add to appropriate container
-    this.activeContent().push(block);
-
-    // track opened content
-    if (children) {
-      this.openedContent.push(block.c);
-    }
-
   }
 
-  public closeBlock() {
+  public renderList(render: () => void) {
+    this.openList();
+    render();
     this.closeContent();
   }
-
-  public openContent() {
-    const content: any[] = [];
-    this.activeContent().push(content);
-    this.openedContent.push(content);
-  }
-
-  public closeContent() {
-    this.openedContent.pop();
-  }
-
-  public renderAny(value: any) {
+  
+  public renderValue(value: any) {
     this.activeContent().push(value);
   }
 
@@ -112,6 +93,36 @@ export class AstSerializerState {
         }
       });
     });
+  }
+
+  private openBlock(type: string, children = true) : void {
+    
+    // create block to add
+    const block: PandocAstToken = {
+      t: type
+    };
+    if (children) {
+      block.c = [];
+    }
+
+    // add to appropriate container
+    this.activeContent().push(block);
+
+    // track opened content
+    if (children) {
+      this.openedContent.push(block.c);
+    }
+
+  }
+
+  private openList() {
+    const list: any[] = [];
+    this.activeContent().push(list);
+    this.openedContent.push(list);
+  }
+
+  private closeContent() {
+    this.openedContent.pop();
   }
 
   private activeContent() : any[] {

@@ -31,9 +31,9 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          state.openBlock("BlockQuote");
-          state.renderContent(node);
-          state.closeBlock();
+          state.renderBlock("BlockQuote", () => {
+            state.renderContent(node);
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.wrapBlock('> ', undefined, node, () => state.renderContent(node));

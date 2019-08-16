@@ -29,7 +29,7 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          state.openBlock("HorizontalRule", false);
+          state.renderBlock("HorizontalRule");
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');

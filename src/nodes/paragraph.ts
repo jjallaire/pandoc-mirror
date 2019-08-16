@@ -25,9 +25,9 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          state.openBlock("Para");
-          state.renderInline(node);
-          state.closeBlock();
+          state.renderBlock("Para", () => {
+            state.renderInline(node);
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderInline(node);
