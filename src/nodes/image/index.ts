@@ -17,6 +17,7 @@ import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
+import { EditorView } from 'prosemirror-view';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -110,7 +111,7 @@ const extension: Extension = {
 };
 
 function imageCommand(nodeType: NodeType, onEditImage: ImageEditorFn) {
-  return (state: EditorState, dispatch?: (tr: Transaction<any>) => void) => {
+  return (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
     if (!canInsertNode(state, nodeType)) {
       return false;
     }
@@ -123,7 +124,7 @@ function imageCommand(nodeType: NodeType, onEditImage: ImageEditorFn) {
       }
 
       // show dialog
-      imageDialog(node, nodeType, state, dispatch, onEditImage);
+      imageDialog(node, nodeType, state, dispatch, view, onEditImage);
     }
 
     return true;
