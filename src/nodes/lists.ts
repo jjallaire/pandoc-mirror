@@ -6,6 +6,7 @@ import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirr
 import { toggleList, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocAstToken } from 'api/pandoc';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
@@ -32,6 +33,14 @@ const extension: Extension = {
         },
       },
       pandoc: {
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderContent(node);
         },
@@ -55,12 +64,20 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'BulletList',
             list: 'bullet_list',
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
         },
@@ -97,7 +114,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'OrderedList',
             list: 'ordered_list',
@@ -107,6 +124,14 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           const start = node.attrs.order || 1;
           const maxW = String(start + node.childCount - 1).length;

@@ -5,6 +5,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocAstToken } from 'api/pandoc';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -36,7 +37,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'CodeBlock',
             block: 'code_block',
@@ -47,6 +48,14 @@ const extension: Extension = {
             getText: (tok: PandocAstToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write('```' + (node.attrs.params || '') + '\n');
           state.text(node.textContent, false);

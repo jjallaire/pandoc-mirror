@@ -6,6 +6,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { CommandFn } from 'api/command';
 import { Extension } from 'api/extension';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const extension: Extension = {
   nodes: [
@@ -21,12 +22,20 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'LineBreak',
             node: 'hard_break',
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (
           state: MarkdownSerializerState,
           node: ProsemirrorNode,

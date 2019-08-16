@@ -15,6 +15,7 @@ import {
   pandocAttrReadAST,
   pandocAttrAvailable,
 } from 'api/pandoc_attr';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const HEADING_LEVEL = 0;
 const HEADING_ATTR = 1;
@@ -52,7 +53,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'Header',
             block: 'heading',
@@ -63,6 +64,14 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(state.repeat('#', node.attrs.level) + ' ');
           state.renderInline(node);

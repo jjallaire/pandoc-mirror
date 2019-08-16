@@ -4,6 +4,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { WrapCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const extension: Extension = {
   nodes: [
@@ -18,12 +19,22 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'BlockQuote',
             block: 'blockquote',
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          state.openBlock("BlockQuote");
+          state.renderContent(node);
+          state.closeBlock();
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.wrapBlock('> ', undefined, node, () => state.renderContent(node));
         },

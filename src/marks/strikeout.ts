@@ -18,7 +18,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'Strikeout',
             mark: 'strikeout',

@@ -153,10 +153,10 @@ export class Editor {
   public getMarkdown(): Promise<string> {
     // get mark and node writers from extensions
     // const markWriters = this.extensions.pandocMarkWriters();
-    // const nodeWriters = this.extensions.pandocNodeWriters();
+    const nodeWriters = this.extensions.pandocAstNodeWriters();
 
     // generate markdown
-    return markdownFromDoc(this.state.doc, this.pandoc);
+    return markdownFromDoc(this.state.doc, nodeWriters, this.pandoc);
   }
 
   public getJSON(): any {

@@ -1,19 +1,142 @@
 
 
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { PandocEngine } from 'api/pandoc';
+import { PandocEngine, PandocAstToken, PandocAstNodeWriterFn } from 'api/pandoc';
 
 export function markdownFromDoc(
   doc: ProsemirrorNode,
+  nodeWriters: { [key: string] : PandocAstNodeWriterFn }, 
   pandoc: PandocEngine,
   options: { [key: string] : any } = {},
 ): Promise<string> {
   
   const format = 'markdown' +
-  '-auto_identifiers';    // don't inject identifiers for headers w/o them
+    '-auto_identifiers';    // don't inject identifiers for headers w/o them
   
-  return pandoc.astToMarkdown(format, pandocAstDoc);
+  const serializer = new AstSerializer(nodeWriters);
+
+  return pandoc.astToMarkdown(format, serializer.serialize(doc));
 }
+
+
+interface PandocAst { 
+  "blocks" : PandocAstToken[]; 
+  "pandoc-api-version": number[];
+  "meta": any;
+}
+
+class AstSerializer {
+  private nodes: { [key: string]: PandocAstNodeWriterFn };
+
+  constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
+    this.nodes = nodes;
+  }
+
+  public serialize(doc: ProsemirrorNode) : PandocAst {
+    const state = new AstSerializerStateImpl(this.nodes);
+    state.renderContent(doc);
+    return state.pandocAst();
+  }
+}
+
+export interface AstSerializerState {
+  openBlock(type: string, children?: boolean): void;
+  closeBlock() : void;
+  render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) : void;
+  renderInline(parent: ProsemirrorNode) : void;
+  renderContent(parent: ProsemirrorNode) : void;
+}
+
+class AstSerializerStateImpl implements AstSerializerState {
+
+  private ast: PandocAst; 
+  
+  private opendedBlocks: PandocAstToken[];
+
+
+  private nodes: { [key: string]: PandocAstNodeWriterFn };
+
+  constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
+    this.nodes = nodes;
+    this.ast = {
+      "blocks": [
+
+      ],
+      "pandoc-api-version": [
+        1,
+        17,
+        5,
+        1
+      ],
+      "meta": {}
+    };
+    this.opendedBlocks = [];
+
+  }
+
+  public openBlock(type: string, children = true) : void {
+    
+    // create block to add
+    const block: PandocAstToken = {
+      t: type
+    };
+    if (children) {
+      block.c = [];
+    }
+
+    // add to appropriate container
+    const container = this.opendedBlocks.length ? this.opendedBlocks[this.opendedBlocks.length-1].c : this.ast.blocks;
+    container.push(block);
+
+    // track opened blocks
+    this.opendedBlocks.push(block);
+  }
+
+  public closeBlock() {
+    this.opendedBlocks.pop();
+  }
+
+  public render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) {
+    this.nodes[node.type.name](this, node, parent, index);
+  }
+
+  public renderInline(parent: ProsemirrorNode) {
+
+    const block = this.activeBlock();
+
+    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+      const strs = node.textContent.split(' ');
+      strs.forEach((value: string, i: number) => {
+        if (value) {
+          block.c.push({ t: "Str", c: value });
+          if (i < (strs.length-1)) {
+            block.c.push( { t: "Space" });
+          }
+        } else {
+          block.c.push( { t: "Space" });
+        }
+      });
+    });
+
+  }
+
+  public renderContent(parent: ProsemirrorNode) {
+    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+      this.render(node, parent, index);
+    });
+  }
+
+  public pandocAst() : PandocAst {
+    return this.ast;
+  }
+
+
+  private activeBlock() : PandocAstToken {
+    return this.opendedBlocks[this.opendedBlocks.length-1];
+  }
+  
+}
+
 
 const pandocAstDoc = {
   "blocks": [

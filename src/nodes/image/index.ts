@@ -18,6 +18,7 @@ import { EditorUI, ImageEditorFn } from 'api/ui';
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
 import { EditorView } from 'prosemirror-view';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -70,7 +71,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'Image',
             node: 'image',
@@ -86,6 +87,14 @@ const extension: Extension = {
             },
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(
             '![' +

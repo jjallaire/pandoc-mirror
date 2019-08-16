@@ -3,6 +3,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
 import { PandocAstToken } from 'src/api/pandoc';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const extension: Extension = {
   nodes: [
@@ -18,13 +19,21 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'SoftBreak',
             node: 'soft_break',
             getText: (tok: PandocAstToken) => ' ',
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          //
+        },
         markdown_writer: (
           state: MarkdownSerializerState,
           node: ProsemirrorNode,

@@ -3,6 +3,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { Command, insertNode } from 'api/command';
 import { Extension } from 'api/extension';
+import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const extension: Extension = {
   nodes: [
@@ -16,12 +17,21 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        ast_readers: [
           {
             token: 'HorizontalRule',
             node: 'horizontal_rule',
           },
         ],
+        ast_writer: (
+          state: AstSerializerState,
+          node: ProsemirrorNode,
+          parent: ProsemirrorNode,
+          index: number
+        ) => {
+          state.openBlock("HorizontalRule", false);
+          state.closeBlock();
+        },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');
           state.closeBlock(node);
