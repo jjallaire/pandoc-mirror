@@ -21,7 +21,9 @@ initToolbar(layout.toolbar, editor)
 
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
-  $(layout.markdown).text((editor.getMarkdown()));
+  editor.getMarkdown().then(markdown => {
+    $(layout.markdown).text(markdown)
+  })
 })
 
 // get content and load it into the editor
