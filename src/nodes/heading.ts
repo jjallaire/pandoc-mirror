@@ -64,12 +64,7 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("Header", () => {
             state.renderValue(node.attrs.level);
             state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);

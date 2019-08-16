@@ -19,12 +19,7 @@ const extension: Extension = {
       },
       pandoc: {
         ast_readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("Para", () => {
             state.renderInline(node);
           });

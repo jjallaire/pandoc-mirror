@@ -23,12 +23,7 @@ const extension: Extension = {
             node: 'horizontal_rule',
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState) => {
           state.renderBlock("HorizontalRule");
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

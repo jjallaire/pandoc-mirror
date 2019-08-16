@@ -25,12 +25,7 @@ const extension: Extension = {
             block: 'blockquote',
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("BlockQuote", () => {
             state.renderContent(node);
           });
