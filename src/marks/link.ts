@@ -63,7 +63,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Link',
             mark: 'link',

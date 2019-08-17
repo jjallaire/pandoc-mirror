@@ -11,7 +11,7 @@ import {
   pandocAttrToDomAttr,
   pandocAttrReadAST,
 } from 'api/pandoc_attr';
-import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
@@ -69,7 +69,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Image',
             node: 'image',
@@ -85,15 +85,15 @@ const extension: Extension = {
             },
           },
         ],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
-          pandoc.renderToken('Image', () => {
-            pandoc.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            pandoc.renderList(() => {
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('Image', () => {
+            output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            output.writeList(() => {
               // TODO: support for arbitrary inlines in alt
               // May simply need a separate figure node type
-              pandoc.renderText(node.attrs.alt);
+              output.writeText(node.attrs.alt);
             });
-            pandoc.render([node.attrs.src, node.attrs.title || '']);
+            output.write([node.attrs.src, node.attrs.title || '']);
           });
         }
       },

@@ -1,6 +1,6 @@
 
 import { Extension } from 'api/extension';
-import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -16,15 +16,15 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'SoftBreak',
             node: 'soft_break',
             getText: (tok: PandocToken) => ' ',
           },
         ],
-        ast_writer: (pandoc: PandocSerializer) => {
-          pandoc.renderToken('SoftBreak');
+        writer: (output: PandocOutput) => {
+          output.writeToken('SoftBreak');
         }
       },
     },

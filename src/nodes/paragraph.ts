@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocSerializer } from 'api/pandoc';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -18,10 +18,10 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
-          pandoc.renderToken('Para', () => {
-            pandoc.renderInlines(node);
+        readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('Para', () => {
+            output.writeInlines(node);
           });
         }
       },

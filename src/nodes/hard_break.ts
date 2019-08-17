@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { CommandFn } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocSerializer } from 'api/pandoc';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -21,14 +21,14 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'LineBreak',
             node: 'hard_break',
           },
         ],
-        ast_writer: (pandoc: PandocSerializer) => {
-          pandoc.renderToken('LineBreak');
+        writer: (output: PandocOutput) => {
+          output.writeToken('LineBreak');
         },
       },
     },

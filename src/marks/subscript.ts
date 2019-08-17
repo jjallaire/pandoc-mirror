@@ -14,7 +14,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Subscript',
             mark: 'subscript',

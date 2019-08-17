@@ -21,7 +21,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Strong',
             mark: 'strong',

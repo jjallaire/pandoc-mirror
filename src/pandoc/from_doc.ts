@@ -1,5 +1,5 @@
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { PandocEngine, PandocToken, PandocSerializer, PandocNodeWriterFn } from 'api/pandoc';
+import { PandocEngine, PandocToken, PandocOutput, PandocNodeWriterFn } from 'api/pandoc';
 
 export function markdownFromDoc(
   doc: ProsemirrorNode,
@@ -8,9 +8,9 @@ export function markdownFromDoc(
 ): Promise<string> {
   
   // render to ast
-  const state = new AstSerializerState(nodeWriters);
-  state.renderBlocks(doc);
-  const ast = state.pandocAst();
+  const output = new AstOutput(nodeWriters);
+  output.writeBlocks(doc);
+  const ast = output.pandocAst();
 
   // ast to markdown
   const format = 'markdown' 
@@ -20,7 +20,7 @@ export function markdownFromDoc(
 
 
 
-export class AstSerializerState implements PandocSerializer {
+export class AstOutput implements PandocOutput {
   private ast: PandocAst;
   private nodes: { [key: string]: PandocNodeWriterFn };
   private containers: any[][];
@@ -39,12 +39,12 @@ export class AstSerializerState implements PandocSerializer {
     return this.ast;
   }
 
-  public render(value: any) {
+  public write(value: any) {
     const container = this.containers[this.containers.length - 1];
     container.push(value);
   }
 
-  public renderToken(type: string, content?: (() => void) | any) {
+  public writeToken(type: string, content?: (() => void) | any) {
     const token: PandocToken = {
       t: type,
     };
@@ -56,42 +56,42 @@ export class AstSerializerState implements PandocSerializer {
         token.c = content;
       }
     }
-    this.render(token);
+    this.write(token);
   }
 
-  public renderList(content: () => void) {
+  public writeList(content: () => void) {
     const list: any[] = [];
     this.fill(list, content);
-    this.render(list);
+    this.write(list);
   }
 
-  public renderAttr(id: string, classes = [], keyvalue = []) {
-    this.render([id, classes, keyvalue]);
+  public writeAttr(id: string, classes = [], keyvalue = []) {
+    this.write([id, classes, keyvalue]);
   }
 
-  public renderText(text: string | null) {
+  public writeText(text: string | null) {
     if (text) {
       const strs = text.split(' ');
       strs.forEach((value: string, i: number) => {
         if (value) {
-          this.renderToken('Str', value);
+          this.writeToken('Str', value);
           if (i < strs.length - 1) {
-            this.renderToken('Space');
+            this.writeToken('Space');
           }
         } else {
-          this.renderToken('Space');
+          this.writeToken('Space');
         }
       });
     }
   }
 
-  public renderBlocks(parent: ProsemirrorNode) {
+  public writeBlocks(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
       this.nodes[node.type.name](this, node, parent, index);
     });
   }
 
-  public renderInlines(parent: ProsemirrorNode) {
+  public writeInlines(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
       // TODO: juxtopose marks
 

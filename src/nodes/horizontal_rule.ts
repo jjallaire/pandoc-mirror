@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 
 import { Command, insertNode } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocSerializer } from 'api/pandoc';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -16,14 +16,14 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'HorizontalRule',
             node: 'horizontal_rule',
           },
         ],
-        ast_writer: (pandoc: PandocSerializer) => {
-          pandoc.renderToken('HorizontalRule');
+        writer: (output: PandocOutput) => {
+          output.writeToken('HorizontalRule');
         }
       },
     },

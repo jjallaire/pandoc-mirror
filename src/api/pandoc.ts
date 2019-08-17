@@ -6,6 +6,11 @@ export interface PandocEngine {
   astToMarkdown(format: string, ast: object): Promise<string>;
 }
 
+export interface PandocToken {
+  t: string;
+  c?: any;
+}
+
 export interface PandocReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)
   token: string;
@@ -23,14 +28,12 @@ export interface PandocReader {
   getText?: (tok: PandocToken) => string;
 }
 
-export interface PandocToken {
-  t: string;
-  c?: any;
-}
-
-export type PandocAstMarkWriterFn = (state: PandocSerializer, mark: Mark, parent: Fragment, index: number) => string;
-
-
+export type PandocNodeWriterFn = (
+  pandoc: PandocOutput,
+  node: ProsemirrorNode,
+  parent: ProsemirrorNode,
+  index: number,
+) => void;
 
 export interface PandocMarkWriter {
   open: string | PandocMarkWriterFn;
@@ -48,21 +51,15 @@ export type PandocMarkWriterFn = (
 ) => string;
 
 
-export interface PandocSerializer {
-  render(value: any) : void;
-  renderToken(type: string, content?: (() => void) | any) : void;
-  renderList(content: () => void) : void;
-  renderAttr(id: string, classes?: string[], keyvalue?: { [key: string]: any }) : void; 
-  renderText(text: string | null) : void;
-  renderBlocks(parent: ProsemirrorNode) : void; 
-  renderInlines(parent: ProsemirrorNode) : void;
+export interface PandocOutput {
+  write(value: any) : void;
+  writeToken(type: string, content?: (() => void) | any) : void;
+  writeList(content: () => void) : void;
+  writeAttr(id: string, classes?: string[], keyvalue?: { [key: string]: any }) : void; 
+  writeText(text: string | null) : void;
+  writeBlocks(parent: ProsemirrorNode) : void; 
+  writeInlines(parent: ProsemirrorNode) : void;
 }
 
 
-export type PandocNodeWriterFn = (
-  pandoc: PandocSerializer,
-  node: ProsemirrorNode,
-  parent: ProsemirrorNode,
-  index: number,
-) => void;
 

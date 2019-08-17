@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -35,7 +35,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'CodeBlock',
             block: 'code_block',
@@ -46,7 +46,7 @@ const extension: Extension = {
             getText: (tok: PandocToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        writer: (pandoc: PandocOutput, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           //
         },
       },

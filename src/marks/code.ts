@@ -35,7 +35,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Code',
             mark: 'code',

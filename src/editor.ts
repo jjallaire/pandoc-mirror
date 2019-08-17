@@ -132,7 +132,7 @@ export class Editor {
 
   public setMarkdown(markdown: string, emitUpdate = true) {
     // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocAstReaders()).then((doc: Node) => {
+    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,

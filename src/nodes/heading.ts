@@ -1,7 +1,7 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, Schema, NodeType } from 'prosemirror-model';
 
-import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorState } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
 import { BlockCommand } from 'api/command';
@@ -44,7 +44,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Header',
             block: 'heading',
@@ -55,12 +55,12 @@ const extension: Extension = {
             getChildren: (tok: PandocToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
-          pandoc.renderToken('Header', () => {
-            pandoc.render(node.attrs.level);
-            pandoc.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            pandoc.renderList(() => {
-              pandoc.renderInlines(node);
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('Header', () => {
+            output.write(node.attrs.level);
+            output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            output.writeList(() => {
+              output.writeInlines(node);
             });
           });
         }

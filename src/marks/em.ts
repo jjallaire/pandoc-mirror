@@ -18,7 +18,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'Emph',
             mark: 'em',

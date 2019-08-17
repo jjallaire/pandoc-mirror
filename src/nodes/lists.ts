@@ -4,7 +4,7 @@ import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirr
 
 import { toggleList, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
@@ -31,12 +31,12 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode, parent: ProsemirrorNode) => {
+        writer: (output: PandocOutput, node: ProsemirrorNode, parent: ProsemirrorNode) => {
           const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
-          pandoc.renderList(() => {
+          output.writeList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
-              pandoc.renderToken(itemBlockType, () => {
-                pandoc.renderInlines(itemNode);
+              output.writeToken(itemBlockType, () => {
+                output.writeInlines(itemNode);
               });
             });
           });
@@ -61,15 +61,15 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'BulletList',
             list: 'bullet_list',
           },
         ],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
-          pandoc.renderToken('BulletList', () => {
-            pandoc.renderBlocks(node);
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('BulletList', () => {
+            output.writeBlocks(node);
           });
         }
       },
@@ -105,7 +105,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_readers: [
+        readers: [
           {
             token: 'OrderedList',
             list: 'ordered_list',
@@ -115,15 +115,15 @@ const extension: Extension = {
             getChildren: (tok: PandocToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
-          pandoc.renderToken('OrderedList', () => {
-            pandoc.renderList(() => {
-              pandoc.render(node.attrs.order);
-              pandoc.renderToken('Decimal');
-              pandoc.renderToken('Period');
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('OrderedList', () => {
+            output.writeList(() => {
+              output.write(node.attrs.order);
+              output.writeToken('Decimal');
+              output.writeToken('Period');
             });
-            pandoc.renderList(() => {
-              pandoc.renderBlocks(node);
+            output.writeList(() => {
+              output.writeBlocks(node);
             });
           });
         },

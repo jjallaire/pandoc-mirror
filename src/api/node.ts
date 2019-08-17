@@ -8,8 +8,8 @@ export interface PandocNode {
   name: string;
   spec: NodeSpec;
   pandoc: {
-    ast_readers?: PandocReader[];
-    ast_writer: PandocNodeWriterFn;
+    readers?: PandocReader[];
+    writer: PandocNodeWriterFn;
   };
 }
 
