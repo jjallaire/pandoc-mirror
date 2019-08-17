@@ -24,7 +24,7 @@ export class AstSerializerState {
 
   private ast: PandocAst; 
   private nodes: { [key: string]: PandocAstNodeWriterFn };
-  private openedContent: any[][];
+  private containers: any[][];
 
   constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
     this.nodes = nodes;
@@ -40,7 +40,7 @@ export class AstSerializerState {
       ],
       "meta": {}
     };
-    this.openedContent = [this.ast.blocks];
+    this.containers = [this.ast.blocks];
   }
 
   public pandocAst() : PandocAst {
@@ -53,38 +53,38 @@ export class AstSerializerState {
     const token: PandocAstToken = {
       t: type
     };
-    this.activeContent().push(token);
+    this.topContainer().push(token);
 
     // if there is content then add it
     if (content) {
       if (typeof content === "function") {
         token.c = [];
-        this.openedContent.push(token.c);
+        this.pushContainer(token.c);
         content();
-        this.closeContent();
+        this.closeContainer();
       } else {
         token.c = content;
       }
     }
   }
 
-  public renderList(render: () => void) {
+  public renderList(content: () => void) {
 
     const list: any[] = [];
-    this.activeContent().push(list);
-    this.openedContent.push(list);
+    this.topContainer().push(list);
+    this.pushContainer(list);
 
-    render();
+    content();
     
-    this.closeContent();
+    this.closeContainer();
   }
 
   public renderValue(value: any) {
-    this.activeContent().push(value);
+    this.topContainer().push(value);
   }
 
   public renderAttr(id: string, classes = [], keyvalue = []) {
-    this.activeContent().push([id, classes, keyvalue]);
+    this.topContainer().push([id, classes, keyvalue]);
   }
 
   public renderText(text: string | null) {
@@ -120,12 +120,16 @@ export class AstSerializerState {
   }
 
   
-  private closeContent() {
-    this.openedContent.pop();
+  private closeContainer() {
+    this.containers.pop();
   }
 
-  private activeContent() : any[] {
-    return this.openedContent[this.openedContent.length-1];
+  private topContainer() : any[] {
+    return this.containers[this.containers.length-1];
+  }
+
+  private pushContainer(container: any[]) {
+    this.containers.push(container);
   }
   
 }
