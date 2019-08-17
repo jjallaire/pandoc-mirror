@@ -24,7 +24,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState) => {
-          state.renderBlock("HorizontalRule");
+          state.renderToken("HorizontalRule");
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(node.attrs.markup || '---');

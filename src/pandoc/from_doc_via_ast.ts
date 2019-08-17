@@ -47,8 +47,17 @@ export class AstSerializerState {
     return this.ast;
   }
 
+  public renderToken(type: string, content?: any) {
+    const token: PandocAstToken = {
+      t: type
+    };
+    if (content) {
+      token.c = content;
+    }
+    this.activeContent().push(token);
+  }
   
-  public renderBlock(type: string, render?: () => void) {
+  public renderBlock(type: string, render: () => void) {
     this.openBlock(type, !!render);
     if (render) {
       render();

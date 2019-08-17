@@ -142,8 +142,8 @@ const extension: Extension = {
           state.renderBlock('OrderedList', () => {
             state.renderList(() => {
               state.renderValue(node.attrs.order);
-              state.renderBlock('Decimal');
-              state.renderBlock('Period');
+              state.renderToken('Decimal');
+              state.renderToken('Period');
             });
             state.renderList(() => {
               state.renderBlocks(node);
