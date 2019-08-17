@@ -2,7 +2,6 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
-
 export interface PandocEngine {
   markdownToAst(format: string, markdown: string): Promise<object>;
   astToMarkdown(format: string, ast: object): Promise<string>;
@@ -30,12 +29,7 @@ export interface PandocAstToken {
   c?: any;
 }
 
-export type PandocAstMarkWriterFn = (
-  state: AstSerializerState,
-  mark: Mark,
-  parent: Fragment,
-  index: number,
-) => string;
+export type PandocAstMarkWriterFn = (state: AstSerializerState, mark: Mark, parent: Fragment, index: number) => string;
 
 export type PandocAstNodeWriterFn = (
   state: AstSerializerState,
@@ -43,8 +37,6 @@ export type PandocAstNodeWriterFn = (
   parent: ProsemirrorNode,
   index: number,
 ) => void;
-
-
 
 export interface PandocMarkWriter {
   open: string | PandocMarkWriterFn;

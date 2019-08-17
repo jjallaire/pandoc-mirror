@@ -48,12 +48,7 @@ const extension: Extension = {
             getText: (tok: PandocAstToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           //
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

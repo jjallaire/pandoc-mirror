@@ -27,7 +27,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState) => {
-          state.renderToken("SoftBreak");
+          state.renderToken('SoftBreak');
         },
         markdown_writer: (
           state: MarkdownSerializerState,

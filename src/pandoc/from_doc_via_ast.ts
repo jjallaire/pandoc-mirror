@@ -1,63 +1,51 @@
-
-
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { PandocEngine, PandocAstToken, PandocAstNodeWriterFn } from 'api/pandoc';
 
 export function markdownFromDoc(
   doc: ProsemirrorNode,
-  nodeWriters: { [key: string] : PandocAstNodeWriterFn }, 
+  nodeWriters: { [key: string]: PandocAstNodeWriterFn },
   pandoc: PandocEngine,
-  options: { [key: string] : any } = {},
+  options: { [key: string]: any } = {},
 ): Promise<string> {
-  
   // render to ast
   const serializer = new AstSerializerState(nodeWriters);
   serializer.renderBlocks(doc);
-  
+
   // ast to markdown
-  const format = 'markdown' +
-    '-auto_identifiers';    // don't inject identifiers for headers w/o them
+  const format = 'markdown' + '-auto_identifiers'; // don't inject identifiers for headers w/o them
   return pandoc.astToMarkdown(format, serializer.pandocAst());
 }
 
 export class AstSerializerState {
-
-  private ast: PandocAst; 
+  private ast: PandocAst;
   private nodes: { [key: string]: PandocAstNodeWriterFn };
   private containers: any[][];
 
   constructor(nodes: { [key: string]: PandocAstNodeWriterFn }) {
     this.nodes = nodes;
     this.ast = {
-      "blocks": [
-
-      ],
-      "pandoc-api-version": [
-        1,
-        17,
-        5,
-        1
-      ],
-      "meta": {}
+      blocks: [],
+      'pandoc-api-version': [1, 17, 5, 1],
+      meta: {},
     };
     this.containers = [this.ast.blocks];
   }
 
-  public pandocAst() : PandocAst {
+  public pandocAst(): PandocAst {
     return this.ast;
   }
 
   public render(value: any) {
-    const container = this.containers[this.containers.length-1];
+    const container = this.containers[this.containers.length - 1];
     container.push(value);
   }
-  
+
   public renderToken(type: string, content?: (() => void) | any) {
     const token: PandocAstToken = {
-      t: type
-    };   
+      t: type,
+    };
     if (content) {
-      if (typeof content === "function") {
+      if (typeof content === 'function') {
         token.c = [];
         this.fill(token.c, content);
       } else {
@@ -82,12 +70,12 @@ export class AstSerializerState {
       const strs = text.split(' ');
       strs.forEach((value: string, i: number) => {
         if (value) {
-          this.renderToken("Str", value);
-          if (i < (strs.length-1)) {
-            this.renderToken("Space");
+          this.renderToken('Str', value);
+          if (i < strs.length - 1) {
+            this.renderToken('Space');
           }
         } else {
-          this.renderToken("Space");
+          this.renderToken('Space');
         }
       });
     }
@@ -100,620 +88,546 @@ export class AstSerializerState {
   }
 
   public renderInlines(parent: ProsemirrorNode) {
-
-    
-
-
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-
-      // TODO: juxtopose marks 
+      // TODO: juxtopose marks
 
       this.nodes[node.type.name](this, node, parent, index);
-
     });
   }
-
 
   private fill(container: any[], content: () => void) {
     this.containers.push(container);
     content();
     this.containers.pop();
   }
-  
 }
 
-interface PandocAst { 
-  blocks : PandocAstToken[]; 
-  "pandoc-api-version": number[];
+interface PandocAst {
+  blocks: PandocAstToken[];
+  'pandoc-api-version': number[];
   meta: any;
 }
 
-
-
 const pandocAstDoc = {
-  "blocks": [
+  blocks: [
     {
-      "t": "Header",
-      "c": [
+      t: 'Header',
+      c: [
         3,
-        [
-          "myHeading",
-          [],
-          []
-        ],
+        ['myHeading', [], []],
         [
           {
-            "t": "Str",
-            "c": "Heading"
-          }
-        ]
-      ]
+            t: 'Str',
+            c: 'Heading',
+          },
+        ],
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Strong",
-          "c": [
+          t: 'Strong',
+          c: [
             {
-              "t": "Str",
-              "c": "bold"
-            }
-          ]
+              t: 'Str',
+              c: 'bold',
+            },
+          ],
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "text."
-        }
-      ]
+          t: 'Str',
+          c: 'text.',
+        },
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Emph",
-          "c": [
+          t: 'Emph',
+          c: [
             {
-              "t": "Str",
-              "c": "italic"
-            }
-          ]
+              t: 'Str',
+              c: 'italic',
+            },
+          ],
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "text."
-        }
-      ]
+          t: 'Str',
+          c: 'text.',
+        },
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "hard"
+          t: 'Str',
+          c: 'hard',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "break."
+          t: 'Str',
+          c: 'break.',
         },
         {
-          "t": "LineBreak"
+          t: 'LineBreak',
         },
         {
-          "t": "Str",
-          "c": "Next"
+          t: 'Str',
+          c: 'Next',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "line"
+          t: 'Str',
+          c: 'line',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "after"
+          t: 'Str',
+          c: 'after',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "hard"
+          t: 'Str',
+          c: 'hard',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "break."
-        }
-      ]
+          t: 'Str',
+          c: 'break.',
+        },
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "soft"
+          t: 'Str',
+          c: 'soft',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "break."
+          t: 'Str',
+          c: 'break.',
         },
         {
-          "t": "SoftBreak"
+          t: 'SoftBreak',
         },
         {
-          "t": "Str",
-          "c": "Next"
+          t: 'Str',
+          c: 'Next',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "line"
+          t: 'Str',
+          c: 'line',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "after"
+          t: 'Str',
+          c: 'after',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "soft"
+          t: 'Str',
+          c: 'soft',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "break."
-        }
-      ]
+          t: 'Str',
+          c: 'break.',
+        },
+      ],
     },
     {
-      "t": "HorizontalRule"
+      t: 'HorizontalRule',
     },
     {
-      "t": "BulletList",
-      "c": [
+      t: 'BulletList',
+      c: [
         [
           {
-            "t": "Plain",
-            "c": [
+            t: 'Plain',
+            c: [
               {
-                "t": "Str",
-                "c": "Unordered"
-              }
-            ]
-          }
+                t: 'Str',
+                c: 'Unordered',
+              },
+            ],
+          },
         ],
         [
           {
-            "t": "Plain",
-            "c": [
+            t: 'Plain',
+            c: [
               {
-                "t": "Str",
-                "c": "List"
-              }
-            ]
-          }
+                t: 'Str',
+                c: 'List',
+              },
+            ],
+          },
         ],
         [
           {
-            "t": "Plain",
-            "c": [
+            t: 'Plain',
+            c: [
               {
-                "t": "Str",
-                "c": "Here"
+                t: 'Str',
+                c: 'Here',
               },
               {
-                "t": "Space"
+                t: 'Space',
               },
               {
-                "t": "Str",
-                "c": "we"
+                t: 'Str',
+                c: 'we',
               },
               {
-                "t": "Space"
+                t: 'Space',
               },
               {
-                "t": "Str",
-                "c": "go"
-              }
-            ]
-          }
-        ]
-      ]
+                t: 'Str',
+                c: 'go',
+              },
+            ],
+          },
+        ],
+      ],
     },
     {
-      "t": "OrderedList",
-      "c": [
+      t: 'OrderedList',
+      c: [
         [
           2,
           {
-            "t": "Decimal"
+            t: 'Decimal',
           },
           {
-            "t": "Period"
-          }
+            t: 'Period',
+          },
         ],
         [
           [
             {
-              "t": "Plain",
-              "c": [
+              t: 'Plain',
+              c: [
                 {
-                  "t": "Str",
-                  "c": "Ordered"
-                }
-              ]
-            }
+                  t: 'Str',
+                  c: 'Ordered',
+                },
+              ],
+            },
           ],
           [
             {
-              "t": "Plain",
-              "c": [
+              t: 'Plain',
+              c: [
                 {
-                  "t": "Str",
-                  "c": "List"
-                }
-              ]
-            }
+                  t: 'Str',
+                  c: 'List',
+                },
+              ],
+            },
           ],
           [
             {
-              "t": "Plain",
-              "c": [
+              t: 'Plain',
+              c: [
                 {
-                  "t": "Str",
-                  "c": "Example"
+                  t: 'Str',
+                  c: 'Example',
                 },
                 {
-                  "t": "Space"
+                  t: 'Space',
                 },
                 {
-                  "t": "Str",
-                  "c": "of"
-                }
-              ]
-            }
-          ]
-        ]
-      ]
+                  t: 'Str',
+                  c: 'of',
+                },
+              ],
+            },
+          ],
+        ],
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "a"
+          t: 'Str',
+          c: 'a',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "link"
+          t: 'Str',
+          c: 'link',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "to"
+          t: 'Str',
+          c: 'to',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Link",
-          "c": [
-            [
-              "myLink",
-              [
-                "splat"
-              ],
-              [
-                [
-                  "target",
-                  "_blank"
-                ]
-              ]
-            ],
+          t: 'Link',
+          c: [
+            ['myLink', ['splat'], [['target', '_blank']]],
             [
               {
-                "t": "Str",
-                "c": "Google"
-              }
+                t: 'Str',
+                c: 'Google',
+              },
             ],
-            [
-              "https://www.google.com",
-              ""
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "t": "Para",
-      "c": [
-        {
-          "t": "Str",
-          "c": "This"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "is"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "an"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "image:"
-        }
-      ]
-    },
-    {
-      "t": "Para",
-      "c": [
-        {
-          "t": "Image",
-          "c": [
-            [
-              "myImage",
-              [
-                "foo",
-                "bar"
-              ],
-              [
-                [
-                  "width",
-                  "400"
-                ],
-                [
-                  "height",
-                  "200"
-                ],
-                [
-                  "style",
-                  "border: 1px solid;"
-                ]
-              ]
-            ],
-            [],
-            [
-              "content/google.png",
-              ""
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "t": "CodeBlock",
-      "c": [
-        [
-          "",
-          [
-            "r"
+            ['https://www.google.com', ''],
           ],
-          []
-        ],
-        "Here is a code block.\n\nAnother line of code."
-      ]
+        },
+      ],
     },
     {
-      "t": "BlockQuote",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Para",
-          "c": [
-            {
-              "t": "Str",
-              "c": "This"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "is"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "a"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "blockquote."
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "See"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "how"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "it"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "runs!"
-            }
-          ]
-        }
-      ]
+          t: 'Str',
+          c: 'This',
+        },
+        {
+          t: 'Space',
+        },
+        {
+          t: 'Str',
+          c: 'is',
+        },
+        {
+          t: 'Space',
+        },
+        {
+          t: 'Str',
+          c: 'an',
+        },
+        {
+          t: 'Space',
+        },
+        {
+          t: 'Str',
+          c: 'image:',
+        },
+      ],
     },
     {
-      "t": "Para",
-      "c": [
+      t: 'Para',
+      c: [
         {
-          "t": "Str",
-          "c": "This"
+          t: 'Image',
+          c: [
+            ['myImage', ['foo', 'bar'], [['width', '400'], ['height', '200'], ['style', 'border: 1px solid;']]],
+            [],
+            ['content/google.png', ''],
+          ],
+        },
+      ],
+    },
+    {
+      t: 'CodeBlock',
+      c: [['', ['r'], []], 'Here is a code block.\n\nAnother line of code.'],
+    },
+    {
+      t: 'BlockQuote',
+      c: [
+        {
+          t: 'Para',
+          c: [
+            {
+              t: 'Str',
+              c: 'This',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'is',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'a',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'blockquote.',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'See',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'how',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'it',
+            },
+            {
+              t: 'Space',
+            },
+            {
+              t: 'Str',
+              c: 'runs!',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      t: 'Para',
+      c: [
+        {
+          t: 'Str',
+          c: 'This',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "is"
+          t: 'Str',
+          c: 'is',
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Code",
-          "c": [
-            [
-              "",
-              [
-                "example"
-              ],
-              []
-            ],
-            "code"
-          ]
+          t: 'Code',
+          c: [['', ['example'], []], 'code'],
         },
         {
-          "t": "Space"
+          t: 'Space',
         },
         {
-          "t": "Str",
-          "c": "text."
-        }
-      ]
-    }
+          t: 'Str',
+          c: 'text.',
+        },
+      ],
+    },
   ],
-  "pandoc-api-version": [
-    1,
-    17,
-    5,
-    1
-  ],
-  "meta": {}
+  'pandoc-api-version': [1, 17, 5, 1],
+  meta: {},
 };

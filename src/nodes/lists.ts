@@ -73,7 +73,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken("BulletList", () => {
+          state.renderToken('BulletList', () => {
             state.renderBlocks(node);
           });
         },

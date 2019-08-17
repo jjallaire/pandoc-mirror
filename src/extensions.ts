@@ -1,5 +1,3 @@
-
-
 import { InputRule } from 'prosemirror-inputrules';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
@@ -36,8 +34,7 @@ import nodeLists from './nodes/lists';
 import nodeParagraph from './nodes/paragraph';
 import nodeText from './nodes/text';
 
-export function initExtensions(config: EditorConfig) : ExtensionManager {
-
+export function initExtensions(config: EditorConfig): ExtensionManager {
   // create extension manager
   const manager = new ExtensionManager();
 
@@ -79,8 +76,6 @@ export function initExtensions(config: EditorConfig) : ExtensionManager {
 
   // return manager
   return manager;
-
-
 }
 
 export class ExtensionManager {
@@ -132,7 +127,7 @@ export class ExtensionManager {
     return writers;
   }
 
-  public pandocAstNodeWriters(): { [key: string] : PandocAstNodeWriterFn } {
+  public pandocAstNodeWriters(): { [key: string]: PandocAstNodeWriterFn } {
     const writers: { [key: string]: PandocAstNodeWriterFn } = {};
     this.pandocNodes().forEach((node: PandocNode) => {
       writers[node.name] = node.pandoc.ast_writer;
@@ -191,4 +186,3 @@ export class ExtensionManager {
     return items;
   }
 }
-

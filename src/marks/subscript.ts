@@ -8,9 +8,7 @@ const extension: Extension = {
     {
       name: 'subscript',
       spec: {
-        parseDOM: [
-          { tag: 'sub' },
-        ],
+        parseDOM: [{ tag: 'sub' }],
         toDOM() {
           return ['sub'];
         },

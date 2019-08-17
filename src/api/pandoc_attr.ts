@@ -16,7 +16,6 @@ export function pandocAttrAvailable(attrs: any) {
 }
 
 export function pandocAttrFrom(attrs: any) {
-  
   const pandocAttr: any = {};
   if (attrs.id) {
     pandocAttr.id = attrs.id;
@@ -32,7 +31,7 @@ export function pandocAttrFrom(attrs: any) {
 }
 
 export function pandocAttrInSpec(spec: NodeSpec | MarkSpec) {
-  const keys = Object.keys(spec.attrs as object || {});
+  const keys = Object.keys((spec.attrs as object) || {});
   return keys.includes('id') && keys.includes('classes') && keys.includes('keyvalue');
 }
 
@@ -46,8 +45,7 @@ export function pandocAttrReadAST(tok: PandocAstToken, index: number) {
 }
 
 export function pandocAttrToDomAttr(attrs: any) {
-  
-  // id and class 
+  // id and class
   const domAttr: any = {};
   if (attrs.id) {
     domAttr.id = attrs.id;
@@ -57,7 +55,7 @@ export function pandocAttrToDomAttr(attrs: any) {
   }
 
   // keyvalue pairs
-  attrs.keyvalue.forEach((keyvalue: [string,string]) => {
+  attrs.keyvalue.forEach((keyvalue: [string, string]) => {
     domAttr[keyvalue[0]] = keyvalue[1];
   });
 
@@ -79,7 +77,7 @@ export function pandocAttrParseDom(el: Element, attrs: { [key: string]: string |
       } else if (name === 'class') {
         attr.classes = value.split(/\s+/);
       } else {
-        attr.keyvalue.push([name,value]);
+        attr.keyvalue.push([name, value]);
       }
     }
   });
@@ -103,16 +101,13 @@ export function pandocAttrToMarkdown(attrs: any) {
     if (attrs.keyvalue && attrs.keyvalue.length > 0) {
       md = md.concat(' ');
       md = md.concat(
-        attrs.keyvalue
-          .map((keyvalue: [string, string]) => `${keyvalue[0]}=${maybeQuote(keyvalue[1])}`)
-          .join(' ')
+        attrs.keyvalue.map((keyvalue: [string, string]) => `${keyvalue[0]}=${maybeQuote(keyvalue[1])}`).join(' '),
       );
     }
     md = md.concat('}');
   }
   return md;
 }
-
 
 // TODO: more robust implementation that encompsses nested quotes
 function maybeQuote(value: string) {

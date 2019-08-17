@@ -47,7 +47,7 @@ const extension: Extension = {
               return {
                 ...attrs,
                 ...pandocAttrParseDom(el, attrs),
-              }; 
+              };
             },
           },
         ],
@@ -125,7 +125,7 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
       // show edit ui
       onEditLink(link as LinkProps).then((result: LinkEditResult | null) => {
         if (result) {
-          // determine the range we will edit 
+          // determine the range we will edit
           const range = getSelectionMarkRange(state.selection, markType);
           const tr = state.tr;
           tr.removeMark(range.from, range.to, markType);

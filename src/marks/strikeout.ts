@@ -11,7 +11,10 @@ const extension: Extension = {
         parseDOM: [
           { tag: 'del' },
           { tag: 's' },
-          { style: 'text-decoration', getAttrs: (value: string | Node) => (value as string) === 'line-through' && null },
+          {
+            style: 'text-decoration',
+            getAttrs: (value: string | Node) => (value as string) === 'line-through' && null,
+          },
         ],
         toDOM() {
           return ['del'];

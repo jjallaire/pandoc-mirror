@@ -1,4 +1,3 @@
-
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';

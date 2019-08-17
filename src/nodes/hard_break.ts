@@ -29,7 +29,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState) => {
-          state.renderToken("LineBreak");
+          state.renderToken('LineBreak');
         },
         markdown_writer: (
           state: MarkdownSerializerState,

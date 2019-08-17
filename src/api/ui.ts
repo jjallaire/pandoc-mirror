@@ -13,7 +13,7 @@ export type ImageEditorFn = (image: ImageProps) => Promise<ImageEditResult | nul
 export interface AttrProps {
   id?: string;
   classes?: string[];
-  keyvalue?: [[string,string]];
+  keyvalue?: [[string, string]];
 }
 
 export type AttrEditResult = AttrProps;

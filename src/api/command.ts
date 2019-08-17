@@ -129,13 +129,13 @@ export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}
     }
 
     // if the type has pandoc attrs then see if we can transfer from the existing node
-    let pandocAttr : any = {}; 
+    let pandocAttr: any = {};
     if (pandocAttrInSpec(type.spec)) {
-        const predicate = (n: Node) => pandocAttrAvailable(n.attrs);
-        const node = findParentNode(predicate)(state.selection);
-        if (node) {
-          pandocAttr = pandocAttrFrom(node.node.attrs);
-        }
+      const predicate = (n: Node) => pandocAttrAvailable(n.attrs);
+      const node = findParentNode(predicate)(state.selection);
+      if (node) {
+        pandocAttr = pandocAttrFrom(node.node.attrs);
+      }
     }
 
     return setBlockType(type, { ...attrs, ...pandocAttr })(state, dispatch);

@@ -8,9 +8,7 @@ const extension: Extension = {
     {
       name: 'superscript',
       spec: {
-        parseDOM: [
-          { tag: 'sup' },
-        ],
+        parseDOM: [{ tag: 'sup' }],
         toDOM() {
           return ['sup'];
         },

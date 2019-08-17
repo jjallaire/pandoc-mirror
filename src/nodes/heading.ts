@@ -24,14 +24,13 @@ const HEADING_CHILDREN = 2;
 const kHeadingLevels = [1, 2, 3, 4, 5, 6];
 
 const extension: Extension = {
-
   nodes: [
     {
       name: 'heading',
       spec: {
-        attrs: { 
+        attrs: {
           level: { default: 1 },
-          ...pandocAttrSpec
+          ...pandocAttrSpec,
         },
         content: 'inline*',
         group: 'block',
@@ -45,11 +44,7 @@ const extension: Extension = {
           { tag: 'h6', getAttrs: getHeadingAttrs(6) },
         ],
         toDOM(node) {
-          return [
-            'h' + node.attrs.level, 
-            pandocAttrToDomAttr(node.attrs),
-            0
-          ];
+          return ['h' + node.attrs.level, pandocAttrToDomAttr(node.attrs), 0];
         },
       },
       pandoc: {
@@ -65,7 +60,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken("Header", () => {
+          state.renderToken('Header', () => {
             state.render(node.attrs.level);
             state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             state.renderList(() => {
@@ -100,7 +95,6 @@ const extension: Extension = {
 };
 
 class HeadingCommand extends BlockCommand {
-
   public nodeType: NodeType;
   public level: number;
 
@@ -123,10 +117,9 @@ function getHeadingAttrs(level: number) {
     const el = dom as Element;
     return {
       level,
-      ...pandocAttrParseDom(el, {})
+      ...pandocAttrParseDom(el, {}),
     };
   };
 }
-
 
 export default extension;

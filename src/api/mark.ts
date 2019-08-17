@@ -39,7 +39,6 @@ export function getMarkAttrs(state: EditorState, type: MarkType) {
   return {};
 }
 
-
 export function getMarkRange($pos?: ResolvedPos, type?: MarkType) {
   if (!$pos || !type) {
     return false;
@@ -74,12 +73,10 @@ export function getMarkRange($pos?: ResolvedPos, type?: MarkType) {
   return { from: startPos, to: endPos };
 }
 
-export function getSelectionMarkRange(selection: Selection, markType: MarkType) : 
-  { from: number; to: number } 
-{
-  let range : { from: number, to: number };
+export function getSelectionMarkRange(selection: Selection, markType: MarkType): { from: number; to: number } {
+  let range: { from: number; to: number };
   if (selection.empty) {
-    range = getMarkRange(selection.$head, markType) as { from: number, to: number };
+    range = getMarkRange(selection.$head, markType) as { from: number; to: number };
   } else {
     range = { from: selection.from, to: selection.to };
   }

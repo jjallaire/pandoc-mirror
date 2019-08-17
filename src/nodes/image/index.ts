@@ -49,7 +49,7 @@ const extension: Extension = {
               const attrs: { [key: string]: string | null } = {
                 src: el.getAttribute('src') || null,
                 title: el.getAttribute('title') || null,
-                alt: el.getAttribute('alt') || null
+                alt: el.getAttribute('alt') || null,
               };
               return {
                 ...attrs,
@@ -65,7 +65,7 @@ const extension: Extension = {
               src: node.attrs.src,
               title: node.attrs.title,
               alt: node.attrs.alt,
-              ...pandocAttrToDomAttr(node.attrs)
+              ...pandocAttrToDomAttr(node.attrs),
             },
           ];
         },
@@ -95,7 +95,7 @@ const extension: Extension = {
               // May simply need a separate figure node type
               state.renderText(node.attrs.alt);
             });
-            state.render([node.attrs.src, node.attrs.title || ""]);
+            state.render([node.attrs.src, node.attrs.title || '']);
           });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
