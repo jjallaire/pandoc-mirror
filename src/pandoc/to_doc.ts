@@ -5,12 +5,12 @@ export function markdownToDoc(
   markdown: string,
   schema: Schema,
   pandoc: PandocEngine,
-  pandocReaders: PandocReader[],
+  readers: PandocReader[],
 ): Promise<Node> {
   const format = 'markdown' + '-auto_identifiers'; // don't inject identifiers for headers w/o them
 
   return pandoc.markdownToAst(format, markdown).then(ast => {
-    const parser: Parser = new Parser(schema, pandocReaders);
+    const parser: Parser = new Parser(schema, readers);
     return parser.parse(ast);
   });
 }

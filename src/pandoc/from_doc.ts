@@ -8,19 +8,17 @@ export function markdownFromDoc(
 ): Promise<string> {
   
   // render to ast
-  const output = new AstOutput(nodeWriters);
-  output.writeBlocks(doc);
-  const ast = output.pandocAst();
-
+  const writer = new PandocWriter(nodeWriters);
+  writer.writeBlocks(doc);
+  
   // ast to markdown
   const format = 'markdown' 
     + '-auto_identifiers'; // don't inject identifiers for headers w/o them
-  return pandoc.astToMarkdown(format, ast);
+  return pandoc.astToMarkdown(format, writer.output());
 }
 
+class PandocWriter implements PandocOutput {
 
-
-export class AstOutput implements PandocOutput {
   private ast: PandocAst;
   private nodes: { [key: string]: PandocNodeWriterFn };
   private containers: any[][];
@@ -35,7 +33,7 @@ export class AstOutput implements PandocOutput {
     this.containers = [this.ast.blocks];
   }
 
-  public pandocAst(): PandocAst {
+  public output(): PandocAst {
     return this.ast;
   }
 
