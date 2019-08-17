@@ -66,7 +66,7 @@ const extension: Extension = {
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderToken("Header", () => {
-            state.renderValue(node.attrs.level);
+            state.render(node.attrs.level);
             state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             state.renderList(() => {
               state.renderInlines(node);

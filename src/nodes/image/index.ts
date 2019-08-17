@@ -95,7 +95,7 @@ const extension: Extension = {
               // May simply need a separate figure node type
               state.renderText(node.attrs.alt);
             });
-            state.renderValue([node.attrs.src, node.attrs.title || ""]);
+            state.render([node.attrs.src, node.attrs.title || ""]);
           });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

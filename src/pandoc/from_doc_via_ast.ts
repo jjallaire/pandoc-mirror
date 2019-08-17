@@ -46,22 +46,23 @@ export class AstSerializerState {
   public pandocAst() : PandocAst {
     return this.ast;
   }
+
+  public render(value: any) {
+    const container = this.containers[this.containers.length-1];
+    container.push(value);
+  }
   
   public renderToken(type: string, content?: (() => void) | any) {
     
-    // create the token and add it to the active container
     const token: PandocAstToken = {
       t: type
     };
-    this.topContainer().push(token);
+    this.render(token);
 
-    // if there is content then add it
     if (content) {
       if (typeof content === "function") {
         token.c = [];
-        this.pushContainer(token.c);
-        content();
-        this.closeContainer();
+        this.fillContainer(token.c, content);
       } else {
         token.c = content;
       }
@@ -69,22 +70,13 @@ export class AstSerializerState {
   }
 
   public renderList(content: () => void) {
-
     const list: any[] = [];
-    this.topContainer().push(list);
-    this.pushContainer(list);
-
-    content();
-    
-    this.closeContainer();
-  }
-
-  public renderValue(value: any) {
-    this.topContainer().push(value);
+    this.render(list);
+    this.fillContainer(list, content);
   }
 
   public renderAttr(id: string, classes = [], keyvalue = []) {
-    this.topContainer().push([id, classes, keyvalue]);
+    this.render([id, classes, keyvalue]);
   }
 
   public renderText(text: string | null) {
@@ -119,17 +111,11 @@ export class AstSerializerState {
     });
   }
 
-  
-  private closeContainer() {
-    this.containers.pop();
-  }
 
-  private topContainer() : any[] {
-    return this.containers[this.containers.length-1];
-  }
-
-  private pushContainer(container: any[]) {
+  private fillContainer(container: any[], content: () => void) {
     this.containers.push(container);
+    content();
+    this.containers.pop();
   }
   
 }

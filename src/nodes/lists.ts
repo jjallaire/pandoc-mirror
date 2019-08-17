@@ -126,7 +126,7 @@ const extension: Extension = {
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderToken('OrderedList', () => {
             state.renderList(() => {
-              state.renderValue(node.attrs.order);
+              state.render(node.attrs.order);
               state.renderToken('Decimal');
               state.renderToken('Period');
             });
