@@ -1,21 +1,17 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema, NodeType } from 'prosemirror-model';
-import { PandocAstToken } from 'api/pandoc';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { findParentNode } from 'prosemirror-utils';
 
+import { PandocSerializer, PandocToken } from 'api/pandoc';
+import { EditorState } from 'prosemirror-state';
+import { findParentNode } from 'prosemirror-utils';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import {
   pandocAttrSpec,
   pandocAttrParseDom,
   pandocAttrToDomAttr,
-  pandocAttrToMarkdown,
   pandocAttrReadAST,
-  pandocAttrAvailable,
 } from 'api/pandoc_attr';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const HEADING_LEVEL = 0;
 const HEADING_ATTR = 1;
@@ -52,31 +48,22 @@ const extension: Extension = {
           {
             token: 'Header',
             block: 'heading',
-            getAttrs: (tok: PandocAstToken) => ({
+            getAttrs: (tok: PandocToken) => ({
               level: tok.c[HEADING_LEVEL],
               ...pandocAttrReadAST(tok, HEADING_ATTR),
             }),
-            getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
+            getChildren: (tok: PandocToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken('Header', () => {
-            state.render(node.attrs.level);
-            state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            state.renderList(() => {
-              state.renderInlines(node);
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
+          pandoc.renderToken('Header', () => {
+            pandoc.render(node.attrs.level);
+            pandoc.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            pandoc.renderList(() => {
+              pandoc.renderInlines(node);
             });
           });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.write(state.repeat('#', node.attrs.level) + ' ');
-          state.renderInline(node);
-          if (pandocAttrAvailable(node.attrs)) {
-            state.write(' ');
-            state.write(pandocAttrToMarkdown(node.attrs));
-          }
-          state.closeBlock(node);
-        },
+        }
       },
     },
   ],

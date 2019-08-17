@@ -4,6 +4,10 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
+implement CodeBlock writer
+
+move AstSerializerState into interface / api 
+
 error handling for pandoc engine (or perhaps the component should just take the AST and not know
 anything at all about markdown)
 

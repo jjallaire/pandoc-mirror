@@ -1,4 +1,4 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 
@@ -9,16 +9,14 @@ import {
   pandocAttrSpec,
   pandocAttrParseDom,
   pandocAttrToDomAttr,
-  pandocAttrToMarkdown,
   pandocAttrReadAST,
 } from 'api/pandoc_attr';
-import { PandocAstToken } from 'api/pandoc';
+import { PandocSerializer, PandocToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
 import { imageDialog } from './dialog';
 import { imagePlugin } from './plugin';
 import { EditorView } from 'prosemirror-view';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -75,7 +73,7 @@ const extension: Extension = {
           {
             token: 'Image',
             node: 'image',
-            getAttrs: (tok: PandocAstToken) => {
+            getAttrs: (tok: PandocToken) => {
               const target = tok.c[IMAGE_TARGET];
               return {
                 src: target[TARGET_URL],
@@ -87,28 +85,17 @@ const extension: Extension = {
             },
           },
         ],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken('Image', () => {
-            state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            state.renderList(() => {
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
+          pandoc.renderToken('Image', () => {
+            pandoc.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            pandoc.renderList(() => {
               // TODO: support for arbitrary inlines in alt
               // May simply need a separate figure node type
-              state.renderText(node.attrs.alt);
+              pandoc.renderText(node.attrs.alt);
             });
-            state.render([node.attrs.src, node.attrs.title || '']);
+            pandoc.render([node.attrs.src, node.attrs.title || '']);
           });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.write(
-            '![' +
-              state.esc(node.attrs.alt || '') +
-              '](' +
-              state.esc(node.attrs.src) +
-              (node.attrs.title ? ' ' + (state as any).quote(node.attrs.title) : '') +
-              ')',
-          );
-          state.write(pandocAttrToMarkdown(node.attrs));
-        },
+        }
       },
     },
   ],
@@ -147,7 +134,7 @@ function imageCommand(nodeType: NodeType, onEditImage: ImageEditorFn) {
 // elements (ignores marks, useful for ast elements
 // that support marks but whose prosemirror equivalent
 // does not, e.g. image alt text)
-function collectText(c: PandocAstToken[]): string {
+function collectText(c: PandocToken[]): string {
   return c
     .map(elem => {
       if (elem.t === 'Str') {

@@ -1,12 +1,11 @@
 import { chainCommands, exitCode } from 'prosemirror-commands';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { CommandFn } from 'api/command';
 import { Extension } from 'api/extension';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -28,21 +27,8 @@ const extension: Extension = {
             node: 'hard_break',
           },
         ],
-        ast_writer: (state: AstSerializerState) => {
-          state.renderToken('LineBreak');
-        },
-        markdown_writer: (
-          state: MarkdownSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number,
-        ) => {
-          for (let i = index + 1; i < parent.childCount; i++) {
-            if (parent.child(i).type !== node.type) {
-              state.write('  \n');
-              return;
-            }
-          }
+        ast_writer: (pandoc: PandocSerializer) => {
+          pandoc.renderToken('LineBreak');
         },
       },
     },

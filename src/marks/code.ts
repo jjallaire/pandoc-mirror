@@ -11,7 +11,7 @@ import {
   pandocAttrReadAST,
   pandocAttrAvailable,
 } from 'api/pandoc_attr';
-import { PandocAstToken } from 'api/pandoc';
+import { PandocToken } from 'api/pandoc';
 
 const CODE_ATTR = 0;
 const CODE_TEXT = 1;
@@ -39,8 +39,8 @@ const extension: Extension = {
           {
             token: 'Code',
             mark: 'code',
-            getText: (tok: PandocAstToken) => tok.c[CODE_TEXT],
-            getAttrs: (tok: PandocAstToken) => {
+            getText: (tok: PandocToken) => tok.c[CODE_TEXT],
+            getAttrs: (tok: PandocToken) => {
               return pandocAttrReadAST(tok, CODE_ATTR);
             },
           },

@@ -1,12 +1,10 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 
 import { toggleList, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocAstToken } from 'api/pandoc';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer, PandocToken } from 'api/pandoc';
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
@@ -33,19 +31,16 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode) => {
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode, parent: ProsemirrorNode) => {
           const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
-          state.renderList(() => {
+          pandoc.renderList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
-              state.renderToken(itemBlockType, () => {
-                state.renderInlines(itemNode);
+              pandoc.renderToken(itemBlockType, () => {
+                pandoc.renderInlines(itemNode);
               });
             });
           });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.renderContent(node);
-        },
+        }
       },
     },
     {
@@ -72,14 +67,11 @@ const extension: Extension = {
             list: 'bullet_list',
           },
         ],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken('BulletList', () => {
-            state.renderBlocks(node);
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
+          pandoc.renderToken('BulletList', () => {
+            pandoc.renderBlocks(node);
           });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
-        },
+        }
       },
     },
     {
@@ -117,31 +109,22 @@ const extension: Extension = {
           {
             token: 'OrderedList',
             list: 'ordered_list',
-            getAttrs: (tok: PandocAstToken) => ({
+            getAttrs: (tok: PandocToken) => ({
               order: tok.c[LIST_ORDER][ORDER_START],
             }),
-            getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
+            getChildren: (tok: PandocToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken('OrderedList', () => {
-            state.renderList(() => {
-              state.render(node.attrs.order);
-              state.renderToken('Decimal');
-              state.renderToken('Period');
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
+          pandoc.renderToken('OrderedList', () => {
+            pandoc.renderList(() => {
+              pandoc.render(node.attrs.order);
+              pandoc.renderToken('Decimal');
+              pandoc.renderToken('Period');
             });
-            state.renderList(() => {
-              state.renderBlocks(node);
+            pandoc.renderList(() => {
+              pandoc.renderBlocks(node);
             });
-          });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          const start = node.attrs.order || 1;
-          const maxW = String(start + node.childCount - 1).length;
-          const space = state.repeat(' ', maxW + 2);
-          state.renderList(node, space, i => {
-            const nStr = String(start + i);
-            return state.repeat(' ', maxW - nStr.length) + nStr + '. ';
           });
         },
       },

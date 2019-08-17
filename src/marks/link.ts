@@ -6,7 +6,7 @@ import { EditorView } from 'prosemirror-view';
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, markIsActive, getSelectionMarkRange } from 'api/mark';
-import { PandocAstToken } from 'api/pandoc';
+import { PandocToken } from 'api/pandoc';
 import {
   pandocAttrSpec,
   pandocAttrParseDom,
@@ -67,7 +67,7 @@ const extension: Extension = {
           {
             token: 'Link',
             mark: 'link',
-            getAttrs: (tok: PandocAstToken) => {
+            getAttrs: (tok: PandocToken) => {
               const target = tok.c[LINK_TARGET];
               return {
                 href: target[TARGET_URL],
@@ -75,7 +75,7 @@ const extension: Extension = {
                 ...pandocAttrReadAST(tok, LINK_ATTR),
               };
             },
-            getChildren: (tok: PandocAstToken) => tok.c[LINK_CHILDREN],
+            getChildren: (tok: PandocToken) => tok.c[LINK_CHILDREN],
           },
         ],
         markdown_writer: {

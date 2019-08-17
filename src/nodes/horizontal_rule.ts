@@ -1,9 +1,8 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 
 import { Command, insertNode } from 'api/command';
 import { Extension } from 'api/extension';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -23,13 +22,9 @@ const extension: Extension = {
             node: 'horizontal_rule',
           },
         ],
-        ast_writer: (state: AstSerializerState) => {
-          state.renderToken('HorizontalRule');
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.write(node.attrs.markup || '---');
-          state.closeBlock(node);
-        },
+        ast_writer: (pandoc: PandocSerializer) => {
+          pandoc.renderToken('HorizontalRule');
+        }
       },
     },
   ],

@@ -1,5 +1,4 @@
 import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
@@ -7,7 +6,7 @@ export interface PandocEngine {
   astToMarkdown(format: string, ast: object): Promise<string>;
 }
 
-export interface PandocAstReader {
+export interface PandocReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)
   token: string;
 
@@ -19,24 +18,19 @@ export interface PandocAstReader {
   text?: boolean;
 
   // functions for getting attributes and children
-  getAttrs?: (tok: PandocAstToken) => any;
-  getChildren?: (tok: PandocAstToken) => any[];
-  getText?: (tok: PandocAstToken) => string;
+  getAttrs?: (tok: PandocToken) => any;
+  getChildren?: (tok: PandocToken) => any[];
+  getText?: (tok: PandocToken) => string;
 }
 
-export interface PandocAstToken {
+export interface PandocToken {
   t: string;
   c?: any;
 }
 
-export type PandocAstMarkWriterFn = (state: AstSerializerState, mark: Mark, parent: Fragment, index: number) => string;
+export type PandocAstMarkWriterFn = (state: PandocSerializer, mark: Mark, parent: Fragment, index: number) => string;
 
-export type PandocAstNodeWriterFn = (
-  state: AstSerializerState,
-  node: ProsemirrorNode,
-  parent: ProsemirrorNode,
-  index: number,
-) => void;
+
 
 export interface PandocMarkWriter {
   open: string | PandocMarkWriterFn;
@@ -53,9 +47,22 @@ export type PandocMarkWriterFn = (
   index: number,
 ) => string;
 
+
+export interface PandocSerializer {
+  render(value: any) : void;
+  renderToken(type: string, content?: (() => void) | any) : void;
+  renderList(content: () => void) : void;
+  renderAttr(id: string, classes?: string[], keyvalue?: { [key: string]: any }) : void; 
+  renderText(text: string | null) : void;
+  renderBlocks(parent: ProsemirrorNode) : void; 
+  renderInlines(parent: ProsemirrorNode) : void;
+}
+
+
 export type PandocNodeWriterFn = (
-  state: MarkdownSerializerState,
+  pandoc: PandocSerializer,
   node: ProsemirrorNode,
   parent: ProsemirrorNode,
   index: number,
 ) => void;
+

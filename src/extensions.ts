@@ -7,7 +7,7 @@ import { CommandFn, Command } from 'api/command';
 import { PandocMark } from 'api/mark';
 import { PandocNode } from 'api/node';
 import { Extension } from 'api/extension';
-import { PandocAstReader, PandocMarkWriter, PandocNodeWriterFn, PandocAstNodeWriterFn } from 'api/pandoc';
+import { PandocReader, PandocMarkWriter, PandocNodeWriterFn } from 'api/pandoc';
 
 import { EditorConfig } from 'editor';
 
@@ -97,8 +97,8 @@ export class ExtensionManager {
     return this.collect<PandocNode>((extension: Extension) => extension.nodes);
   }
 
-  public pandocAstReaders(): PandocAstReader[] {
-    const readers: PandocAstReader[] = [];
+  public pandocAstReaders(): PandocReader[] {
+    const readers: PandocReader[] = [];
     this.pandocMarks().forEach((mark: PandocMark) => {
       readers.push(...mark.pandoc.ast_readers);
     });
@@ -121,14 +121,6 @@ export class ExtensionManager {
 
   public pandocNodeWriters(): { [key: string]: PandocNodeWriterFn } {
     const writers: { [key: string]: PandocNodeWriterFn } = {};
-    this.pandocNodes().forEach((node: PandocNode) => {
-      writers[node.name] = node.pandoc.markdown_writer;
-    });
-    return writers;
-  }
-
-  public pandocAstNodeWriters(): { [key: string]: PandocAstNodeWriterFn } {
-    const writers: { [key: string]: PandocAstNodeWriterFn } = {};
     this.pandocNodes().forEach((node: PandocNode) => {
       writers[node.name] = node.pandoc.ast_writer;
     });

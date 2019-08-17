@@ -1,9 +1,9 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -19,15 +19,11 @@ const extension: Extension = {
       },
       pandoc: {
         ast_readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderToken('Para', () => {
-            state.renderInlines(node);
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode) => {
+          pandoc.renderToken('Para', () => {
+            pandoc.renderInlines(node);
           });
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.renderInline(node);
-          state.closeBlock(node);
-        },
+        }
       },
     },
   ],

@@ -14,7 +14,7 @@ import { Extension } from 'api/extension';
 import { ExtensionManager } from './extensions';
 import { PandocEngine } from 'api/pandoc';
 
-import { markdownFromDoc } from './pandoc/from_doc_via_ast';
+import { markdownFromDoc } from './pandoc/from_doc';
 import { markdownToDoc } from './pandoc/to_doc';
 
 import { initExtensions } from './extensions';
@@ -152,7 +152,7 @@ export class Editor {
   public getMarkdown(): Promise<string> {
     // get mark and node writers from extensions
     // const markWriters = this.extensions.pandocMarkWriters();
-    const nodeWriters = this.extensions.pandocAstNodeWriters();
+    const nodeWriters = this.extensions.pandocNodeWriters();
 
     // generate markdown
     return markdownFromDoc(this.state.doc, nodeWriters, this.pandoc);

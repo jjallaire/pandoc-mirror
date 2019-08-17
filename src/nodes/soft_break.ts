@@ -1,9 +1,6 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
-import { PandocAstToken } from 'src/api/pandoc';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer, PandocToken } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -23,20 +20,12 @@ const extension: Extension = {
           {
             token: 'SoftBreak',
             node: 'soft_break',
-            getText: (tok: PandocAstToken) => ' ',
+            getText: (tok: PandocToken) => ' ',
           },
         ],
-        ast_writer: (state: AstSerializerState) => {
-          state.renderToken('SoftBreak');
-        },
-        markdown_writer: (
-          state: MarkdownSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number,
-        ) => {
-          state.text('\n');
-        },
+        ast_writer: (pandoc: PandocSerializer) => {
+          pandoc.renderToken('SoftBreak');
+        }
       },
     },
   ],

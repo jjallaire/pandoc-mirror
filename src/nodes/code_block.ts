@@ -1,11 +1,9 @@
 import { setBlockType } from 'prosemirror-commands';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocAstToken } from 'api/pandoc';
-import { AstSerializerState } from 'pandoc/from_doc_via_ast';
+import { PandocSerializer, PandocToken } from 'api/pandoc';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -41,22 +39,15 @@ const extension: Extension = {
           {
             token: 'CodeBlock',
             block: 'code_block',
-            getAttrs: (tok: PandocAstToken) => ({
+            getAttrs: (tok: PandocToken) => ({
               // TODO: enhance for pandoc {} syntax
               params: tok.c[CODE_BLOCK_ATTR][CODE_BLOCK_ATTR_PARAMS].join(' '),
             }),
-            getText: (tok: PandocAstToken) => tok.c[CODE_BLOCK_TEXT],
+            getText: (tok: PandocToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        ast_writer: (state: AstSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
+        ast_writer: (pandoc: PandocSerializer, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
           //
-        },
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.write('```' + (node.attrs.params || '') + '\n');
-          state.text(node.textContent, false);
-          state.ensureNewLine();
-          state.write('```');
-          state.closeBlock(node);
         },
       },
     },
