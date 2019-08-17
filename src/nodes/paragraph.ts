@@ -21,7 +21,7 @@ const extension: Extension = {
         ast_readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("Para", () => {
-            state.renderInline(node);
+            state.renderInlines(node);
           });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {

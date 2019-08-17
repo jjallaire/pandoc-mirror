@@ -69,7 +69,7 @@ const extension: Extension = {
             state.renderValue(node.attrs.level);
             state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             state.renderList(() => {
-              state.renderInline(node);
+              state.renderInlines(node);
             });
           });
         },

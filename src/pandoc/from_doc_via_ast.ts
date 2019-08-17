@@ -12,7 +12,7 @@ export function markdownFromDoc(
   
   // render to ast
   const serializer = new AstSerializerState(nodeWriters);
-  serializer.renderContent(doc);
+  serializer.renderBlocks(doc);
   
   // ast to markdown
   const format = 'markdown' +
@@ -61,7 +61,7 @@ export class AstSerializerState {
     render();
     this.closeContent();
   }
-  
+
   public renderValue(value: any) {
     this.activeContent().push(value);
   }
@@ -70,13 +70,13 @@ export class AstSerializerState {
     this.activeContent().push([id, classes, keyvalue]);
   }
 
-  public renderContent(parent: ProsemirrorNode) {
+  public renderBlocks(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
-      this.render(node, parent, index);
+      this.nodes[node.type.name](this, node, parent, index);
     });
   }
 
-  public renderInline(parent: ProsemirrorNode) {
+  public renderInlines(parent: ProsemirrorNode) {
 
     const content = this.activeContent();
   
@@ -128,11 +128,6 @@ export class AstSerializerState {
   private activeContent() : any[] {
     return this.openedContent[this.openedContent.length-1];
   }
-
-  private render(node: ProsemirrorNode, parent: ProsemirrorNode, index: number) {
-    this.nodes[node.type.name](this, node, parent, index);
-  }
-
   
 }
 

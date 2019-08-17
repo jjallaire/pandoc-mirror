@@ -27,7 +27,7 @@ const extension: Extension = {
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("BlockQuote", () => {
-            state.renderContent(node);
+            state.renderBlocks(node);
           });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
