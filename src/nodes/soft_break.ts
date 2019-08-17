@@ -26,13 +26,8 @@ const extension: Extension = {
             getText: (tok: PandocAstToken) => ' ',
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
-          //
+        ast_writer: (state: AstSerializerState) => {
+          state.renderToken("SoftBreak");
         },
         markdown_writer: (
           state: MarkdownSerializerState,

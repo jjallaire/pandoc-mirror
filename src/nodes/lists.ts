@@ -33,12 +33,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode, parent: ProsemirrorNode) => {
           const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
           state.renderList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
@@ -77,12 +72,7 @@ const extension: Extension = {
             list: 'bullet_list',
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock("BulletList", () => {
             state.renderBlocks(node);
           });
@@ -133,12 +123,7 @@ const extension: Extension = {
             getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
           state.renderBlock('OrderedList', () => {
             state.renderList(() => {
               state.renderValue(node.attrs.order);

@@ -28,13 +28,8 @@ const extension: Extension = {
             node: 'hard_break',
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
-          //
+        ast_writer: (state: AstSerializerState) => {
+          state.renderToken("LineBreak");
         },
         markdown_writer: (
           state: MarkdownSerializerState,

@@ -87,13 +87,16 @@ const extension: Extension = {
             },
           },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
-          //
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
+          state.renderBlock('Image', () => {
+            state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            state.renderList(() => {
+              // TODO: support for arbitrary inlines in alt
+              // May simply need a separate figure node type
+              state.renderText(node.attrs.alt);
+            });
+            state.renderValue([node.attrs.src, node.attrs.title || ""]);
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.write(

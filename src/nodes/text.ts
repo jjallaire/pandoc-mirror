@@ -20,13 +20,8 @@ const extension: Extension = {
           { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
           { token: 'Space', text: true, getText: () => ' ' },
         ],
-        ast_writer: (
-          state: AstSerializerState,
-          node: ProsemirrorNode,
-          parent: ProsemirrorNode,
-          index: number
-        ) => {
-          //
+        ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
+          state.renderText(node.textContent);
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.text(node.text as string);

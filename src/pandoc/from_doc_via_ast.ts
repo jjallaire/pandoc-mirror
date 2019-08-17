@@ -79,6 +79,22 @@ export class AstSerializerState {
     this.activeContent().push([id, classes, keyvalue]);
   }
 
+  public renderText(text: string | null) {
+    if (text) {
+      const strs = text.split(' ');
+      strs.forEach((value: string, i: number) => {
+        if (value) {
+          this.renderToken("Str", value);
+          if (i < (strs.length-1)) {
+            this.renderToken("Space");
+          }
+        } else {
+          this.renderToken("Space");
+        }
+      });
+    }
+  }
+
   public renderBlocks(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
       this.nodes[node.type.name](this, node, parent, index);
@@ -86,21 +102,12 @@ export class AstSerializerState {
   }
 
   public renderInlines(parent: ProsemirrorNode) {
-
-    const content = this.activeContent();
-  
     parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
-      const strs = node.textContent.split(' ');
-      strs.forEach((value: string, i: number) => {
-        if (value) {
-          content.push({ t: "Str", c: value });
-          if (i < (strs.length-1)) {
-            content.push( { t: "Space" });
-          }
-        } else {
-          content.push( { t: "Space" });
-        }
-      });
+
+      // TODO: juxtopose marks 
+
+      this.nodes[node.type.name](this, node, parent, index);
+
     });
   }
 
