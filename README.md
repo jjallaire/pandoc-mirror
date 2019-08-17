@@ -7,6 +7,8 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 error handling for pandoc engine (or perhaps the component should just take the AST and not know
 anything at all about markdown)
 
+support for additional ordered list attributes (delimiter, etc.)
+
 consider emiting pandoc ast\
 superscript and subscript don't get spaces escaped (solved by emitting ast)
 
