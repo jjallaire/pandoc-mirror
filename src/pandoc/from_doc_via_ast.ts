@@ -53,26 +53,24 @@ export class AstSerializerState {
   }
   
   public renderToken(type: string, content?: (() => void) | any) {
-    
     const token: PandocAstToken = {
       t: type
-    };
-    this.render(token);
-
+    };   
     if (content) {
       if (typeof content === "function") {
         token.c = [];
-        this.fillContainer(token.c, content);
+        this.fill(token.c, content);
       } else {
         token.c = content;
       }
     }
+    this.render(token);
   }
 
   public renderList(content: () => void) {
     const list: any[] = [];
+    this.fill(list, content);
     this.render(list);
-    this.fillContainer(list, content);
   }
 
   public renderAttr(id: string, classes = [], keyvalue = []) {
@@ -112,7 +110,7 @@ export class AstSerializerState {
   }
 
 
-  private fillContainer(container: any[], content: () => void) {
+  private fill(container: any[], content: () => void) {
     this.containers.push(container);
     content();
     this.containers.pop();
