@@ -94,13 +94,17 @@ export class AstSerializerState {
   }
 
   public renderBlocks(parent: ProsemirrorNode) {
-    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
       this.nodes[node.type.name](this, node, parent, index);
     });
   }
 
   public renderInlines(parent: ProsemirrorNode) {
-    parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+
+    
+
+
+    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
 
       // TODO: juxtopose marks 
 
