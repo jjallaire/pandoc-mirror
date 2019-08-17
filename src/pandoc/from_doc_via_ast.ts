@@ -146,7 +146,7 @@ const pandocAstDoc = {
       "c": [
         3,
         [
-          "",
+          "myHeading",
           [],
           []
         ],
@@ -154,130 +154,6 @@ const pandocAstDoc = {
           {
             "t": "Str",
             "c": "Heading"
-          },
-          {
-            "t": "Space"
-          },
-          {
-            "t": "Str",
-            "c": "3"
-          }
-        ]
-      ]
-    },
-    {
-      "t": "Para",
-      "c": [
-        {
-          "t": "Image",
-          "c": [
-            [
-              "",
-              [],
-              []
-            ],
-            [
-              {
-                "t": "Str",
-                "c": "This"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "is"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "the"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Strong",
-                "c": [
-                  {
-                    "t": "Str",
-                    "c": "bold"
-                  }
-                ]
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "text"
-              }
-            ],
-            [
-              "https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-250.png",
-              "The image title"
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "t": "BulletList",
-      "c": [
-        [
-          {
-            "t": "Plain",
-            "c": [
-              {
-                "t": "Str",
-                "c": "Item"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "1"
-              }
-            ]
-          }
-        ],
-        [
-          {
-            "t": "Plain",
-            "c": [
-              {
-                "t": "Str",
-                "c": "Item"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "2"
-              }
-            ]
-          }
-        ],
-        [
-          {
-            "t": "Plain",
-            "c": [
-              {
-                "t": "Str",
-                "c": "Item"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "3"
-              }
-            ]
           }
         ]
       ]
@@ -294,14 +170,42 @@ const pandocAstDoc = {
         },
         {
           "t": "Str",
-          "c": "paragraph"
+          "c": "is"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Strong",
+          "c": [
+            {
+              "t": "Str",
+              "c": "bold"
+            }
+          ]
         },
         {
           "t": "Space"
         },
         {
           "t": "Str",
-          "c": "has"
+          "c": "text."
+        }
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "is"
         },
         {
           "t": "Space"
@@ -311,7 +215,7 @@ const pandocAstDoc = {
           "c": [
             {
               "t": "Str",
-              "c": "italics"
+              "c": "italic"
             }
           ]
         },
@@ -320,28 +224,23 @@ const pandocAstDoc = {
         },
         {
           "t": "Str",
-          "c": "and"
+          "c": "text."
+        }
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This"
         },
         {
           "t": "Space"
         },
         {
           "t": "Str",
-          "c": "also"
-        },
-        {
-          "t": "LineBreak"
-        },
-        {
-          "t": "Str",
-          "c": "includes"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "a"
+          "c": "is"
         },
         {
           "t": "Space"
@@ -355,7 +254,35 @@ const pandocAstDoc = {
         },
         {
           "t": "Str",
+          "c": "break."
+        },
+        {
+          "t": "LineBreak"
+        },
+        {
+          "t": "Str",
+          "c": "Next"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
           "c": "line"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "after"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "hard"
         },
         {
           "t": "Space"
@@ -378,31 +305,314 @@ const pandocAstDoc = {
         },
         {
           "t": "Str",
-          "c": "paragraph"
+          "c": "is"
         },
         {
           "t": "Space"
         },
         {
           "t": "Str",
-          "c": "has"
+          "c": "soft"
         },
         {
           "t": "Space"
         },
         {
-          "t": "Strong",
-          "c": [
+          "t": "Str",
+          "c": "break."
+        },
+        {
+          "t": "SoftBreak"
+        },
+        {
+          "t": "Str",
+          "c": "Next"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "line"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "after"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "soft"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "break."
+        }
+      ]
+    },
+    {
+      "t": "HorizontalRule"
+    },
+    {
+      "t": "BulletList",
+      "c": [
+        [
+          {
+            "t": "Plain",
+            "c": [
+              {
+                "t": "Str",
+                "c": "Unordered"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "Plain",
+            "c": [
+              {
+                "t": "Str",
+                "c": "List"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "Plain",
+            "c": [
+              {
+                "t": "Str",
+                "c": "Here"
+              },
+              {
+                "t": "Space"
+              },
+              {
+                "t": "Str",
+                "c": "we"
+              },
+              {
+                "t": "Space"
+              },
+              {
+                "t": "Str",
+                "c": "go"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "t": "OrderedList",
+      "c": [
+        [
+          2,
+          {
+            "t": "Decimal"
+          },
+          {
+            "t": "Period"
+          }
+        ],
+        [
+          [
             {
-              "t": "Str",
-              "c": "bold"
+              "t": "Plain",
+              "c": [
+                {
+                  "t": "Str",
+                  "c": "Ordered"
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "t": "Plain",
+              "c": [
+                {
+                  "t": "Str",
+                  "c": "List"
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "t": "Plain",
+              "c": [
+                {
+                  "t": "Str",
+                  "c": "Example"
+                },
+                {
+                  "t": "Space"
+                },
+                {
+                  "t": "Str",
+                  "c": "of"
+                }
+              ]
             }
           ]
+        ]
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This"
+        },
+        {
+          "t": "Space"
         },
         {
           "t": "Str",
-          "c": "."
+          "c": "is"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "a"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "link"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "to"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Link",
+          "c": [
+            [
+              "myLink",
+              [
+                "splat"
+              ],
+              [
+                [
+                  "target",
+                  "_blank"
+                ]
+              ]
+            ],
+            [
+              {
+                "t": "Str",
+                "c": "Google"
+              }
+            ],
+            [
+              "https://www.google.com",
+              ""
+            ]
+          ]
         }
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "is"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "an"
+        },
+        {
+          "t": "Space"
+        },
+        {
+          "t": "Str",
+          "c": "image:"
+        }
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Image",
+          "c": [
+            [
+              "myImage",
+              [
+                "foo",
+                "bar"
+              ],
+              [
+                [
+                  "width",
+                  "400"
+                ],
+                [
+                  "height",
+                  "200"
+                ],
+                [
+                  "style",
+                  "border: 1px solid;"
+                ]
+              ]
+            ],
+            [],
+            [
+              "content/google.png",
+              ""
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "t": "CodeBlock",
+      "c": [
+        [
+          "",
+          [
+            "r"
+          ],
+          []
+        ],
+        "Here is a code block.\n\nAnother line of code."
       ]
     },
     {
@@ -414,13 +624,6 @@ const pandocAstDoc = {
             {
               "t": "Str",
               "c": "This"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "paragraph"
             },
             {
               "t": "Space"
@@ -440,32 +643,39 @@ const pandocAstDoc = {
               "t": "Space"
             },
             {
-              "t": "Emph",
-              "c": [
-                {
-                  "t": "Str",
-                  "c": "blockquote"
-                }
-              ]
+              "t": "Str",
+              "c": "blockquote."
+            },
+            {
+              "t": "Space"
+            },
+            {
+              "t": "Str",
+              "c": "See"
+            },
+            {
+              "t": "Space"
+            },
+            {
+              "t": "Str",
+              "c": "how"
+            },
+            {
+              "t": "Space"
+            },
+            {
+              "t": "Str",
+              "c": "it"
+            },
+            {
+              "t": "Space"
+            },
+            {
+              "t": "Str",
+              "c": "runs!"
             }
           ]
         }
-      ]
-    },
-    {
-      "t": "HorizontalRule"
-    },
-    {
-      "t": "CodeBlock",
-      "c": [
-        [
-          "",
-          [
-            "swift"
-          ],
-          []
-        ],
-        "Fenced code region\n"
       ]
     },
     {
@@ -480,21 +690,7 @@ const pandocAstDoc = {
         },
         {
           "t": "Str",
-          "c": "paragraph"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "has"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "some"
+          "c": "is"
         },
         {
           "t": "Space"
@@ -504,144 +700,20 @@ const pandocAstDoc = {
           "c": [
             [
               "",
-              [],
+              [
+                "example"
+              ],
               []
             ],
-            "inline code"
+            "code"
           ]
         },
         {
-          "t": "Str",
-          "c": "."
-        }
-      ]
-    },
-    {
-      "t": "Para",
-      "c": [
-        {
-          "t": "Str",
-          "c": "This"
-        },
-        {
           "t": "Space"
         },
         {
           "t": "Str",
-          "c": "paragraph"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Emph",
-          "c": [
-            {
-              "t": "Str",
-              "c": "combines"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Strong",
-              "c": [
-                {
-                  "t": "Str",
-                  "c": "bold"
-                }
-              ]
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "and"
-            },
-            {
-              "t": "Space"
-            },
-            {
-              "t": "Str",
-              "c": "italics"
-            }
-          ]
-        },
-        {
-          "t": "Str",
-          "c": "."
-        }
-      ]
-    },
-    {
-      "t": "Para",
-      "c": [
-        {
-          "t": "Str",
-          "c": "This"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "paragraph"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "has"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Str",
-          "c": "a"
-        },
-        {
-          "t": "Space"
-        },
-        {
-          "t": "Link",
-          "c": [
-            [
-              "",
-              [],
-              []
-            ],
-            [
-              {
-                "t": "Str",
-                "c": "link"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "to"
-              },
-              {
-                "t": "Space"
-              },
-              {
-                "t": "Str",
-                "c": "Google!"
-              }
-            ],
-            [
-              "http://google.com",
-              ""
-            ]
-          ]
-        },
-        {
-          "t": "Str",
-          "c": "."
+          "c": "text."
         }
       ]
     }

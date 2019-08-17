@@ -39,7 +39,14 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          //
+          const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
+          state.renderList(() => {
+            node.forEach((itemNode: ProsemirrorNode) => {
+              state.renderBlock(itemBlockType, () => {
+                state.renderInlines(itemNode);
+              });
+            });
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderContent(node);
@@ -76,7 +83,9 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          //
+          state.renderBlock("BulletList", () => {
+            state.renderBlocks(node);
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
@@ -130,7 +139,16 @@ const extension: Extension = {
           parent: ProsemirrorNode,
           index: number
         ) => {
-          //
+          state.renderBlock('OrderedList', () => {
+            state.renderList(() => {
+              state.renderValue(node.attrs.order);
+              state.renderBlock('Decimal');
+              state.renderBlock('Period');
+            });
+            state.renderList(() => {
+              state.renderBlocks(node);
+            });
+          });
         },
         markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
           const start = node.attrs.order || 1;
