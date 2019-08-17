@@ -54,7 +54,11 @@ module.exports = {
 
       app.post('/pandoc/markdown', express.json(), function(request, response) {
         let spawn = child_process.spawn;
-        pandoc = spawn('pandoc', ['--from', 'json', '--to', request.body.format]);
+        pandoc = spawn('pandoc', 
+          ['--from', 'json', 
+           '--to', request.body.format,
+           '--atx-headers'
+          ]);
         pandoc.stdout.on('data', data => {
           response.json( { markdown: `${data}` });
         });
