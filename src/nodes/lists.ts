@@ -37,7 +37,7 @@ const extension: Extension = {
           const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
           state.renderList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
-              state.renderBlock(itemBlockType, () => {
+              state.renderToken(itemBlockType, () => {
                 state.renderInlines(itemNode);
               });
             });
@@ -73,7 +73,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderBlock("BulletList", () => {
+          state.renderToken("BulletList", () => {
             state.renderBlocks(node);
           });
         },
@@ -124,7 +124,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderBlock('OrderedList', () => {
+          state.renderToken('OrderedList', () => {
             state.renderList(() => {
               state.renderValue(node.attrs.order);
               state.renderToken('Decimal');

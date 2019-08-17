@@ -26,7 +26,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderBlock("BlockQuote", () => {
+          state.renderToken("BlockQuote", () => {
             state.renderBlocks(node);
           });
         },

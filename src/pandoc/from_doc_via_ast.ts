@@ -46,28 +46,36 @@ export class AstSerializerState {
   public pandocAst() : PandocAst {
     return this.ast;
   }
-
-  public renderToken(type: string, content?: any) {
+  
+  public renderToken(type: string, content?: (() => void) | any) {
+    
+    // create the token and add it to the active container
     const token: PandocAstToken = {
       t: type
     };
-    if (content) {
-      token.c = content;
-    }
     this.activeContent().push(token);
-  }
-  
-  public renderBlock(type: string, render: () => void) {
-    this.openBlock(type, !!render);
-    if (render) {
-      render();
-      this.closeContent();
+
+    // if there is content then add it
+    if (content) {
+      if (typeof content === "function") {
+        token.c = [];
+        this.openedContent.push(token.c);
+        content();
+        this.closeContent();
+      } else {
+        token.c = content;
+      }
     }
   }
 
   public renderList(render: () => void) {
-    this.openList();
+
+    const list: any[] = [];
+    this.activeContent().push(list);
+    this.openedContent.push(list);
+
     render();
+    
     this.closeContent();
   }
 
@@ -111,32 +119,7 @@ export class AstSerializerState {
     });
   }
 
-  private openBlock(type: string, children = true) : void {
-    
-    // create block to add
-    const block: PandocAstToken = {
-      t: type
-    };
-    if (children) {
-      block.c = [];
-    }
-
-    // add to appropriate container
-    this.activeContent().push(block);
-
-    // track opened content
-    if (children) {
-      this.openedContent.push(block.c);
-    }
-
-  }
-
-  private openList() {
-    const list: any[] = [];
-    this.activeContent().push(list);
-    this.openedContent.push(list);
-  }
-
+  
   private closeContent() {
     this.openedContent.pop();
   }

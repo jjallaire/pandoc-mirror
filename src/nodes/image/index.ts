@@ -88,7 +88,7 @@ const extension: Extension = {
           },
         ],
         ast_writer: (state: AstSerializerState, node: ProsemirrorNode) => {
-          state.renderBlock('Image', () => {
+          state.renderToken('Image', () => {
             state.renderAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             state.renderList(() => {
               // TODO: support for arbitrary inlines in alt
