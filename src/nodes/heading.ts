@@ -82,8 +82,8 @@ const extension: Extension = {
 };
 
 class HeadingCommand extends BlockCommand {
-  public nodeType: NodeType;
-  public level: number;
+  public readonly nodeType: NodeType;
+  public readonly level: number;
 
   constructor(schema: Schema, level: number) {
     super('heading' + level, ['Shift-Ctrl-' + level], schema.nodes.heading, schema.nodes.paragraph, { level });

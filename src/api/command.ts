@@ -10,9 +10,9 @@ import { canInsertNode, nodeIsActive } from './node';
 import { pandocAttrInSpec, pandocAttrAvailable, pandocAttrFrom } from './pandoc_attr';
 
 export class Command {
-  public name: string;
-  public keymap: string[] | null;
-  public execute: CommandFn;
+  public readonly name: string;
+  public readonly keymap: string[] | null;
+  public readonly execute: CommandFn;
 
   constructor(name: string, keymap: string[] | null, execute: CommandFn) {
     this.name = name;
@@ -30,8 +30,8 @@ export class Command {
 }
 
 export class MarkCommand extends Command {
-  public markType: MarkType;
-  public attrs: object;
+  public readonly markType: MarkType;
+  public readonly attrs: object;
 
   constructor(name: string, keymap: string[] | null, markType: MarkType, attrs = {}) {
     super(name, keymap, toggleMark(markType, attrs) as CommandFn);
@@ -45,8 +45,8 @@ export class MarkCommand extends Command {
 }
 
 export class NodeCommand extends Command {
-  public nodeType: NodeType;
-  public attrs: object;
+  public readonly nodeType: NodeType;
+  public readonly attrs: object;
 
   constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, execute: CommandFn) {
     super(name, keymap, execute);

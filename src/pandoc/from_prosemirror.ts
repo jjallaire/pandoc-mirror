@@ -10,9 +10,9 @@ export function prosemirrorToPandocAst(doc: ProsemirrorNode, apiVersion: PandocA
 
 class PandocWriter implements PandocOutput {
 
-  private ast: PandocAst;
-  private nodes: { [key: string]: PandocNodeWriterFn };
-  private containers: any[][];
+  private readonly ast: PandocAst;
+  private readonly nodes: { [key: string]: PandocNodeWriterFn };
+  private readonly containers: any[][];
 
   constructor(apiVersion: PandocApiVersion, nodes: PandocNodeWriter[]) {
     

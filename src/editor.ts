@@ -49,17 +49,18 @@ export const kEventUpdate = 'update';
 export const kEventSelectionChange = 'selectionChange';
 
 export class Editor {
-  private parent: HTMLElement;
-  private pandocTranslator: PandocTranslator;
-  private ui: EditorUI;
-  private options: EditorOptions;
-  private hooks: EditorHooks;
-  private events: { [key: string]: Event };
-  private schema: Schema;
+  
+  private readonly parent: HTMLElement;
+  private readonly pandocTranslator: PandocTranslator;
+  private readonly ui: EditorUI;
+  private readonly options: EditorOptions;
+  private readonly hooks: EditorHooks;
+  private readonly events: { [key: string]: Event };
+  private readonly schema: Schema;
+  private readonly view: EditorView;
+  private readonly extensions: ExtensionManager;
+  private readonly onClickBelow: (ev: MouseEvent) => void;
   private state: EditorState;
-  private view: EditorView;
-  private extensions: ExtensionManager;
-  private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: EditorConfig) {
     // initialize references

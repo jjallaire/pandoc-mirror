@@ -8,8 +8,9 @@ export function pandocAstToProsemirror(ast: PandocAst, schema: Schema, readers: 
 }
 
 class Parser {
-  private schema: Schema;
-  private handlers: { [token: string]: ParserTokenHandler };
+
+  private readonly schema: Schema;
+  private readonly handlers: { [token: string]: ParserTokenHandler };
 
   constructor(schema: Schema, readers: PandocTokenReader[]) {
     this.schema = schema;
@@ -129,8 +130,9 @@ class Parser {
 }
 
 class ParserState {
-  private schema: Schema;
-  private stack: IParserStackElement[];
+
+  private readonly schema: Schema;
+  private readonly stack: IParserStackElement[];
   private marks: Mark[];
 
   constructor(schema: Schema) {
