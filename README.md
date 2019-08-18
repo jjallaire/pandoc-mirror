@@ -6,8 +6,6 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 
 emit pandoc ast
 
-use readonly attribute for class members
-
 error handling for pandoc engine (or perhaps the component should just take the AST and not know
 anything at all about markdown)
 
