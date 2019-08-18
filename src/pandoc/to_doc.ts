@@ -1,4 +1,4 @@
-import { Mark, Node, NodeType, Schema } from 'prosemirror-model';
+import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { PandocEngine, PandocReader, PandocToken } from 'api/pandoc';
 
 export function markdownToDoc(
@@ -6,7 +6,7 @@ export function markdownToDoc(
   schema: Schema,
   pandoc: PandocEngine,
   readers: PandocReader[],
-): Promise<Node> {
+): Promise<ProsemirrorNode> {
   const format = 'markdown' + '-auto_identifiers'; // don't inject identifiers for headers w/o them
 
   return pandoc.markdownToAst(format, markdown).then(ast => {
@@ -24,7 +24,7 @@ class Parser {
     this.handlers = this.createHandlers(readers);
   }
 
-  public parse(ast: any): Node {
+  public parse(ast: any): ProsemirrorNode {
     const state: ParserState = new ParserState(this.schema);
     this.parseTokens(state, ast.blocks);
     return state.topNode();
@@ -100,7 +100,7 @@ class Parser {
         }
         const nodeType = this.schema.nodes[reader.node];
         handlers[reader.token] = (state: ParserState, tok: PandocToken) => {
-          let content: Node[] = [];
+          let content: ProsemirrorNode[] = [];
           if (reader.getText) {
             content = [this.schema.text(reader.getText(tok))];
           }
@@ -147,18 +147,18 @@ class ParserState {
     this.marks = Mark.none;
   }
 
-  public topNode(): Node {
-    return this.top().type.createAndFill(null, this.top().content) as Node;
+  public topNode(): ProsemirrorNode {
+    return this.top().type.createAndFill(null, this.top().content) as ProsemirrorNode;
   }
 
   public addText(text: string) {
     if (!text) {
       return;
     }
-    const nodes: Node[] = this.top().content;
-    const last: Node = nodes[nodes.length - 1];
-    const node: Node = this.schema.text(text, this.marks);
-    const merged: Node | undefined = this.maybeMerge(last, node);
+    const nodes: ProsemirrorNode[] = this.top().content;
+    const last: ProsemirrorNode = nodes[nodes.length - 1];
+    const node: ProsemirrorNode = this.schema.text(text, this.marks);
+    const merged: ProsemirrorNode | undefined = this.maybeMerge(last, node);
     if (last && merged) {
       nodes[nodes.length - 1] = merged;
     } else {
@@ -166,8 +166,8 @@ class ParserState {
     }
   }
 
-  public addNode(type: NodeType, attrs: {}, content: Node[]) {
-    const node: Node | null | undefined = type.createAndFill(attrs, content, this.marks);
+  public addNode(type: NodeType, attrs: {}, content: ProsemirrorNode[]) {
+    const node: ProsemirrorNode | null | undefined = type.createAndFill(attrs, content, this.marks);
     if (!node) {
       return null;
     }
@@ -181,12 +181,12 @@ class ParserState {
     this.stack.push({ type, attrs, content: [] });
   }
 
-  public closeNode(): Node {
+  public closeNode(): ProsemirrorNode {
     if (this.marks.length) {
       this.marks = Mark.none;
     }
     const info: IParserStackElement = this.stack.pop() as IParserStackElement;
-    return this.addNode(info.type, info.attrs, info.content) as Node;
+    return this.addNode(info.type, info.attrs, info.content) as ProsemirrorNode;
   }
 
   public openMark(mark: Mark) {
@@ -201,7 +201,7 @@ class ParserState {
     return this.stack[this.stack.length - 1];
   }
 
-  private maybeMerge(a: Node, b: Node): Node | undefined {
+  private maybeMerge(a: ProsemirrorNode, b: ProsemirrorNode): ProsemirrorNode | undefined {
     if (a && a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
       return this.schema.text(((a.text as string) + b.text) as string, a.marks);
     } else {
@@ -213,7 +213,7 @@ class ParserState {
 interface IParserStackElement {
   type: NodeType;
   attrs: {};
-  content: Node[];
+  content: ProsemirrorNode[];
 }
 
 type ParserTokenHandler = (state: ParserState, tok: PandocToken) => void;
