@@ -1,25 +1,17 @@
 import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
-import { PandocEngine, PandocReader, PandocToken } from 'api/pandoc';
+import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
 
-export function markdownToDoc(
-  markdown: string,
-  schema: Schema,
-  pandoc: PandocEngine,
-  readers: PandocReader[],
-): Promise<ProsemirrorNode> {
-  const format = 'markdown' + '-auto_identifiers'; // don't inject identifiers for headers w/o them
 
-  return pandoc.markdownToAst(format, markdown).then(ast => {
-    const parser: Parser = new Parser(schema, readers);
-    return parser.parse(ast);
-  });
+export function pandocAstToProsemirror(ast: PandocAst, schema: Schema, readers: PandocTokenReader[]) {
+  const parser = new Parser(schema, readers);
+  return parser.parse(ast);
 }
 
 class Parser {
   private schema: Schema;
   private handlers: { [token: string]: ParserTokenHandler };
 
-  constructor(schema: Schema, readers: PandocReader[]) {
+  constructor(schema: Schema, readers: PandocTokenReader[]) {
     this.schema = schema;
     this.handlers = this.createHandlers(readers);
   }
@@ -42,7 +34,7 @@ class Parser {
   }
 
   // create parser token handler functions based on the passed readers
-  private createHandlers(readers: PandocReader[]) {
+  private createHandlers(readers: PandocTokenReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
       // resolve children (provide default impl)

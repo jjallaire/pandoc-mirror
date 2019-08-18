@@ -14,8 +14,7 @@ import { Extension } from 'api/extension';
 import { ExtensionManager } from './extensions';
 import { PandocEngine } from 'api/pandoc';
 
-import { markdownFromDoc } from './pandoc/from_doc';
-import { markdownToDoc } from './pandoc/to_doc';
+import { PandocTranslator } from 'pandoc/translator';
 
 import { initExtensions } from './extensions';
 
@@ -51,7 +50,7 @@ export const kEventSelectionChange = 'selectionChange';
 
 export class Editor {
   private parent: HTMLElement;
-  private pandoc: PandocEngine;
+  private pandocTranslator: PandocTranslator;
   private ui: EditorUI;
   private options: EditorOptions;
   private hooks: EditorHooks;
@@ -65,7 +64,6 @@ export class Editor {
   constructor(config: EditorConfig) {
     // initialize references
     this.parent = config.parent;
-    this.pandoc = config.pandoc;
     this.ui = config.ui;
     this.options = config.options || {};
     this.hooks = config.hooks || {};
@@ -91,6 +89,14 @@ export class Editor {
       state: this.state,
       dispatchTransaction: this.dispatchTransaction.bind(this),
     });
+
+    // create pandoc translator
+    this.pandocTranslator = new PandocTranslator(
+      this.schema,
+      this.extensions.pandocReaders(),
+      this.extensions.pandocNodeWriters(),
+      config.pandoc
+    );
 
     // apply devtools if they are available
     if (this.hooks.applyDevTools) {
@@ -131,8 +137,9 @@ export class Editor {
   }
 
   public setMarkdown(markdown: string, emitUpdate = true) {
-    // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocReaders()).then((doc: Node) => {
+    
+    return this.pandocTranslator.toProsemirror(markdown).then((doc: Node) => {
+      
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -150,12 +157,7 @@ export class Editor {
   }
 
   public getMarkdown(): Promise<string> {
-    // get mark and node writers from extensions
-    // const markWriters = this.extensions.pandocMarkWriters();
-    const nodeWriters = this.extensions.pandocNodeWriters();
-
-    // generate markdown
-    return markdownFromDoc(this.state.doc, nodeWriters, this.pandoc);
+    return this.pandocTranslator.fromProsemirror(this.state.doc);
   }
 
   public getJSON(): any {

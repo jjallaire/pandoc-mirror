@@ -1,20 +1,11 @@
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { PandocEngine, PandocToken, PandocOutput, PandocNodeWriterFn } from 'api/pandoc';
+import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocApiVersion } from 'api/pandoc';
 
-export function markdownFromDoc(
-  doc: ProsemirrorNode,
-  nodeWriters: { [key: string]: PandocNodeWriterFn },
-  pandoc: PandocEngine
-): Promise<string> {
-  
-  // render to ast
-  const writer = new PandocWriter(nodeWriters);
+
+export function prosemirrorToPandocAst(doc: ProsemirrorNode, apiVersion: PandocApiVersion, writers: PandocNodeWriter[]) : PandocAst {
+  const writer = new PandocWriter(apiVersion, writers);
   writer.writeBlocks(doc);
-  
-  // ast to markdown
-  const format = 'markdown' 
-    + '-auto_identifiers'; // don't inject identifiers for headers w/o them
-  return pandoc.astToMarkdown(format, writer.output());
+  return writer.output();
 }
 
 class PandocWriter implements PandocOutput {
@@ -23,11 +14,17 @@ class PandocWriter implements PandocOutput {
   private nodes: { [key: string]: PandocNodeWriterFn };
   private containers: any[][];
 
-  constructor(nodes: { [key: string]: PandocNodeWriterFn }) {
-    this.nodes = nodes;
+  constructor(apiVersion: PandocApiVersion, nodes: PandocNodeWriter[]) {
+    
+    // create map of node writers
+    this.nodes = {};
+    nodes.forEach((writer: PandocNodeWriter) => {
+      this.nodes[writer.name] = writer.write;
+    });
+    
     this.ast = {
       blocks: [],
-      'pandoc-api-version': [1, 17, 5, 1],
+      'pandoc-api-version': apiVersion,
       meta: {},
     };
     this.containers = [this.ast.blocks];
@@ -104,11 +101,6 @@ class PandocWriter implements PandocOutput {
   }
 }
 
-interface PandocAst {
-  blocks: PandocToken[];
-  'pandoc-api-version': number[];
-  meta: any;
-}
 
 const pandocAstDoc = {
   blocks: [

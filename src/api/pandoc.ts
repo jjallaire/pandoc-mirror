@@ -2,16 +2,24 @@ import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
-  markdownToAst(format: string, markdown: string): Promise<object>;
-  astToMarkdown(format: string, ast: object): Promise<string>;
+  markdownToAst(format: string, markdown: string): Promise<PandocAst>;
+  astToMarkdown(format: string, ast: PandocAst): Promise<string>;
 }
+
+export interface PandocAst {
+  blocks: PandocToken[];
+  'pandoc-api-version': PandocApiVersion;
+  meta: any;
+}
+
+export type PandocApiVersion = [number,number,number,number];
 
 export interface PandocToken {
   t: string;
   c?: any;
 }
 
-export interface PandocReader {
+export interface PandocTokenReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)
   token: string;
 
@@ -26,6 +34,11 @@ export interface PandocReader {
   getAttrs?: (tok: PandocToken) => any;
   getChildren?: (tok: PandocToken) => any[];
   getText?: (tok: PandocToken) => string;
+}
+
+export interface PandocNodeWriter {
+  name: string;
+  write: PandocNodeWriterFn;
 }
 
 export type PandocNodeWriterFn = (
