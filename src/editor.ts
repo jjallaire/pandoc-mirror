@@ -137,24 +137,24 @@ export class Editor {
     };
   }
 
-  public setMarkdown(markdown: string, emitUpdate = true) {
+  public setMarkdown(markdown: string, emitUpdate = true) : Promise<void> {
     
-    return this.pandocTranslator.toProsemirror(markdown).then((doc: Node) => {
-      
-      // re-initialize editor state
-      this.state = EditorState.create({
-        schema: this.state.schema,
-        doc,
-        plugins: this.state.plugins,
-      });
-      this.view.updateState(this.state);
+    return this.pandocTranslator.toProsemirror(markdown)
+      .then((doc: Node) => {
+        // re-initialize editor state
+        this.state = EditorState.create({
+          schema: this.state.schema,
+          doc,
+          plugins: this.state.plugins,
+        });
+        this.view.updateState(this.state);
 
-      // notify listeners if requested
-      if (emitUpdate) {
-        this.emitUpdate();
-        this.emitSelectionChanged();
-      }
-    });
+        // notify listeners if requested
+        if (emitUpdate) {
+          this.emitUpdate();
+          this.emitSelectionChanged();
+        }
+      });
   }
 
   public getMarkdown(): Promise<string> {

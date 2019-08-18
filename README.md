@@ -6,8 +6,9 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 
 emit pandoc ast
 
-error handling for pandoc engine (or perhaps the component should just take the AST and not know
-anything at all about markdown)
+error handling for pandoc engine:
+   - Make alert part of editor UI interface
+   - Verify that json parsing error doesn't have more
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 

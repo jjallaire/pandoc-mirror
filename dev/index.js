@@ -21,14 +21,21 @@ initToolbar(layout.toolbar, editor)
 
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
-  editor.getMarkdown().then(markdown => {
-    $(layout.markdown).text(markdown)
-  })
+  editor.getMarkdown()
+    .then(markdown => {
+      $(layout.markdown).text(markdown)
+    })
+    .catch(error => {
+      w2alert(error.message)
+    })
 })
 
 // get content and load it into the editor
 axios.get('content/content.md') .then(result => {
   editor.setMarkdown(result.data)
+    .catch(error => {
+      w2alert(error.message)
+    })
 })
 
 
