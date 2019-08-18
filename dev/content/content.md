@@ -26,7 +26,7 @@ This is an image:
 
 ![](content/google.png){#myImage .foo .bar width=400 height=200 style='border: 1px solid;'}
 
-```r
+``` {.r out.width=400}
 Here is a code block.
 
 Another line of code.

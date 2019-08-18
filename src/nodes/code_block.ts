@@ -4,6 +4,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
+import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_ATTR_PARAMS = 1;
@@ -18,20 +19,19 @@ const extension: Extension = {
         group: 'block',
         code: true,
         defining: true,
-        attrs: { params: { default: '' } },
+        attrs: { ...pandocAttrSpec },
         parseDOM: [
           {
             tag: 'pre',
             preserveWhitespace: true,
-            getAttrs: (node: Node | string) => ({ params: (node as Element).getAttribute('data-params') || '' }),
+            getAttrs: (node: Node | string) => { 
+              const el = node as Element;
+              return pandocAttrParseDom(el, {});
+             },
           },
         ],
         toDOM(node: ProsemirrorNode) {
-          if (node.attrs.params) {
-            return ['pre', { 'data-params': node.attrs.params }, ['code', 0]];
-          } else {
-            return ['pre', {}, ['code', 0]];
-          }
+          return ['pre', pandocAttrToDomAttr(node.attrs), ['code', 0]];
         },
       },
       pandoc: {
@@ -40,14 +40,16 @@ const extension: Extension = {
             token: 'CodeBlock',
             block: 'code_block',
             getAttrs: (tok: PandocToken) => ({
-              // TODO: enhance for pandoc {} syntax
-              params: tok.c[CODE_BLOCK_ATTR][CODE_BLOCK_ATTR_PARAMS].join(' '),
+              ...pandocAttrReadAST(tok, CODE_BLOCK_ATTR)
             }),
             getText: (tok: PandocToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
-        writer: (pandoc: PandocOutput, node: ProsemirrorNode, parent: ProsemirrorNode, index: number) => {
-          //
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken("CodeBlock", () => {
+            output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            output.write(node.textContent);
+          });
         },
       },
     },

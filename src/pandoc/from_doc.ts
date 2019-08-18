@@ -64,7 +64,7 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeAttr(id: string, classes = [], keyvalue = []) {
-    this.write([id, classes, keyvalue]);
+    this.write([id || "", classes, keyvalue]);
   }
 
   public writeText(text: string | null) {
