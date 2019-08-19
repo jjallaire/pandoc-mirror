@@ -44,16 +44,12 @@ const extension: Extension = {
           },
         ],
         writer: (output: PandocOutput, mark: Mark, parent: Fragment) => {
-          output.writeInlines(parent);
-
-          /*
-          output.writeToken('Code', () => {
-          
-              output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
-              output.writeText('myCode');
-            
+          output.writeToken("Code", () => {
+            output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
+            let code = '';
+            parent.forEach((node: ProsemirrorNode) => code = code + node.textContent);
+            output.write(code);
           });
-          */
         }
       },
     },
@@ -63,28 +59,5 @@ const extension: Extension = {
     return [new MarkCommand('code', ['Mod-d', 'Mod-D'], schema.marks.code)];
   },
 };
-
-function backticksFor(node: ProsemirrorNode, side: -1 | 1) {
-  const ticks = /`+/g;
-  let m: RegExpExecArray | null;
-  let len = 0;
-  if (node.isText) {
-    for (;;) {
-      m = ticks.exec(node.text as string);
-      if (!m) {
-        break;
-      }
-      len = Math.max(len, m[0].length);
-    }
-  }
-  let result = len > 0 && side > 0 ? ' `' : '`';
-  for (let i = 0; i < len; i++) {
-    result += '`';
-  }
-  if (len > 0 && side < 0) {
-    result += ' ';
-  }
-  return result;
-}
 
 export default extension;
