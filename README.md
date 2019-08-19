@@ -6,9 +6,6 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 
 emit pandoc ast
 
-error handling for pandoc engine:
-   - Make alert part of editor UI interface
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 editing support for additional ordered list attributes (delimiter, etc.)
@@ -28,6 +25,8 @@ embedeed codemirror editor
 support for footnotes
 
 add outline notifications / navigation
+
+crit markup
 
 support for image figures (where alt text is displayed in a p below the image). note that alt text supports arbitrary markup so need a structured way to allow selection and editing of just the alt text. figures will
 be an additional node type with a custom node view (or something like that)
