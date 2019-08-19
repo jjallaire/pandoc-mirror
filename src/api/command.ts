@@ -10,11 +10,11 @@ import { canInsertNode, nodeIsActive } from './node';
 import { pandocAttrInSpec, pandocAttrAvailable, pandocAttrFrom } from './pandoc_attr';
 
 export class Command {
-  public name: string;
-  public keymap: string[] | null;
-  public execute: CommandFn;
+  public readonly name: string;
+  public readonly keymap: readonly string[] | null;
+  public readonly execute: CommandFn;
 
-  constructor(name: string, keymap: string[] | null, execute: CommandFn) {
+  constructor(name: string, keymap: readonly string[] | null, execute: CommandFn) {
     this.name = name;
     this.keymap = keymap;
     this.execute = execute;
@@ -30,8 +30,8 @@ export class Command {
 }
 
 export class MarkCommand extends Command {
-  public markType: MarkType;
-  public attrs: object;
+  public readonly markType: MarkType;
+  public readonly attrs: object;
 
   constructor(name: string, keymap: string[] | null, markType: MarkType, attrs = {}) {
     super(name, keymap, toggleMark(markType, attrs) as CommandFn);
@@ -45,8 +45,8 @@ export class MarkCommand extends Command {
 }
 
 export class NodeCommand extends Command {
-  public nodeType: NodeType;
-  public attrs: object;
+  public readonly nodeType: NodeType;
+  public readonly attrs: object;
 
   constructor(name: string, keymap: string[] | null, nodeType: NodeType, attrs: object, execute: CommandFn) {
     super(name, keymap, execute);
@@ -129,13 +129,13 @@ export function toggleBlockType(type: NodeType, toggletype: NodeType, attrs = {}
     }
 
     // if the type has pandoc attrs then see if we can transfer from the existing node
-    let pandocAttr : any = {}; 
+    let pandocAttr: any = {};
     if (pandocAttrInSpec(type.spec)) {
-        const predicate = (n: Node) => pandocAttrAvailable(n.attrs);
-        const node = findParentNode(predicate)(state.selection);
-        if (node) {
-          pandocAttr = pandocAttrFrom(node.node.attrs);
-        }
+      const predicate = (n: Node) => pandocAttrAvailable(n.attrs);
+      const node = findParentNode(predicate)(state.selection);
+      if (node) {
+        pandocAttr = pandocAttrFrom(node.node.attrs);
+      }
     }
 
     return setBlockType(type, { ...attrs, ...pandocAttr })(state, dispatch);

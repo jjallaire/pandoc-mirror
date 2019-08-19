@@ -2,7 +2,13 @@
 
 const editorUI = {
   
-  onEditLink(link) {
+  alert(message, title) {
+    return new Promise(resolve => {
+      w2alert(message, title).done(resolve)
+    })
+  },
+
+  editLink(link) {
   
     return new Promise(resolve => {
   
@@ -40,7 +46,7 @@ const editorUI = {
   },
   
   
-  onEditImage(image) {
+  editImage(image) {
   
     return new Promise(resolve => {
   
@@ -69,7 +75,7 @@ const editorUI = {
     })
   },
   
-  onEditAttr(attr) {
+  editAttr(attr) {
   
     return new Promise(resolve => {
   

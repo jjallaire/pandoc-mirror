@@ -1,11 +1,10 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 
 import { toggleList, NodeCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import { PandocAstToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 
 const LIST_ORDER = 0;
 const LIST_CHILDREN = 1;
@@ -25,16 +24,30 @@ const extension: Extension = {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
+        attrs: { tight: { default: false } },
         defining: true,
-        parseDOM: [{ tag: 'li' }],
-        toDOM() {
-          return ['li', 0];
+        parseDOM: [
+          { tag: 'li', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
+        ],
+        toDOM(node) {
+          if (node.attrs.tight) {
+            return ['li', { 'data-tight': 'true' }, 0];
+          } else {
+            return ['li', 0];
+          }
         },
       },
       pandoc: {
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.renderContent(node);
-        },
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
+          output.writeList(() => {
+            node.forEach((itemNode: ProsemirrorNode) => {
+              output.writeToken(itemBlockType, () => {
+                output.writeInlines(itemNode.content);
+              });
+            });
+          });
+        }
       },
     },
     {
@@ -42,28 +55,23 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        attrs: { tight: { default: false } },
-        parseDOM: [
-          { tag: 'ul', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
-        ],
-        toDOM(node) {
-          if (node.attrs.tight) {
-            return ['ul', { 'data-tight': 'true' }, 0];
-          } else {
-            return ['ul', 0];
-          }
+        parseDOM: [{ tag: 'ul' }],
+        toDOM() {
+          return ['ul', 0];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'BulletList',
             list: 'bullet_list',
           },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.renderList(node, '  ', () => (node.attrs.bullet || '*') + ' ');
-        },
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('BulletList', () => {
+            output.writeBlocks(node);
+          });
+        }
       },
     },
     {
@@ -71,7 +79,7 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        attrs: { order: { default: 1 }, tight: { default: false } },
+        attrs: { order: { default: 1 } },
         parseDOM: [
           {
             tag: 'ol',
@@ -81,7 +89,7 @@ const extension: Extension = {
               if (!order) {
                 order = 1;
               }
-              return { order, tight: el.hasAttribute('data-tight') };
+              return { order };
             },
           },
         ],
@@ -90,30 +98,30 @@ const extension: Extension = {
           if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order;
           }
-          if (node.attrs.tight) {
-            attrs['data-tight'] = 'true';
-          }
           return ['ol', attrs, 0];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'OrderedList',
             list: 'ordered_list',
-            getAttrs: (tok: PandocAstToken) => ({
+            getAttrs: (tok: PandocToken) => ({
               order: tok.c[LIST_ORDER][ORDER_START],
             }),
-            getChildren: (tok: PandocAstToken) => tok.c[LIST_CHILDREN],
+            getChildren: (tok: PandocToken) => tok.c[LIST_CHILDREN],
           },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          const start = node.attrs.order || 1;
-          const maxW = String(start + node.childCount - 1).length;
-          const space = state.repeat(' ', maxW + 2);
-          state.renderList(node, space, i => {
-            const nStr = String(start + i);
-            return state.repeat(' ', maxW - nStr.length) + nStr + '. ';
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('OrderedList', () => {
+            output.writeList(() => {
+              output.write(node.attrs.order);
+              output.writeToken('Decimal');
+              output.writeToken('Period');
+            });
+            output.writeList(() => {
+              output.writeBlocks(node);
+            });
           });
         },
       },

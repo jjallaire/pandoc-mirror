@@ -23,47 +23,50 @@ module.exports = {
     port: 8080,
     before: function(app, server) {
 
-      function pandoc({ from, to, input }) {
-        return new Promise(resolve => {
-          let spawn = child_process.spawn;
-          pandoc = spawn('pandoc', ['--from', from, '--to', to]);
-          pandoc.stdout.on('data', data => {
-            let ast = JSON.parse(data);
-            resolve(ast);
-          });
-          pandoc.stdin.setEncoding = 'utf-8';
-          pandoc.stdin.write(input);
-          pandoc.stdin.end();
+      function pandoc(args, input, response_fn) {
+
+        let spawn = child_process.spawn;
+        let process = spawn('pandoc', args)
+         
+        let output = ''
+        process.stdout.setEncoding = 'utf-8';
+        process.stdout.on('data', data => {
+          output = output + data;
+        });
+
+        let error = ''
+        process.stderr.setEncoding = 'utf-8';
+        process.stderr.on('data', data => {
+          error = error + data;
         })
+
+        process.on('close', status => {
+          if (status === 0) {
+            response_fn(output)
+          } else {
+            response_fn( { error: error.trim() })
+          }
+        })
+       
+        process.stdin.setEncoding = 'utf-8';
+        process.stdin.write(input);
+        process.stdin.end();
       }
               
       app.post('/pandoc/ast', express.json(), function(request, response) {
-        let spawn = child_process.spawn;
-        pandoc = spawn('pandoc', ['--from', request.body.format, '--to', 'json']);
-        pandoc.stdout.on('data', data => {
-          let ast = JSON.parse(data);
-          response.json( { ast });
-        });
-        pandoc.stderr.on('data', data => {
-          response.status(500).send(`${data}`);
-        })
-        pandoc.stdin.setEncoding = 'utf-8';
-        pandoc.stdin.write(request.body.markdown);
-        pandoc.stdin.end();
+        pandoc(
+          ['--from', request.body.format, '--to', 'json'],
+          request.body.markdown,
+          output => { response.json( { ast: JSON.parse(output) } ) } 
+        )
       });
 
       app.post('/pandoc/markdown', express.json(), function(request, response) {
-        let spawn = child_process.spawn;
-        pandoc = spawn('pandoc', ['--from', 'json', '--to', request.body.format]);
-        pandoc.stdout.on('data', data => {
-          response.json( { markdown: `${data}` });
-        });
-        pandoc.stderr.on('data', data => {
-          response.status(500).send(`${data}`);
-        })
-        pandoc.stdin.setEncoding = 'utf-8';
-        pandoc.stdin.write(JSON.stringify(request.body.ast));
-        pandoc.stdin.end();
+        pandoc(
+          ['--from', 'json', '--to', request.body.format, '--atx-headers'],
+          JSON.stringify(request.body.ast),
+          output => { response.json( { markdown: output }) }
+        )
       })
     }
   },

@@ -1,5 +1,3 @@
-
-
 import { InputRule } from 'prosemirror-inputrules';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
@@ -9,7 +7,7 @@ import { CommandFn, Command } from 'api/command';
 import { PandocMark } from 'api/mark';
 import { PandocNode } from 'api/node';
 import { Extension } from 'api/extension';
-import { PandocAstReader, PandocMarkWriter, PandocNodeWriterFn } from 'api/pandoc';
+import { PandocTokenReader, PandocMarkWriter, PandocNodeWriterFn, PandocNodeWriter } from 'api/pandoc';
 
 import { EditorConfig } from 'editor';
 
@@ -36,8 +34,7 @@ import nodeLists from './nodes/lists';
 import nodeParagraph from './nodes/paragraph';
 import nodeText from './nodes/text';
 
-export function initExtensions(config: EditorConfig) : ExtensionManager {
-
+export function initExtensions(config: EditorConfig): ExtensionManager {
   // create extension manager
   const manager = new ExtensionManager();
 
@@ -79,59 +76,82 @@ export function initExtensions(config: EditorConfig) : ExtensionManager {
 
   // return manager
   return manager;
-
-
 }
 
 export class ExtensionManager {
+
   private extensions: Extension[];
 
   public constructor() {
     this.extensions = [];
   }
 
-  public register(extensions: Extension[]): void {
+  public register(extensions: readonly Extension[]): void {
     this.extensions.push(...extensions);
   }
 
-  public pandocMarks(): PandocMark[] {
+  public pandocMarks(): readonly PandocMark[] {
     return this.collect<PandocMark>((extension: Extension) => extension.marks);
   }
 
-  public pandocNodes(): PandocNode[] {
+  public pandocNodes(): readonly PandocNode[] {
     return this.collect<PandocNode>((extension: Extension) => extension.nodes);
   }
 
-  public pandocAstReaders(): PandocAstReader[] {
-    const readers: PandocAstReader[] = [];
+  public pandocReaders(): readonly PandocTokenReader[] {
+    const readers: PandocTokenReader[] = [];
     this.pandocMarks().forEach((mark: PandocMark) => {
-      readers.push(...mark.pandoc.ast_reader);
+      readers.push(...mark.pandoc.readers);
     });
     this.pandocNodes().forEach((node: PandocNode) => {
-      if (node.pandoc.ast_reader) {
-        readers.push(...node.pandoc.ast_reader);
+      if (node.pandoc.readers) {
+        readers.push(...node.pandoc.readers);
       }
     });
-
     return readers;
   }
 
-  public pandocMarkWriters(): { [key: string]: PandocMarkWriter } {
-    const writers: { [key: string]: PandocMarkWriter } = {};
-    this.pandocMarks().forEach((mark: PandocMark) => {
-      writers[mark.name] = mark.pandoc.markdown_writer;
+  public pandocMarkWriters(): readonly PandocMarkWriter[] {
+    return this.pandocMarks().map((mark: PandocMark) => {
+      return {
+        name: mark.name,
+        write: mark.pandoc.writer
+      };
     });
-    return writers;
+    
   }
 
-  public pandocNodeWriters(): { [key: string]: PandocNodeWriterFn } {
-    const writers: { [key: string]: PandocNodeWriterFn } = {};
-    this.pandocNodes().forEach((node: PandocNode) => {
-      writers[node.name] = node.pandoc.markdown_writer;
+  public pandocNodeWriters(): readonly PandocNodeWriter[] {
+    return this.pandocNodes().map((node: PandocNode) => {
+      return {
+        name: node.name,
+        write: node.pandoc.writer
+      };
     });
-    return writers;
   }
 
+  public commands(schema: Schema, ui: EditorUI): readonly Command[] {
+    return this.collect<Command>((extension: Extension) => {
+      if (extension.commands) {
+        return extension.commands(schema, ui);
+      } else {
+        return undefined;
+      }
+    });
+  }
+
+  public plugins(schema: Schema, ui: EditorUI): readonly Plugin[] {
+    return this.collect<Plugin>((extension: Extension) => {
+      if (extension.plugins) {
+        return extension.plugins(schema, ui);
+      } else {
+        return undefined;
+      }
+    });
+  }
+
+  // NOTE: return value not readonly b/c it will be fed directly to a 
+  // Prosemirror interface that doesn't take readonly 
   public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {
     let keys: { [key: string]: CommandFn } = {};
     this.extensions.forEach(extension => {
@@ -142,26 +162,8 @@ export class ExtensionManager {
     return keys;
   }
 
-  public commands(schema: Schema, ui: EditorUI): Command[] {
-    return this.collect<Command>((extension: Extension) => {
-      if (extension.commands) {
-        return extension.commands(schema, ui);
-      } else {
-        return undefined;
-      }
-    });
-  }
-
-  public plugins(schema: Schema, ui: EditorUI): Plugin[] {
-    return this.collect<Plugin>((extension: Extension) => {
-      if (extension.plugins) {
-        return extension.plugins(schema, ui);
-      } else {
-        return undefined;
-      }
-    });
-  }
-
+  // NOTE: return value not readonly b/c it will be fed directly to a 
+  // Prosemirror interface that doesn't take readonly 
   public inputRules(schema: Schema): InputRule[] {
     return this.collect<InputRule>((extension: Extension) => {
       if (extension.inputRules) {
@@ -172,10 +174,10 @@ export class ExtensionManager {
     });
   }
 
-  private collect<T>(collector: (extension: Extension) => T[] | undefined) {
+  private collect<T>(collector: (extension: Extension) => readonly T[] | undefined) {
     let items: T[] = [];
     this.extensions.forEach(extension => {
-      const collected: T[] | undefined = collector(extension);
+      const collected: readonly T[] | undefined = collector(extension);
       if (collected !== undefined) {
         items = items.concat(collected);
       }
@@ -183,4 +185,3 @@ export class ExtensionManager {
     return items;
   }
 }
-

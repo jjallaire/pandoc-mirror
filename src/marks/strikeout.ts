@@ -1,7 +1,8 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   marks: [
@@ -11,25 +12,25 @@ const extension: Extension = {
         parseDOM: [
           { tag: 'del' },
           { tag: 's' },
-          { style: 'text-decoration', getAttrs: (value: string | Node) => (value as string) === 'line-through' && null },
+          {
+            style: 'text-decoration',
+            getAttrs: (value: string | Node) => (value as string) === 'line-through' && null,
+          },
         ],
         toDOM() {
           return ['del'];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'Strikeout',
             mark: 'strikeout',
           },
         ],
-        markdown_writer: {
-          open: '~~',
-          close: '~~',
-          mixable: true,
-          expelEnclosingWhitespace: true,
-        },
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Strikeout', parent);
+        }
       },
     },
   ],

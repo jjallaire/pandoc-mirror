@@ -1,7 +1,8 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   marks: [
@@ -18,18 +19,15 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'Emph',
             mark: 'em',
           },
         ],
-        markdown_writer: {
-          open: '*',
-          close: '*',
-          mixable: true,
-          expelEnclosingWhitespace: true,
-        },
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Emph', parent);
+        }
       },
     },
   ],

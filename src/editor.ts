@@ -1,4 +1,3 @@
-
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -15,24 +14,23 @@ import { Extension } from 'api/extension';
 import { ExtensionManager } from './extensions';
 import { PandocEngine } from 'api/pandoc';
 
-import { markdownFromDoc } from './pandoc/from_doc';
-import { markdownToDoc } from './pandoc/to_doc';
+import { PandocConverter } from 'pandoc/converter';
 
 import { initExtensions } from './extensions';
 
 import './styles/prosemirror.css';
 
 export interface EditorConfig {
-  parent: HTMLElement;
-  pandoc: PandocEngine;
-  ui: EditorUI;
-  options?: EditorOptions;
-  hooks?: EditorHooks;
-  extensions?: Extension[];
+  readonly parent: HTMLElement;
+  readonly pandoc: PandocEngine;
+  readonly ui: EditorUI;
+  readonly options?: EditorOptions;
+  readonly hooks?: EditorHooks;
+  readonly extensions?: readonly Extension[];
 }
 
 export interface EditorOptions {
-  autoFocus?: boolean;
+  readonly autoFocus?: boolean;
 }
 
 export interface EditorHooks {
@@ -41,7 +39,7 @@ export interface EditorHooks {
 }
 
 export interface EditorCommand {
-  name: string;
+  readonly name: string;
   isEnabled: () => boolean;
   isActive: () => boolean;
   execute: () => void;
@@ -51,22 +49,23 @@ export const kEventUpdate = 'update';
 export const kEventSelectionChange = 'selectionChange';
 
 export class Editor {
-  private parent: HTMLElement;
-  private pandoc: PandocEngine;
-  private ui: EditorUI;
-  private options: EditorOptions;
-  private hooks: EditorHooks;
-  private events: { [key: string]: Event };
-  private schema: Schema;
+  
+  private readonly parent: HTMLElement;
+  private readonly ui: EditorUI;
+  private readonly options: EditorOptions;
+  private readonly hooks: EditorHooks;
+  private events: ReadonlyMap<string,Event>;
+  private readonly schema: Schema;
+  private readonly view: EditorView;
+  private readonly extensions: ExtensionManager;
+  private readonly pandocConverter: PandocConverter;
+  private readonly onClickBelow: (ev: MouseEvent) => void;
+
   private state: EditorState;
-  private view: EditorView;
-  private extensions: ExtensionManager;
-  private onClickBelow: (ev: MouseEvent) => void;
 
   constructor(config: EditorConfig) {
     // initialize references
     this.parent = config.parent;
-    this.pandoc = config.pandoc;
     this.ui = config.ui;
     this.options = config.options || {};
     this.hooks = config.hooks || {};
@@ -92,6 +91,15 @@ export class Editor {
       state: this.state,
       dispatchTransaction: this.dispatchTransaction.bind(this),
     });
+
+    // create pandoc translator
+    this.pandocConverter = new PandocConverter(
+      this.schema,
+      this.extensions.pandocReaders(),
+      this.extensions.pandocNodeWriters(),
+      this.extensions.pandocMarkWriters(),
+      config.pandoc
+    );
 
     // apply devtools if they are available
     if (this.hooks.applyDevTools) {
@@ -122,8 +130,9 @@ export class Editor {
   }
 
   public subscribe(event: string, handler: VoidFunction): VoidFunction {
-    if (!this.events.hasOwnProperty(event)) {
-      throw new Error(`Unknown event ${event}. Valid events are ${Object.keys(this.events).join(', ')}`);
+    if (!this.events.has(event)) {
+      const valid = Array.from(this.events.keys()).join(', ');
+      throw new Error(`Unknown event ${event}. Valid events are ${valid}`);
     }
     this.parent.addEventListener(event, handler);
     return () => {
@@ -131,32 +140,28 @@ export class Editor {
     };
   }
 
-  public setMarkdown(markdown: string, emitUpdate = true) {
-    // convert from pandoc markdown to prosemirror doc
-    return markdownToDoc(markdown, this.schema, this.pandoc, this.extensions.pandocAstReaders()).then((doc: Node) => {
-      // re-initialize editor state
-      this.state = EditorState.create({
-        schema: this.state.schema,
-        doc,
-        plugins: this.state.plugins,
-      });
-      this.view.updateState(this.state);
+  public setMarkdown(markdown: string, emitUpdate = true) : Promise<void> {
+    
+    return this.pandocConverter.toProsemirror(markdown)
+      .then((doc: Node) => {
+        // re-initialize editor state
+        this.state = EditorState.create({
+          schema: this.state.schema,
+          doc,
+          plugins: this.state.plugins,
+        });
+        this.view.updateState(this.state);
 
-      // notify listeners if requested
-      if (emitUpdate) {
-        this.emitUpdate();
-        this.emitSelectionChanged();
-      }
-    });
+        // notify listeners if requested
+        if (emitUpdate) {
+          this.emitEvent(kEventUpdate);
+          this.emitEvent(kEventSelectionChange);
+        }
+      });
   }
 
-  public getMarkdown(): string {
-    // get mark and node writers from extensions
-    const markWriters = this.extensions.pandocMarkWriters();
-    const nodeWriters = this.extensions.pandocNodeWriters();
-
-    // generate markdown
-    return markdownFromDoc(this.state.doc, markWriters, nodeWriters);
+  public getMarkdown(): Promise<string> {
+    return this.pandocConverter.fromProsemirror(this.state.doc);
   }
 
   public getJSON(): any {
@@ -193,27 +198,26 @@ export class Editor {
     this.view.updateState(this.state);
 
     // notify listeners of selection change
-    this.emitSelectionChanged();
+    this.emitEvent(kEventSelectionChange);
 
     // notify listeners of updates
     if (transaction.docChanged) {
-      this.emitUpdate();
+      this.emitEvent(kEventUpdate);
     }
   }
 
-  private emitSelectionChanged() {
-    this.parent.dispatchEvent(this.events.selectionChange);
+  private emitEvent(name: string) {
+    const event = this.events.get(name);
+    if (event) {
+      this.parent.dispatchEvent(event);
+    }
   }
 
-  private emitUpdate() {
-    this.parent.dispatchEvent(this.events.update);
-  }
-
-  private initEvents() {
-    return {
-      [kEventUpdate]: new Event(kEventUpdate),
-      [kEventSelectionChange]: new Event(kEventSelectionChange),
-    };
+  private initEvents() : ReadonlyMap<string,Event> {
+    const events = new Map<string,Event>();
+    events.set(kEventUpdate, new Event(kEventUpdate));
+    events.set(kEventSelectionChange, new Event(kEventSelectionChange));
+    return events;
   }
 
   private initSchema(): Schema {
@@ -257,7 +261,7 @@ export class Editor {
   private keymapPlugins(): Plugin[] {
     // command keys from extensions
     const commandKeys: { [key: string]: CommandFn } = {};
-    const commands: Command[] = this.extensions.commands(this.schema, this.ui);
+    const commands: readonly Command[] = this.extensions.commands(this.schema, this.ui);
     commands.forEach((command: Command) => {
       if (command.keymap) {
         command.keymap.forEach((key: string) => {

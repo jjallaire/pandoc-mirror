@@ -5,15 +5,21 @@ const pandocEngine = {
   markdownToAst(format, markdown) {
     return axios.post("/pandoc/ast", { format , markdown })
       .then(result => {
-      return result.data.ast;
-    })
+        if (result.data.ast)
+          return result.data.ast;
+        else
+          return Promise.reject(new Error(result.data.error))
+      })
   },
   
   astToMarkdown(format, ast) {
     return axios.post("/pandoc/markdown", { format, ast } )
       .then(result => {
-        return result.data.markdown;
-    })
+        if (result.data.markdown)
+          return result.data.markdown;
+        else
+          return Promise.reject(new Error(result.data.error));
+      })
   }
   
 }

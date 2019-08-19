@@ -1,9 +1,9 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { WrapCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -18,15 +18,17 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'BlockQuote',
             block: 'blockquote',
           },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.wrapBlock('> ', undefined, node, () => state.renderContent(node));
-        },
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('BlockQuote', () => {
+            output.writeBlocks(node);
+          });
+        }
       },
     },
   ],

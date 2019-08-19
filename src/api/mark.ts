@@ -1,14 +1,14 @@
 import { Mark, MarkSpec, MarkType, ResolvedPos } from 'prosemirror-model';
 import { EditorState, Selection } from 'prosemirror-state';
 
-import { PandocMarkWriter, PandocAstReader } from './pandoc';
+import { PandocTokenReader, PandocMarkWriterFn } from './pandoc';
 
 export interface PandocMark {
-  name: string;
-  spec: MarkSpec;
-  pandoc: {
-    ast_reader: PandocAstReader[];
-    markdown_writer: PandocMarkWriter;
+  readonly name: string;
+  readonly spec: MarkSpec;
+  readonly pandoc: {
+    readonly readers: readonly PandocTokenReader[];
+    readonly writer: PandocMarkWriterFn;
   };
 }
 
@@ -38,7 +38,6 @@ export function getMarkAttrs(state: EditorState, type: MarkType) {
 
   return {};
 }
-
 
 export function getMarkRange($pos?: ResolvedPos, type?: MarkType) {
   if (!$pos || !type) {
@@ -74,12 +73,10 @@ export function getMarkRange($pos?: ResolvedPos, type?: MarkType) {
   return { from: startPos, to: endPos };
 }
 
-export function getSelectionMarkRange(selection: Selection, markType: MarkType) : 
-  { from: number; to: number } 
-{
-  let range : { from: number, to: number };
+export function getSelectionMarkRange(selection: Selection, markType: MarkType): { from: number; to: number } {
+  let range: { from: number; to: number };
   if (selection.empty) {
-    range = getMarkRange(selection.$head, markType) as { from: number, to: number };
+    range = getMarkRange(selection.$head, markType) as { from: number; to: number };
   } else {
     range = { from: selection.from, to: selection.to };
   }

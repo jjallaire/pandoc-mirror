@@ -1,33 +1,29 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   marks: [
     {
       name: 'superscript',
       spec: {
-        parseDOM: [
-          { tag: 'sup' },
-        ],
+        parseDOM: [{ tag: 'sup' }],
         toDOM() {
           return ['sup'];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'Superscript',
             mark: 'superscript',
           },
         ],
-        markdown_writer: {
-          open: '^',
-          close: '^',
-          mixable: true,
-          expelEnclosingWhitespace: true,
-        },
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Superscript', parent);
+        }
       },
     },
   ],

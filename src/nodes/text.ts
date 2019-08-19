@@ -1,8 +1,7 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
-import { PandocAstToken } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 
 const extension: Extension = {
   nodes: [
@@ -15,13 +14,13 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        ast_reader: [
-          { token: 'Str', text: true, getText: (tok: PandocAstToken) => tok.c },
+        readers: [
+          { token: 'Str', text: true, getText: (tok: PandocToken) => tok.c },
           { token: 'Space', text: true, getText: () => ' ' },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.text(node.text as string);
-        },
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeText(node.textContent);
+        }
       },
     },
   ],

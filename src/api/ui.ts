@@ -1,8 +1,11 @@
 export interface EditorUI {
-  onEditLink: LinkEditorFn;
-  onEditImage: ImageEditorFn;
-  onEditAttr: AttrEditorFn;
+  alert: AlertFn;
+  editLink: LinkEditorFn;
+  editImage: ImageEditorFn;
+  editAttr: AttrEditorFn;
 }
+
+export type AlertFn = (message: string, title?: string) => Promise<void>;
 
 export type AttrEditorFn = (attr: AttrProps) => Promise<AttrEditResult | null>;
 
@@ -11,27 +14,27 @@ export type LinkEditorFn = (link: LinkProps) => Promise<LinkEditResult | null>;
 export type ImageEditorFn = (image: ImageProps) => Promise<ImageEditResult | null>;
 
 export interface AttrProps {
-  id?: string;
-  classes?: string[];
-  keyvalue?: [[string,string]];
+  readonly id?: string;
+  readonly classes?: string[];
+  readonly keyvalue?: [[string, string]];
 }
 
 export type AttrEditResult = AttrProps;
 
 export interface LinkProps extends AttrProps {
-  href: string;
-  title?: string;
+  readonly href: string;
+  readonly title?: string;
 }
 
 export interface LinkEditResult {
-  action: 'edit' | 'remove';
-  link: LinkProps;
+  readonly action: 'edit' | 'remove';
+  readonly link: LinkProps;
 }
 
 export interface ImageProps extends AttrProps {
-  src: string | null;
-  title?: string;
-  alt?: string;
+  readonly src: string | null;
+  readonly title?: string;
+  readonly alt?: string;
 }
 
 export type ImageEditResult = ImageProps;

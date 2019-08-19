@@ -1,19 +1,16 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
-import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { Node as ProsemirrorNode, Schema, NodeType } from 'prosemirror-model';
-import { PandocAstToken } from 'api/pandoc';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { findParentNode } from 'prosemirror-utils';
 
+import { PandocOutput, PandocToken } from 'api/pandoc';
+import { EditorState } from 'prosemirror-state';
+import { findParentNode } from 'prosemirror-utils';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import {
   pandocAttrSpec,
   pandocAttrParseDom,
   pandocAttrToDomAttr,
-  pandocAttrToMarkdown,
   pandocAttrReadAST,
-  pandocAttrAvailable,
 } from 'api/pandoc_attr';
 
 const HEADING_LEVEL = 0;
@@ -23,14 +20,13 @@ const HEADING_CHILDREN = 2;
 const kHeadingLevels = [1, 2, 3, 4, 5, 6];
 
 const extension: Extension = {
-
   nodes: [
     {
       name: 'heading',
       spec: {
-        attrs: { 
+        attrs: {
           level: { default: 1 },
-          ...pandocAttrSpec
+          ...pandocAttrSpec,
         },
         content: 'inline*',
         group: 'block',
@@ -44,34 +40,30 @@ const extension: Extension = {
           { tag: 'h6', getAttrs: getHeadingAttrs(6) },
         ],
         toDOM(node) {
-          return [
-            'h' + node.attrs.level, 
-            pandocAttrToDomAttr(node.attrs),
-            0
-          ];
+          return ['h' + node.attrs.level, pandocAttrToDomAttr(node.attrs), 0];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'Header',
             block: 'heading',
-            getAttrs: (tok: PandocAstToken) => ({
+            getAttrs: (tok: PandocToken) => ({
               level: tok.c[HEADING_LEVEL],
               ...pandocAttrReadAST(tok, HEADING_ATTR),
             }),
-            getChildren: (tok: PandocAstToken) => tok.c[HEADING_CHILDREN],
+            getChildren: (tok: PandocToken) => tok.c[HEADING_CHILDREN],
           },
         ],
-        markdown_writer: (state: MarkdownSerializerState, node: ProsemirrorNode) => {
-          state.write(state.repeat('#', node.attrs.level) + ' ');
-          state.renderInline(node);
-          if (pandocAttrAvailable(node.attrs)) {
-            state.write(' ');
-            state.write(pandocAttrToMarkdown(node.attrs));
-          }
-          state.closeBlock(node);
-        },
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          output.writeToken('Header', () => {
+            output.write(node.attrs.level);
+            output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
+            output.writeList(() => {
+              output.writeInlines(node.content);
+            });
+          });
+        }
       },
     },
   ],
@@ -90,9 +82,8 @@ const extension: Extension = {
 };
 
 class HeadingCommand extends BlockCommand {
-
-  public nodeType: NodeType;
-  public level: number;
+  public readonly nodeType: NodeType;
+  public readonly level: number;
 
   constructor(schema: Schema, level: number) {
     super('heading' + level, ['Shift-Ctrl-' + level], schema.nodes.heading, schema.nodes.paragraph, { level });
@@ -113,10 +104,9 @@ function getHeadingAttrs(level: number) {
     const el = dom as Element;
     return {
       level,
-      ...pandocAttrParseDom(el, {})
+      ...pandocAttrParseDom(el, {}),
     };
   };
 }
-
 
 export default extension;

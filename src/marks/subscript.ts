@@ -1,33 +1,29 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   marks: [
     {
       name: 'subscript',
       spec: {
-        parseDOM: [
-          { tag: 'sub' },
-        ],
+        parseDOM: [{ tag: 'sub' }],
         toDOM() {
           return ['sub'];
         },
       },
       pandoc: {
-        ast_reader: [
+        readers: [
           {
             token: 'Subscript',
             mark: 'subscript',
           },
         ],
-        markdown_writer: {
-          open: '~',
-          close: '~',
-          mixable: true,
-          expelEnclosingWhitespace: true,
-        },
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Subscript', parent);
+        }
       },
     },
   ],
