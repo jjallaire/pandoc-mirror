@@ -103,7 +103,7 @@ const extension: Extension = {
   ],
 
   commands: (schema: Schema, ui: EditorUI) => {
-    return [new Command('link', ['Shift-Mod-k', 'Shift-Mod-Z'], linkCommand(schema.marks.link, ui.onEditLink))];
+    return [new Command('link', ['Shift-Mod-k', 'Shift-Mod-Z'], linkCommand(schema.marks.link, ui.editLink))];
   },
 };
 

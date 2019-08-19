@@ -1,7 +1,7 @@
 export interface EditorUI {
-  onEditLink: LinkEditorFn;
-  onEditImage: ImageEditorFn;
-  onEditAttr: AttrEditorFn;
+  editLink: LinkEditorFn;
+  editImage: ImageEditorFn;
+  editAttr: AttrEditorFn;
 }
 
 export type AttrEditorFn = (attr: AttrProps) => Promise<AttrEditResult | null>;

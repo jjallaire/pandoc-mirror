@@ -101,11 +101,11 @@ const extension: Extension = {
   ],
 
   commands: (schema: Schema, ui: EditorUI) => {
-    return [new Command('image', null, imageCommand(schema.nodes.image, ui.onEditImage))];
+    return [new Command('image', null, imageCommand(schema.nodes.image, ui.editImage))];
   },
 
   plugins: (schema: Schema, ui: EditorUI) => {
-    return [imagePlugin(schema.nodes.image, ui.onEditImage)];
+    return [imagePlugin(schema.nodes.image, ui.editImage)];
   },
 };
 

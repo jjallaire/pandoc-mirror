@@ -61,7 +61,7 @@ function editMarkAttrs(
 ): Promise<void> {
   const attrs = mark.attrs;
   const markType = mark.type;
-  return ui.onEditAttr(attrs).then((result: AttrEditResult | null) => {
+  return ui.editAttr(attrs).then((result: AttrEditResult | null) => {
     if (result) {
       const tr = state.tr;
       const range = getSelectionMarkRange(state.selection, markType);
@@ -87,7 +87,7 @@ function editNodeAttrs(
   ui: EditorUI,
 ): Promise<void> {
   const attrs = node.attrs;
-  return ui.onEditAttr(attrs).then((result: AttrEditResult | null) => {
+  return ui.editAttr(attrs).then((result: AttrEditResult | null) => {
     if (result) {
       dispatch(
         state.tr.setNodeMarkup(pos, node.type, {
