@@ -76,8 +76,15 @@ const extension: Extension = {
             getChildren: (tok: PandocToken) => tok.c[LINK_CHILDREN],
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
-          pandoc.writeInlines(parent);
+
+        writer: (output: PandocOutput, mark: Mark, parent: Fragment) => {
+          output.writeToken('Link', () => {
+            output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
+            output.writeList(() => {
+              output.writeInlines(parent);
+            });
+            output.write([mark.attrs.href || '', mark.attrs.title || '']);
+          });
         }
       },
     },

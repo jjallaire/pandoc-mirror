@@ -26,7 +26,7 @@ Next line after soft break.
 3. List
 4. Example of
 
-This is a link to [Google](https://www.google.com){#myLink .splat target=_blank}
+This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank}*
 
 This is an image:
 
