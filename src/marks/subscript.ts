@@ -21,8 +21,8 @@ const extension: Extension = {
             mark: 'subscript',
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
-          //
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Subscript', parent);
         }
       },
     },

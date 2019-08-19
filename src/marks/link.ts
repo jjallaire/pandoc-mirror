@@ -77,7 +77,7 @@ const extension: Extension = {
           },
         ],
         writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
-          //
+          pandoc.writeInlines(parent);
         }
       },
     },

@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Fragment, MarkType, Mark } from 'prosemirror-model';
 import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion, PandocMarkWriterFn } from 'api/pandoc';
 
 
@@ -18,9 +18,10 @@ export function pandocFromProsemirror(
 class PandocWriter implements PandocOutput {
 
   private readonly ast: PandocAst;
-  private readonly nodes: { [key: string]: PandocNodeWriterFn };
-  private readonly marks: { [key: string]: PandocMarkWriterFn };
+  private readonly nodeWriters: { [key: string]: PandocNodeWriterFn };
+  private readonly markWriters: { [key: string]: PandocMarkWriterFn };
   private readonly containers: any[][];
+  private readonly activeMarks: MarkType[];
 
   constructor(
     apiVersion: PandocApiVersion, 
@@ -29,13 +30,13 @@ class PandocWriter implements PandocOutput {
   ) {
     
     // create maps of node and mark writers
-    this.nodes = {};
+    this.nodeWriters = {};
     nodeWriters.forEach((writer: PandocNodeWriter) => {
-      this.nodes[writer.name] = writer.write;
+      this.nodeWriters[writer.name] = writer.write;
     });
-    this.marks = {};
+    this.markWriters = {};
     markWriters.forEach((writer: PandocMarkWriter) => {
-      this.marks[writer.name] = writer.write;
+      this.markWriters[writer.name] = writer.write;
     });
     
     this.ast = {
@@ -44,6 +45,7 @@ class PandocWriter implements PandocOutput {
       meta: {},
     };
     this.containers = [this.ast.blocks];
+    this.activeMarks = [];
   }
 
   public output(): PandocAst {
@@ -68,6 +70,12 @@ class PandocWriter implements PandocOutput {
       }
     }
     this.write(token);
+  }
+
+  public writeMark(type: string, parent: Fragment) {
+    this.writeToken(type, () => {
+      this.writeInlines(parent);
+    });  
   }
 
   public writeList(content: () => void) {
@@ -98,22 +106,69 @@ class PandocWriter implements PandocOutput {
 
   public writeBlocks(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-      this.nodes[node.type.name](this, node);
+      this.nodeWriters[node.type.name](this, node);
     });
   }
 
   public writeInlines(parent: Fragment) {
-
-    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-      this.nodes[node.type.name](this, node);
-    });
-
-
-
     
-    
+    // track the current child
+    let currentChild = 0;
 
-   
+    // helper to get the next node sans any marks already on the stack
+    const nextNode = () => {
+      const childIndex = currentChild;
+      currentChild++;
+      return {
+        node: parent.child(childIndex),
+        marks: this.nodeMarks(parent.child(childIndex))
+      };
+    };
+
+    // iterate through the nodes
+    while (currentChild < parent.childCount) {
+
+      // get the next node
+      let next = nextNode();
+
+      // if there are active marks then collect them up and call the mark handler
+      // with all nodes that it contains, otherwise just process it as a plain
+      // unmarked node
+      if (next.marks.length > 0) {
+        const mark = next.marks[0];
+        const markedNodes: ProsemirrorNode[] = [next.node];
+        
+        // inner iteration to find nodes that have this mark
+        while (currentChild < parent.childCount) {
+          next = nextNode();
+          if (mark.type.isInSet(next.marks)) {
+            markedNodes.push(next.node);
+          } else { // no mark found, "put back" the node
+            currentChild--; 
+            break;
+          }
+        }
+
+        // call the mark writer after noting that this mark is active (which
+        // will cause subsequent recursive invocations of this function to
+        // not re-process this mark) 
+        this.activeMarks.push(mark.type);
+        this.markWriters[mark.type.name](this, mark, Fragment.from(markedNodes));
+        this.activeMarks.pop();
+
+      } else {
+        // ordinary unmarked node, call the node writer
+        this.nodeWriters[next.node.type.name](this, next.node); 
+      }    
+    }
+  }
+
+  private nodeMarks(node: ProsemirrorNode) {
+    let marks: Mark[] = node.marks;
+    for (const activeMark of this.activeMarks) {
+      marks = activeMark.removeFromSet(marks);
+    }
+    return marks;
   }
 
   private fill(container: any[], content: () => void) {

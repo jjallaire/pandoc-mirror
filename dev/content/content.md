@@ -4,6 +4,12 @@ This is **bold** text.
 
 This is *italic* text.
 
+This **bold text with embedded *italic* text**.
+
+This text has ~~strikeout~~ text.
+
+Here we try out superscript^super^ and subscript~sub~
+
 This is hard break.  
 Next line after hard break.
 

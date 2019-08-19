@@ -43,8 +43,17 @@ const extension: Extension = {
             },
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
-          //
+        writer: (output: PandocOutput, mark: Mark, parent: Fragment) => {
+          output.writeInlines(parent);
+
+          /*
+          output.writeToken('Code', () => {
+          
+              output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
+              output.writeText('myCode');
+            
+          });
+          */
         }
       },
     },

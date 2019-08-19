@@ -28,8 +28,8 @@ const extension: Extension = {
             mark: 'strikeout',
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
-          //
+        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+          output.writeMark('Strikeout', parent);
         }
       },
     },

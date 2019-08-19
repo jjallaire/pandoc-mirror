@@ -1,5 +1,5 @@
 
-import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
+import { Fragment, Mark, Node as ProsemirrorNode, MarkType } from 'prosemirror-model';
 
 export interface PandocEngine {
   markdownToAst(format: string, markdown: string): Promise<PandocAst>;
@@ -41,18 +41,19 @@ export interface PandocNodeWriter {
   readonly write: PandocNodeWriterFn;
 }
 
-export type PandocNodeWriterFn = (pandoc: PandocOutput, node: ProsemirrorNode) => void;
+export type PandocNodeWriterFn = (output: PandocOutput, node: ProsemirrorNode) => void;
 
 export interface PandocMarkWriter {
   readonly name: string;
   readonly write: PandocMarkWriterFn;
 }
 
-export type PandocMarkWriterFn = (pandoc: PandocOutput, mark: Mark, parent: Fragment) => void;
+export type PandocMarkWriterFn = (output: PandocOutput, mark: Mark, parent: Fragment) => void;
 
 export interface PandocOutput {
   write(value: any) : void;
   writeToken(type: string, content?: (() => void) | any) : void;
+  writeMark(type: string, parent: Fragment) : void;
   writeList(content: () => void) : void;
   writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]) : void; 
   writeText(text: string | null) : void;

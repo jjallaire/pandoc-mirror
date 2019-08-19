@@ -4,7 +4,10 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-emit pandoc ast
+emit pandoc ast:
+   - inline code
+   - link
+   - order of marks (code outside, superscript/subscript, etc.)
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
