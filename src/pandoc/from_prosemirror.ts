@@ -112,17 +112,27 @@ class PandocWriter implements PandocOutput {
 
   public writeInlines(parent: Fragment) {
     
-    // track the current child
-    let currentChild = 0;
+    // get the marks from a node that are not already on the stack of active marks
+    const nodeMarks = (node: ProsemirrorNode) => {
+      let marks: Mark[] = node.marks;
+      for (const activeMark of this.activeMarks) {
+        marks = activeMark.removeFromSet(marks);
+      }
+      return marks;
+    };
 
-    // helper to get the next node sans any marks already on the stack
+    // helpers to iterate through the nodes (sans any marks already on the stack)
+    let currentChild = 0;
     const nextNode = () => {
       const childIndex = currentChild;
       currentChild++;
       return {
         node: parent.child(childIndex),
-        marks: this.nodeMarks(parent.child(childIndex))
+        marks: nodeMarks(parent.child(childIndex))
       };
+    };
+    const putBackNode = () => {
+      currentChild--;
     };
 
     // iterate through the nodes
@@ -135,6 +145,8 @@ class PandocWriter implements PandocOutput {
       // with all nodes that it contains, otherwise just process it as a plain
       // unmarked node
       if (next.marks.length > 0) {
+
+        // get the mark and start building a list of marked nodes
         const mark = next.marks[0];
         const markedNodes: ProsemirrorNode[] = [next.node];
         
@@ -144,7 +156,7 @@ class PandocWriter implements PandocOutput {
           if (mark.type.isInSet(next.marks)) {
             markedNodes.push(next.node);
           } else { // no mark found, "put back" the node
-            currentChild--; 
+            putBackNode(); 
             break;
           }
         }
@@ -161,14 +173,6 @@ class PandocWriter implements PandocOutput {
         this.nodeWriters[next.node.type.name](this, next.node); 
       }    
     }
-  }
-
-  private nodeMarks(node: ProsemirrorNode) {
-    let marks: Mark[] = node.marks;
-    for (const activeMark of this.activeMarks) {
-      marks = activeMark.removeFromSet(marks);
-    }
-    return marks;
   }
 
   private fill(container: any[], content: () => void) {
