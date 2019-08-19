@@ -118,7 +118,21 @@ class PandocWriter implements PandocOutput {
       for (const activeMark of this.activeMarks) {
         marks = activeMark.removeFromSet(marks);
       }
-      return marks;
+      // order marks by priority (code lowest so that we never include 
+      // other markup inside code)
+      return marks.sort((a: Mark, b: Mark) => {
+        if (a.type.name === "code" && b.type.name === "code") {
+          return 0;
+        } else if (a.type.name === "code") {
+          return 1;
+        } else if (b.type.name === "code") {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+
+      
     };
 
     // helpers to iterate through the nodes (sans any marks already on the stack)
