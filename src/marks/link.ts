@@ -77,14 +77,17 @@ const extension: Extension = {
           },
         ],
 
-        writer: (output: PandocOutput, mark: Mark, parent: Fragment) => {
-          output.writeToken('Link', () => {
-            output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
-            output.writeList(() => {
-              output.writeInlines(parent);
+        writer: {
+          priority: 15,
+          write: (output: PandocOutput, mark: Mark, parent: Fragment) => {
+            output.writeToken('Link', () => {
+              output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
+              output.writeList(() => {
+                output.writeInlines(parent);
+              });
+              output.write([mark.attrs.href || '', mark.attrs.title || '']);
             });
-            output.write([mark.attrs.href || '', mark.attrs.title || '']);
-          });
+          }
         }
       },
     },

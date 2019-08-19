@@ -45,6 +45,7 @@ export type PandocNodeWriterFn = (output: PandocOutput, node: ProsemirrorNode) =
 
 export interface PandocMarkWriter {
   readonly name: string;
+  readonly priority: number;
   readonly write: PandocMarkWriterFn;
 }
 

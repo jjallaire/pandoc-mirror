@@ -115,7 +115,8 @@ export class ExtensionManager {
     return this.pandocMarks().map((mark: PandocMark) => {
       return {
         name: mark.name,
-        write: mark.pandoc.writer
+        priority: mark.pandoc.writer.priority,
+        write: mark.pandoc.writer.write
       };
     });
     

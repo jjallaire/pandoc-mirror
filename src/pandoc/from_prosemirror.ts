@@ -19,7 +19,7 @@ class PandocWriter implements PandocOutput {
 
   private readonly ast: PandocAst;
   private readonly nodeWriters: { [key: string]: PandocNodeWriterFn };
-  private readonly markWriters: { [key: string]: PandocMarkWriterFn };
+  private readonly markWriters: { [key: string]: PandocMarkWriter };
   private readonly containers: any[][];
   private readonly activeMarks: MarkType[];
 
@@ -36,7 +36,7 @@ class PandocWriter implements PandocOutput {
     });
     this.markWriters = {};
     markWriters.forEach((writer: PandocMarkWriter) => {
-      this.markWriters[writer.name] = writer.write;
+      this.markWriters[writer.name] = writer;
     });
     
     this.ast = {
@@ -114,25 +114,28 @@ class PandocWriter implements PandocOutput {
     
     // get the marks from a node that are not already on the stack of active marks
     const nodeMarks = (node: ProsemirrorNode) => {
-      let marks: Mark[] = node.marks;
-      for (const activeMark of this.activeMarks) {
-        marks = activeMark.removeFromSet(marks);
-      }
-      // order marks by priority (code lowest so that we never include 
+      
+      // get marks -- order marks by priority (code lowest so that we never include 
       // other markup inside code)
-      return marks.sort((a: Mark, b: Mark) => {
-        if (a.type.name === "code" && b.type.name === "code") {
-          return 0;
-        } else if (a.type.name === "code") {
-          return 1;
-        } else if (b.type.name === "code") {
+      let marks: Mark[] = node.marks.sort((a: Mark, b: Mark) => {
+        const aPriority = this.markWriters[a.type.name].priority;
+        const bPriority = this.markWriters[b.type.name].priority;
+        if (aPriority < bPriority) {
           return -1;
+        } else if (bPriority < aPriority) {
+          return 1;
         } else {
           return 0;
         }
       });
 
-      
+      // remove active marks
+      for (const activeMark of this.activeMarks) {
+        marks = activeMark.removeFromSet(marks);
+      }
+
+      // return marks
+      return marks;
     };
 
     // helpers to iterate through the nodes (sans any marks already on the stack)
@@ -179,7 +182,7 @@ class PandocWriter implements PandocOutput {
         // will cause subsequent recursive invocations of this function to
         // not re-process this mark) 
         this.activeMarks.push(mark.type);
-        this.markWriters[mark.type.name](this, mark, Fragment.from(markedNodes));
+        this.markWriters[mark.type.name].write(this, mark, Fragment.from(markedNodes));
         this.activeMarks.pop();
 
       } else {

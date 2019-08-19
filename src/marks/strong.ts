@@ -28,8 +28,11 @@ const extension: Extension = {
             mark: 'strong',
           },
         ],
-        writer: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
-          output.writeMark('Strong', parent);
+        writer: {
+          priority: 1,
+          write: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
+            output.writeMark('Strong', parent);
+          }
         }
       },
     },

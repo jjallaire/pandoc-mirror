@@ -43,13 +43,16 @@ const extension: Extension = {
             },
           },
         ],
-        writer: (output: PandocOutput, mark: Mark, parent: Fragment) => {
-          output.writeToken("Code", () => {
-            output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
-            let code = '';
-            parent.forEach((node: ProsemirrorNode) => code = code + node.textContent);
-            output.write(code);
-          });
+        writer: {
+          priority: 20,
+          write: (output: PandocOutput, mark: Mark, parent: Fragment) => {
+            output.writeToken("Code", () => {
+              output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
+              let code = '';
+              parent.forEach((node: ProsemirrorNode) => code = code + node.textContent);
+              output.write(code);
+            });
+          }
         }
       },
     },
