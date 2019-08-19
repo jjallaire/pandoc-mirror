@@ -8,7 +8,6 @@ emit pandoc ast
 
 error handling for pandoc engine:
    - Make alert part of editor UI interface
-   - Verify that json parsing error doesn't have more
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
@@ -19,6 +18,8 @@ handle meta fields
 SoftBreak handling: We can call pandoc with --wrap=preserve however this won't work well if
 significant text is added to the paragraph. May want to simply rely on the use of
 --wrap=auto --columns=72 to automatically wrap 
+
+Options for hard breaks (\ or double-space)
 
 handle duplicate ids when block elements are split (required once we support ids on divs)
 

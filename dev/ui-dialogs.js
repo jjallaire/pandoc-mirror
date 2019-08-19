@@ -2,6 +2,12 @@
 
 const editorUI = {
   
+  alert(message, title) {
+    return new Promise(resolve => {
+      w2alert(message, title).done(resolve)
+    })
+  },
+
   editLink(link) {
   
     return new Promise(resolve => {

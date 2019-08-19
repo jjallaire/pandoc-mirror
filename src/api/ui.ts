@@ -1,8 +1,11 @@
 export interface EditorUI {
+  alert: AlertFn;
   editLink: LinkEditorFn;
   editImage: ImageEditorFn;
   editAttr: AttrEditorFn;
 }
+
+export type AlertFn = (message: string, title?: string) => Promise<void>;
 
 export type AttrEditorFn = (attr: AttrProps) => Promise<AttrEditResult | null>;
 

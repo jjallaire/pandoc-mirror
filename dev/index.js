@@ -19,6 +19,7 @@ let editor = new PandocMirror.Editor({
 // initialize toolbar
 initToolbar(layout.toolbar, editor)
 
+
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
   editor.getMarkdown()
@@ -26,7 +27,7 @@ editor.subscribe(PandocMirror.kEventUpdate, () => {
       $(layout.markdown).text(markdown)
     })
     .catch(error => {
-      w2alert(error.message)
+      editorUI.alert(error.message)
     })
 })
 
@@ -34,7 +35,7 @@ editor.subscribe(PandocMirror.kEventUpdate, () => {
 axios.get('content/content.md') .then(result => {
   editor.setMarkdown(result.data)
     .catch(error => {
-      w2alert(error.message)
+      editorUI.alert(error.message)
     })
 })
 
