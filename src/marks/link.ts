@@ -76,7 +76,7 @@ const extension: Extension = {
             getChildren: (tok: PandocToken) => tok.c[LINK_CHILDREN],
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
           //
         }
       },

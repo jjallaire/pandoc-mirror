@@ -21,7 +21,7 @@ const extension: Extension = {
             mark: 'superscript',
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
           //
         }
       },

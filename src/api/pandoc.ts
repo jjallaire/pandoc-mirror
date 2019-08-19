@@ -41,24 +41,14 @@ export interface PandocNodeWriter {
   readonly write: PandocNodeWriterFn;
 }
 
-export type PandocNodeWriterFn = (
-  pandoc: PandocOutput,
-  node: ProsemirrorNode,
-  parent: ProsemirrorNode,
-  index: number,
-) => void;
+export type PandocNodeWriterFn = (pandoc: PandocOutput, node: ProsemirrorNode) => void;
 
 export interface PandocMarkWriter {
   readonly name: string;
   readonly write: PandocMarkWriterFn;
 }
 
-export type PandocMarkWriterFn = (
-  pandoc: PandocOutput,
-  mark: Mark,
-  parent: Fragment,
-  index: number,
-) => void;
+export type PandocMarkWriterFn = (pandoc: PandocOutput, mark: Mark, parent: Fragment) => void;
 
 export interface PandocOutput {
   write(value: any) : void;

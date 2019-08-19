@@ -25,7 +25,7 @@ const extension: Extension = {
             mark: 'em',
           },
         ],
-        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment) => {
           //
         }
       },
