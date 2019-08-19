@@ -60,7 +60,7 @@ const extension: Extension = {
             output.write(node.attrs.level);
             output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             output.writeList(() => {
-              output.writeInlines(node);
+              output.writeInlines(node.content);
             });
           });
         }

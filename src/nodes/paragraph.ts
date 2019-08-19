@@ -21,7 +21,7 @@ const extension: Extension = {
         readers: [{ token: 'Para', block: 'paragraph' }, { token: 'Plain', block: 'paragraph' }],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
           output.writeToken('Para', () => {
-            output.writeInlines(node);
+            output.writeInlines(node.content);
           });
         }
       },

@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Fragment } from 'prosemirror-model';
 import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion, PandocMarkWriterFn } from 'api/pandoc';
 
 
@@ -98,29 +98,15 @@ class PandocWriter implements PandocOutput {
 
   public writeBlocks(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-      this.nodes[node.type.name](this, node, parent, index);
+      this.nodes[node.type.name](this, node);
     });
   }
 
-  public writeInlines(parent: ProsemirrorNode) {
+  public writeInlines(parent: Fragment) {
 
-    let currentChild = 0;
-    
-    
-
-    const writeUntil = (end: number) => {
-      while (currentChild < end) {
-        const node = parent.child(currentChild);
-        const writer = this.nodes[node.type.name];
-
-
-        writer(this, node, parent, currentChild);
-        
-        currentChild++;
-      }
-    };
-
-    writeUntil(parent.childCount);
+    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
+      this.nodes[node.type.name](this, node);
+    });
 
 
 

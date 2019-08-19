@@ -43,7 +43,7 @@ const extension: Extension = {
           output.writeList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
               output.writeToken(itemBlockType, () => {
-                output.writeInlines(itemNode);
+                output.writeInlines(itemNode.content);
               });
             });
           });
