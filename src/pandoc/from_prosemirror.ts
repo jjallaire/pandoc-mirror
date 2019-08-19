@@ -2,7 +2,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocApiVersion } from 'api/pandoc';
 
 
-export function prosemirrorToPandocAst(doc: ProsemirrorNode, apiVersion: PandocApiVersion, writers: PandocNodeWriter[]) : PandocAst {
+export function prosemirrorToPandocAst(doc: ProsemirrorNode, apiVersion: PandocApiVersion, writers: readonly PandocNodeWriter[]) : PandocAst {
   const writer = new PandocWriter(apiVersion, writers);
   writer.writeBlocks(doc);
   return writer.output();
@@ -14,7 +14,7 @@ class PandocWriter implements PandocOutput {
   private readonly nodes: { [key: string]: PandocNodeWriterFn };
   private readonly containers: any[][];
 
-  constructor(apiVersion: PandocApiVersion, nodes: PandocNodeWriter[]) {
+  constructor(apiVersion: PandocApiVersion, nodes: readonly PandocNodeWriter[]) {
     
     // create map of node writers
     this.nodes = {};

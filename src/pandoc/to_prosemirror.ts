@@ -2,7 +2,7 @@ import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-mod
 import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
 
 
-export function pandocAstToProsemirror(ast: PandocAst, schema: Schema, readers: PandocTokenReader[]) {
+export function pandocAstToProsemirror(ast: PandocAst, schema: Schema, readers: readonly PandocTokenReader[]) {
   const parser = new Parser(schema, readers);
   return parser.parse(ast);
 }
@@ -12,7 +12,7 @@ class Parser {
   private readonly schema: Schema;
   private readonly handlers: { [token: string]: ParserTokenHandler };
 
-  constructor(schema: Schema, readers: PandocTokenReader[]) {
+  constructor(schema: Schema, readers: readonly PandocTokenReader[]) {
     this.schema = schema;
     this.handlers = this.createHandlers(readers);
   }
@@ -35,7 +35,7 @@ class Parser {
   }
 
   // create parser token handler functions based on the passed readers
-  private createHandlers(readers: PandocTokenReader[]) {
+  private createHandlers(readers: readonly PandocTokenReader[]) {
     const handlers = Object.create(null);
     for (const reader of readers) {
       // resolve children (provide default impl)

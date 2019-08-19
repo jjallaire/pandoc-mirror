@@ -79,25 +79,26 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
 }
 
 export class ExtensionManager {
+
   private extensions: Extension[];
 
   public constructor() {
     this.extensions = [];
   }
 
-  public register(extensions: Extension[]): void {
+  public register(extensions: readonly Extension[]): void {
     this.extensions.push(...extensions);
   }
 
-  public pandocMarks(): PandocMark[] {
+  public pandocMarks(): readonly PandocMark[] {
     return this.collect<PandocMark>((extension: Extension) => extension.marks);
   }
 
-  public pandocNodes(): PandocNode[] {
+  public pandocNodes(): readonly PandocNode[] {
     return this.collect<PandocNode>((extension: Extension) => extension.nodes);
   }
 
-  public pandocReaders(): PandocTokenReader[] {
+  public pandocReaders(): readonly PandocTokenReader[] {
     const readers: PandocTokenReader[] = [];
     this.pandocMarks().forEach((mark: PandocMark) => {
       readers.push(...mark.pandoc.readers);
@@ -107,19 +108,18 @@ export class ExtensionManager {
         readers.push(...node.pandoc.readers);
       }
     });
-
     return readers;
   }
 
-  public pandocMarkWriters(): { [key: string]: PandocMarkWriter } {
-    const writers: { [key: string]: PandocMarkWriter } = {};
+  public pandocMarkWriters(): ReadonlyMap<string,PandocMarkWriter> {
+    const writers = new Map<string,PandocMarkWriter>();
     this.pandocMarks().forEach((mark: PandocMark) => {
-      writers[mark.name] = mark.pandoc.markdown_writer;
+      writers.set(mark.name, mark.pandoc.markdown_writer);
     });
     return writers;
   }
 
-  public pandocNodeWriters(): PandocNodeWriter[] {
+  public pandocNodeWriters(): readonly PandocNodeWriter[] {
     return this.pandocNodes().map((node: PandocNode) => {
       return {
         name: node.name,
@@ -128,6 +128,28 @@ export class ExtensionManager {
     });
   }
 
+  public commands(schema: Schema, ui: EditorUI): readonly Command[] {
+    return this.collect<Command>((extension: Extension) => {
+      if (extension.commands) {
+        return extension.commands(schema, ui);
+      } else {
+        return undefined;
+      }
+    });
+  }
+
+  public plugins(schema: Schema, ui: EditorUI): readonly Plugin[] {
+    return this.collect<Plugin>((extension: Extension) => {
+      if (extension.plugins) {
+        return extension.plugins(schema, ui);
+      } else {
+        return undefined;
+      }
+    });
+  }
+
+  // NOTE: return value not readonly b/c it will be fed directly to a 
+  // Prosemirror interface that doesn't take readonly 
   public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {
     let keys: { [key: string]: CommandFn } = {};
     this.extensions.forEach(extension => {
@@ -138,26 +160,8 @@ export class ExtensionManager {
     return keys;
   }
 
-  public commands(schema: Schema, ui: EditorUI): Command[] {
-    return this.collect<Command>((extension: Extension) => {
-      if (extension.commands) {
-        return extension.commands(schema, ui);
-      } else {
-        return undefined;
-      }
-    });
-  }
-
-  public plugins(schema: Schema, ui: EditorUI): Plugin[] {
-    return this.collect<Plugin>((extension: Extension) => {
-      if (extension.plugins) {
-        return extension.plugins(schema, ui);
-      } else {
-        return undefined;
-      }
-    });
-  }
-
+  // NOTE: return value not readonly b/c it will be fed directly to a 
+  // Prosemirror interface that doesn't take readonly 
   public inputRules(schema: Schema): InputRule[] {
     return this.collect<InputRule>((extension: Extension) => {
       if (extension.inputRules) {
@@ -168,10 +172,10 @@ export class ExtensionManager {
     });
   }
 
-  private collect<T>(collector: (extension: Extension) => T[] | undefined) {
+  private collect<T>(collector: (extension: Extension) => readonly T[] | undefined) {
     let items: T[] = [];
     this.extensions.forEach(extension => {
-      const collected: T[] | undefined = collector(extension);
+      const collected: readonly T[] | undefined = collector(extension);
       if (collected !== undefined) {
         items = items.concat(collected);
       }

@@ -11,10 +11,10 @@ import { pandocAttrInSpec, pandocAttrAvailable, pandocAttrFrom } from './pandoc_
 
 export class Command {
   public readonly name: string;
-  public readonly keymap: string[] | null;
+  public readonly keymap: readonly string[] | null;
   public readonly execute: CommandFn;
 
-  constructor(name: string, keymap: string[] | null, execute: CommandFn) {
+  constructor(name: string, keymap: readonly string[] | null, execute: CommandFn) {
     this.name = name;
     this.keymap = keymap;
     this.execute = execute;

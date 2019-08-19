@@ -5,11 +5,11 @@ import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 import { PandocTokenReader, PandocNodeWriterFn } from './pandoc';
 
 export interface PandocNode {
-  name: string;
-  spec: NodeSpec;
-  pandoc: {
-    readers?: PandocTokenReader[];
-    writer: PandocNodeWriterFn;
+  readonly name: string;
+  readonly spec: NodeSpec;
+  readonly pandoc: {
+    readonly readers?: readonly PandocTokenReader[];
+    readonly writer: PandocNodeWriterFn;
   };
 }
 

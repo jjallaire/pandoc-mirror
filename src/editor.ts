@@ -21,16 +21,16 @@ import { initExtensions } from './extensions';
 import './styles/prosemirror.css';
 
 export interface EditorConfig {
-  parent: HTMLElement;
-  pandoc: PandocEngine;
-  ui: EditorUI;
-  options?: EditorOptions;
-  hooks?: EditorHooks;
-  extensions?: Extension[];
+  readonly parent: HTMLElement;
+  readonly pandoc: PandocEngine;
+  readonly ui: EditorUI;
+  readonly options?: EditorOptions;
+  readonly hooks?: EditorHooks;
+  readonly extensions?: readonly Extension[];
 }
 
 export interface EditorOptions {
-  autoFocus?: boolean;
+  readonly autoFocus?: boolean;
 }
 
 export interface EditorHooks {
@@ -39,7 +39,7 @@ export interface EditorHooks {
 }
 
 export interface EditorCommand {
-  name: string;
+  readonly name: string;
   isEnabled: () => boolean;
   isActive: () => boolean;
   execute: () => void;
@@ -55,11 +55,12 @@ export class Editor {
   private readonly ui: EditorUI;
   private readonly options: EditorOptions;
   private readonly hooks: EditorHooks;
-  private readonly events: { [key: string]: Event };
+  private events: ReadonlyMap<string,Event>;
   private readonly schema: Schema;
   private readonly view: EditorView;
   private readonly extensions: ExtensionManager;
   private readonly onClickBelow: (ev: MouseEvent) => void;
+
   private state: EditorState;
 
   constructor(config: EditorConfig) {
@@ -128,8 +129,9 @@ export class Editor {
   }
 
   public subscribe(event: string, handler: VoidFunction): VoidFunction {
-    if (!this.events.hasOwnProperty(event)) {
-      throw new Error(`Unknown event ${event}. Valid events are ${Object.keys(this.events).join(', ')}`);
+    if (!this.events.has(event)) {
+      const valid = Array.from(this.events.keys()).join(', ');
+      throw new Error(`Unknown event ${event}. Valid events are ${valid}`);
     }
     this.parent.addEventListener(event, handler);
     return () => {
@@ -151,8 +153,8 @@ export class Editor {
 
         // notify listeners if requested
         if (emitUpdate) {
-          this.emitUpdate();
-          this.emitSelectionChanged();
+          this.emitEvent(kEventUpdate);
+          this.emitEvent(kEventSelectionChange);
         }
       });
   }
@@ -195,27 +197,26 @@ export class Editor {
     this.view.updateState(this.state);
 
     // notify listeners of selection change
-    this.emitSelectionChanged();
+    this.emitEvent(kEventSelectionChange);
 
     // notify listeners of updates
     if (transaction.docChanged) {
-      this.emitUpdate();
+      this.emitEvent(kEventUpdate);
     }
   }
 
-  private emitSelectionChanged() {
-    this.parent.dispatchEvent(this.events.selectionChange);
+  private emitEvent(name: string) {
+    const event = this.events.get(name);
+    if (event) {
+      this.parent.dispatchEvent(event);
+    }
   }
 
-  private emitUpdate() {
-    this.parent.dispatchEvent(this.events.update);
-  }
-
-  private initEvents() {
-    return {
-      [kEventUpdate]: new Event(kEventUpdate),
-      [kEventSelectionChange]: new Event(kEventSelectionChange),
-    };
+  private initEvents() : ReadonlyMap<string,Event> {
+    const events = new Map<string,Event>();
+    events.set(kEventUpdate, new Event(kEventUpdate));
+    events.set(kEventSelectionChange, new Event(kEventSelectionChange));
+    return events;
   }
 
   private initSchema(): Schema {
@@ -259,7 +260,7 @@ export class Editor {
   private keymapPlugins(): Plugin[] {
     // command keys from extensions
     const commandKeys: { [key: string]: CommandFn } = {};
-    const commands: Command[] = this.extensions.commands(this.schema, this.ui);
+    const commands: readonly Command[] = this.extensions.commands(this.schema, this.ui);
     commands.forEach((command: Command) => {
       if (command.keymap) {
         command.keymap.forEach((key: string) => {

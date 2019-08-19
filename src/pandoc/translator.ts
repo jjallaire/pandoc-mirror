@@ -12,16 +12,16 @@ const kMarkdownFormat = 'markdown'
 export class PandocTranslator {
 
   private readonly schema: Schema;
-  private readonly readers: PandocTokenReader[];
-  private readonly writers: PandocNodeWriter[];
+  private readonly readers: readonly PandocTokenReader[];
+  private readonly writers: readonly PandocNodeWriter[];
   private readonly pandoc: PandocEngine;
 
   private apiVersion: PandocApiVersion | null;
 
   constructor(
     schema: Schema, 
-    readers: PandocTokenReader[], 
-    writers: PandocNodeWriter[],
+    readers: readonly PandocTokenReader[], 
+    writers: readonly PandocNodeWriter[],
     pandoc: PandocEngine
   ) {
     this.schema = schema;

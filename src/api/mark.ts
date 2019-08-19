@@ -4,11 +4,11 @@ import { EditorState, Selection } from 'prosemirror-state';
 import { PandocMarkWriter, PandocTokenReader } from './pandoc';
 
 export interface PandocMark {
-  name: string;
-  spec: MarkSpec;
-  pandoc: {
-    readers: PandocTokenReader[];
-    markdown_writer: PandocMarkWriter;
+  readonly name: string;
+  readonly spec: MarkSpec;
+  readonly pandoc: {
+    readonly readers: readonly PandocTokenReader[];
+    readonly markdown_writer: PandocMarkWriter;
   };
 }
 

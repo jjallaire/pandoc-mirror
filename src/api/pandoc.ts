@@ -21,14 +21,14 @@ export interface PandocToken {
 
 export interface PandocTokenReader {
   // pandoc token name (e.g. "Str", "Emph", etc.)
-  token: string;
+  readonly token: string;
 
   // one and only one of these values must also be set
-  node?: string;
-  block?: string;
-  list?: string;
-  mark?: string;
-  text?: boolean;
+  readonly node?: string;
+  readonly block?: string;
+  readonly list?: string;
+  readonly mark?: string;
+  readonly text?: boolean;
 
   // functions for getting attributes and children
   getAttrs?: (tok: PandocToken) => any;
@@ -37,8 +37,8 @@ export interface PandocTokenReader {
 }
 
 export interface PandocNodeWriter {
-  name: string;
-  write: PandocNodeWriterFn;
+  readonly name: string;
+  readonly write: PandocNodeWriterFn;
 }
 
 export type PandocNodeWriterFn = (
@@ -49,11 +49,11 @@ export type PandocNodeWriterFn = (
 ) => void;
 
 export interface PandocMarkWriter {
-  open: string | PandocMarkWriterFn;
-  close: string | PandocMarkWriterFn;
-  mixable?: boolean;
-  escape?: boolean;
-  expelEnclosingWhitespace?: boolean;
+  readonly open: string | PandocMarkWriterFn;
+  readonly close: string | PandocMarkWriterFn;
+  readonly mixable?: boolean;
+  readonly escape?: boolean;
+  readonly expelEnclosingWhitespace?: boolean;
 }
 
 export type PandocMarkWriterFn = (
@@ -68,7 +68,7 @@ export interface PandocOutput {
   write(value: any) : void;
   writeToken(type: string, content?: (() => void) | any) : void;
   writeList(content: () => void) : void;
-  writeAttr(id: string, classes?: string[], keyvalue?: { [key: string]: any }) : void; 
+  writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]) : void; 
   writeText(text: string | null) : void;
   writeBlocks(parent: ProsemirrorNode) : void; 
   writeInlines(parent: ProsemirrorNode) : void;
