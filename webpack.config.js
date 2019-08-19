@@ -49,7 +49,7 @@ module.exports = {
         })
        
         process.stdin.setEncoding = 'utf-8';
-        process.stdin.write(JSON.stringify(input));
+        process.stdin.write(input);
         process.stdin.end();
       }
               
@@ -57,14 +57,14 @@ module.exports = {
         pandoc(
           ['--from', request.body.format, '--to', 'json'],
           request.body.markdown,
-          output => { response.json( { ast: output }) }
+          output => { response.json( { ast: JSON.parse(output) } ) } 
         )
       });
 
       app.post('/pandoc/markdown', express.json(), function(request, response) {
         pandoc(
           ['--from', 'json', '--to', request.body.format, '--atx-headers'],
-          request.body.ast,
+          JSON.stringify(request.body.ast),
           output => { response.json( { markdown: output }) }
         )
       })
