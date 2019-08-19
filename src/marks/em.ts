@@ -28,7 +28,7 @@ const extension: Extension = {
         writer: {
           priority: 2,
           write: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
-            output.writeMark('Emph', parent);
+            output.writeMark('Emph', parent, true);
           }
         }
       },

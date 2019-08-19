@@ -5,9 +5,6 @@
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
 emit pandoc ast:
-
-   - can you have bold inside bold with links?  select Bold then select Code (bold is dropped)
-   - order of marks (code outside, superscript/subscript, etc.)
    - expelEnclosingWhitespace (whitespace inside emphasis)
 
 

@@ -72,10 +72,48 @@ class PandocWriter implements PandocOutput {
     this.write(token);
   }
 
-  public writeMark(type: string, parent: Fragment) {
-    this.writeToken(type, () => {
-      this.writeInlines(parent);
-    });  
+  public writeMark(type: string, parent: Fragment, expelEnclosingWhitespace = false) {
+    
+    if (expelEnclosingWhitespace) {
+     
+      const inlines: ProsemirrorNode[] = [];
+
+      parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
+        inlines.push(node);       
+      });
+
+      this.writeToken(type, () => {
+        this.writeInlines(Fragment.from(inlines));
+      });  
+
+    } else {
+      this.writeToken(type, () => {
+        this.writeInlines(parent);
+      });  
+    }
+    
+
+    /*
+    // expel enclosing spaces for mark types that request it
+        const expel = this.markWriters[mark.type.name].expelEnclosingWhitespace || false;
+        if (expel) {
+          const firstNode = markedNodes[0];
+          if (firstNode.isText) {
+            const match = firstNode.textContent.match(/^\s+/);
+            if (match) {
+              this.writeToken("Space");
+              this.writeText
+            }
+            this.nodeWriters[firstNode.type.name](this, firstNode); 
+            markedNodes.shift();
+          }
+        }
+
+
+
+
+    */
+
   }
 
   public writeList(content: () => void) {
