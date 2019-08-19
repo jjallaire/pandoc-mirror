@@ -44,8 +44,17 @@ export interface PandocNodeWriter {
 export type PandocNodeWriterFn = (output: PandocOutput, node: ProsemirrorNode) => void;
 
 export interface PandocMarkWriter {
+  
+  // pandoc mark name
   readonly name: string;
+  
+  // The 'priority' property allows us to dicate the order of nesting
+  // for marks (this is required b/c Prosemirror uses a flat structure
+  // whereby multiple marks are attached to text nodes). This allows us
+  // to e.g. ensure that strong and em always occur outside code.
   readonly priority: number;
+  
+  // writer function
   readonly write: PandocMarkWriterFn;
 }
 
