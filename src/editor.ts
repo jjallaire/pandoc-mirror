@@ -14,7 +14,7 @@ import { Extension } from 'api/extension';
 import { ExtensionManager } from './extensions';
 import { PandocEngine } from 'api/pandoc';
 
-import { PandocTranslator } from 'pandoc/translator';
+import { PandocConverter } from 'pandoc/converter';
 
 import { initExtensions } from './extensions';
 
@@ -51,7 +51,6 @@ export const kEventSelectionChange = 'selectionChange';
 export class Editor {
   
   private readonly parent: HTMLElement;
-  private readonly pandocTranslator: PandocTranslator;
   private readonly ui: EditorUI;
   private readonly options: EditorOptions;
   private readonly hooks: EditorHooks;
@@ -59,6 +58,7 @@ export class Editor {
   private readonly schema: Schema;
   private readonly view: EditorView;
   private readonly extensions: ExtensionManager;
+  private readonly pandocConverter: PandocConverter;
   private readonly onClickBelow: (ev: MouseEvent) => void;
 
   private state: EditorState;
@@ -93,7 +93,7 @@ export class Editor {
     });
 
     // create pandoc translator
-    this.pandocTranslator = new PandocTranslator(
+    this.pandocConverter = new PandocConverter(
       this.schema,
       this.extensions.pandocReaders(),
       this.extensions.pandocNodeWriters(),
@@ -141,7 +141,7 @@ export class Editor {
 
   public setMarkdown(markdown: string, emitUpdate = true) : Promise<void> {
     
-    return this.pandocTranslator.toProsemirror(markdown)
+    return this.pandocConverter.toProsemirror(markdown)
       .then((doc: Node) => {
         // re-initialize editor state
         this.state = EditorState.create({
@@ -160,7 +160,7 @@ export class Editor {
   }
 
   public getMarkdown(): Promise<string> {
-    return this.pandocTranslator.fromProsemirror(this.state.doc);
+    return this.pandocConverter.fromProsemirror(this.state.doc);
   }
 
   public getJSON(): any {

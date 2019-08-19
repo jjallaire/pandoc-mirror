@@ -9,7 +9,7 @@ import { prosemirrorToPandocAst } from './from_prosemirror';
 const kMarkdownFormat = 'markdown' 
   + '-auto_identifiers';  // don't inject identifiers for headers w/o them
 
-export class PandocTranslator {
+export class PandocConverter {
 
   private readonly schema: Schema;
   private readonly readers: readonly PandocTokenReader[];
