@@ -2,9 +2,14 @@ import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-mod
 import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
 
 
-export function pandocAstToProsemirror(ast: PandocAst, schema: Schema, readers: readonly PandocTokenReader[]) {
+export function pandocToProsemirror(
+    ast: PandocAst, 
+    schema: Schema, 
+    readers: readonly PandocTokenReader[]) {
+
   const parser = new Parser(schema, readers);
   return parser.parse(ast);
+
 }
 
 class Parser {

@@ -2,10 +2,16 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocApiVersion } from 'api/pandoc';
 
 
-export function prosemirrorToPandocAst(doc: ProsemirrorNode, apiVersion: PandocApiVersion, writers: readonly PandocNodeWriter[]) : PandocAst {
+export function pandocFromProsemirror(
+    doc: ProsemirrorNode, 
+    apiVersion: 
+    PandocApiVersion, writers: 
+    readonly PandocNodeWriter[]) : PandocAst {
+
   const writer = new PandocWriter(apiVersion, writers);
   writer.writeBlocks(doc);
   return writer.output();
+
 }
 
 class PandocWriter implements PandocOutput {
@@ -89,6 +95,9 @@ class PandocWriter implements PandocOutput {
   public writeInlines(parent: ProsemirrorNode) {
     parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
       // TODO: juxtopose marks
+
+
+
 
       this.nodes[node.type.name](this, node, parent, index);
     });
