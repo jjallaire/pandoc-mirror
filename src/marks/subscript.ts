@@ -1,7 +1,8 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
+import { PandocOutput } from 'api/pandoc';
 
 const extension: Extension = {
   marks: [
@@ -20,12 +21,9 @@ const extension: Extension = {
             mark: 'subscript',
           },
         ],
-        markdown_writer: {
-          open: '~',
-          close: '~',
-          mixable: true,
-          expelEnclosingWhitespace: true,
-        },
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+          //
+        }
       },
     },
   ],

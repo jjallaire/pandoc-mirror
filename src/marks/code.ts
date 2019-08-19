@@ -1,4 +1,4 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
@@ -7,11 +7,9 @@ import {
   pandocAttrSpec,
   pandocAttrParseDom,
   pandocAttrToDomAttr,
-  pandocAttrToMarkdown,
   pandocAttrReadAST,
-  pandocAttrAvailable,
 } from 'api/pandoc_attr';
-import { PandocToken } from 'api/pandoc';
+import { PandocToken, PandocOutput } from 'api/pandoc';
 
 const CODE_ATTR = 0;
 const CODE_TEXT = 1;
@@ -45,18 +43,9 @@ const extension: Extension = {
             },
           },
         ],
-        markdown_writer: {
-          open(_state: MarkdownSerializerState, _mark: Mark, parent: Fragment, index: number) {
-            return backticksFor(parent.child(index), -1);
-          },
-          close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
-            let code = backticksFor(parent.child(index - 1), 1);
-            if (pandocAttrAvailable(mark.attrs)) {
-              code = code.concat(pandocAttrToMarkdown(mark.attrs));
-            }
-            return code;
-          },
-        },
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+          //
+        }
       },
     },
   ],

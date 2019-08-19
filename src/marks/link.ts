@@ -1,19 +1,17 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
-import { Fragment, Mark, MarkType, Schema, Node as ProsemirrorNode } from 'prosemirror-model';
+
+import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, markIsActive, getSelectionMarkRange } from 'api/mark';
-import { PandocToken } from 'api/pandoc';
+import { PandocToken, PandocOutput } from 'api/pandoc';
 import {
   pandocAttrSpec,
   pandocAttrParseDom,
   pandocAttrToDomAttr,
-  pandocAttrToMarkdown,
   pandocAttrReadAST,
-  pandocAttrAvailable,
 } from 'api/pandoc_attr';
 import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
@@ -78,26 +76,9 @@ const extension: Extension = {
             getChildren: (tok: PandocToken) => tok.c[LINK_CHILDREN],
           },
         ],
-        markdown_writer: {
-          open(_state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
-            return isPlainURL(mark, parent, index, 1) ? '<' : '[';
-          },
-          close(state: MarkdownSerializerState, mark: Mark, parent: Fragment, index: number) {
-            let link = isPlainURL(mark, parent, index, -1)
-              ? '>'
-              : '](' +
-                state.esc(mark.attrs.href) +
-                (mark.attrs.title
-                  ? ' ' + (state as any).quote(mark.attrs.title) // quote function not declared in @types
-                  : '') +
-                ')';
-
-            if (pandocAttrAvailable(mark.attrs)) {
-              link = link.concat(pandocAttrToMarkdown(mark.attrs));
-            }
-            return link;
-          },
-        },
+        writer: (pandoc: PandocOutput, mark: Mark, parent: Fragment, index: number) => {
+          //
+        }
       },
     },
   ],
@@ -143,21 +124,6 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
 
     return true;
   };
-}
-
-function isPlainURL(link: Mark, parent: Fragment, index: number, side: -1 | 1) {
-  if (link.attrs.title || pandocAttrAvailable(link.attrs)) {
-    return false;
-  }
-  const content = parent.child(index + (side < 0 ? -1 : 0));
-  if (!content.isText || content.text !== link.attrs.href || content.marks[content.marks.length - 1] !== link) {
-    return false;
-  }
-  if (index === (side < 0 ? 1 : parent.childCount - 1)) {
-    return true;
-  }
-  const next = parent.child(index + (side < 0 ? -2 : 1));
-  return !link.isInSet(next.marks);
 }
 
 export default extension;

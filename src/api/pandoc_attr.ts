@@ -83,37 +83,3 @@ export function pandocAttrParseDom(el: Element, attrs: { [key: string]: string |
   });
   return attr;
 }
-
-export function pandocAttrToMarkdown(attrs: any) {
-  let md = '';
-  if (pandocAttrAvailable(attrs)) {
-    md = md.concat('{');
-    if (attrs.id) {
-      md = md.concat('#' + attrs.id);
-      if (attrs.classes.length > 0) {
-        md = md.concat(' ');
-      }
-    }
-    if (attrs.classes) {
-      const classes = attrs.classes.map((clz: string) => '.' + clz);
-      md = md.concat(classes.join(' '));
-    }
-    if (attrs.keyvalue && attrs.keyvalue.length > 0) {
-      md = md.concat(' ');
-      md = md.concat(
-        attrs.keyvalue.map((keyvalue: [string, string]) => `${keyvalue[0]}=${maybeQuote(keyvalue[1])}`).join(' '),
-      );
-    }
-    md = md.concat('}');
-  }
-  return md;
-}
-
-// TODO: more robust implementation that encompsses nested quotes
-function maybeQuote(value: string) {
-  if (value.indexOf(' ') !== -1) {
-    return `'${value}'`;
-  } else {
-    return value;
-  }
-}

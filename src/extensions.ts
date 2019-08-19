@@ -111,12 +111,14 @@ export class ExtensionManager {
     return readers;
   }
 
-  public pandocMarkWriters(): ReadonlyMap<string,PandocMarkWriter> {
-    const writers = new Map<string,PandocMarkWriter>();
-    this.pandocMarks().forEach((mark: PandocMark) => {
-      writers.set(mark.name, mark.pandoc.markdown_writer);
+  public pandocMarkWriters(): readonly PandocMarkWriter[] {
+    return this.pandocMarks().map((mark: PandocMark) => {
+      return {
+        name: mark.name,
+        write: mark.pandoc.writer
+      };
     });
-    return writers;
+    
   }
 
   public pandocNodeWriters(): readonly PandocNodeWriter[] {

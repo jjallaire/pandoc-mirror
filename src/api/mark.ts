@@ -1,14 +1,14 @@
 import { Mark, MarkSpec, MarkType, ResolvedPos } from 'prosemirror-model';
 import { EditorState, Selection } from 'prosemirror-state';
 
-import { PandocMarkWriter, PandocTokenReader } from './pandoc';
+import { PandocTokenReader, PandocMarkWriterFn } from './pandoc';
 
 export interface PandocMark {
   readonly name: string;
   readonly spec: MarkSpec;
   readonly pandoc: {
     readonly readers: readonly PandocTokenReader[];
-    readonly markdown_writer: PandocMarkWriter;
+    readonly writer: PandocMarkWriterFn;
   };
 }
 

@@ -1,4 +1,4 @@
-import { MarkdownSerializerState } from 'prosemirror-markdown';
+
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
@@ -49,20 +49,16 @@ export type PandocNodeWriterFn = (
 ) => void;
 
 export interface PandocMarkWriter {
-  readonly open: string | PandocMarkWriterFn;
-  readonly close: string | PandocMarkWriterFn;
-  readonly mixable?: boolean;
-  readonly escape?: boolean;
-  readonly expelEnclosingWhitespace?: boolean;
+  readonly name: string;
+  readonly write: PandocMarkWriterFn;
 }
 
 export type PandocMarkWriterFn = (
-  state: MarkdownSerializerState,
+  pandoc: PandocOutput,
   mark: Mark,
   parent: Fragment,
   index: number,
-) => string;
-
+) => void;
 
 export interface PandocOutput {
   write(value: any) : void;

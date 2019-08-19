@@ -97,6 +97,7 @@ export class Editor {
       this.schema,
       this.extensions.pandocReaders(),
       this.extensions.pandocNodeWriters(),
+      this.extensions.pandocMarkWriters(),
       config.pandoc
     );
 

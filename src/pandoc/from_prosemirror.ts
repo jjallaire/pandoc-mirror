@@ -1,14 +1,15 @@
 import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocApiVersion } from 'api/pandoc';
+import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion, PandocMarkWriterFn } from 'api/pandoc';
 
 
 export function pandocFromProsemirror(
     doc: ProsemirrorNode, 
     apiVersion: 
-    PandocApiVersion, writers: 
-    readonly PandocNodeWriter[]) : PandocAst {
+    PandocApiVersion, 
+    nodeWriters: readonly PandocNodeWriter[],
+    markWriters: readonly PandocMarkWriter[]) : PandocAst {
 
-  const writer = new PandocWriter(apiVersion, writers);
+  const writer = new PandocWriter(apiVersion, nodeWriters, markWriters);
   writer.writeBlocks(doc);
   return writer.output();
 
@@ -18,14 +19,23 @@ class PandocWriter implements PandocOutput {
 
   private readonly ast: PandocAst;
   private readonly nodes: { [key: string]: PandocNodeWriterFn };
+  private readonly marks: { [key: string]: PandocMarkWriterFn };
   private readonly containers: any[][];
 
-  constructor(apiVersion: PandocApiVersion, nodes: readonly PandocNodeWriter[]) {
+  constructor(
+    apiVersion: PandocApiVersion, 
+    nodeWriters: readonly PandocNodeWriter[],
+    markWriters: readonly PandocMarkWriter[]
+  ) {
     
-    // create map of node writers
+    // create maps of node and mark writers
     this.nodes = {};
-    nodes.forEach((writer: PandocNodeWriter) => {
+    nodeWriters.forEach((writer: PandocNodeWriter) => {
       this.nodes[writer.name] = writer.write;
+    });
+    this.marks = {};
+    markWriters.forEach((writer: PandocMarkWriter) => {
+      this.marks[writer.name] = writer.write;
     });
     
     this.ast = {
@@ -93,14 +103,31 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeInlines(parent: ProsemirrorNode) {
-    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-      // TODO: juxtopose marks
+
+    let currentChild = 0;
+    
+    
+
+    const writeUntil = (end: number) => {
+      while (currentChild < end) {
+        const node = parent.child(currentChild);
+        const writer = this.nodes[node.type.name];
+
+
+        writer(this, node, parent, currentChild);
+        
+        currentChild++;
+      }
+    };
+
+    writeUntil(parent.childCount);
 
 
 
+    
+    
 
-      this.nodes[node.type.name](this, node, parent, index);
-    });
+   
   }
 
   private fill(container: any[], content: () => void) {
