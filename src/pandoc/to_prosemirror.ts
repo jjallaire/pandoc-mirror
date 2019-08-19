@@ -117,12 +117,13 @@ class Parser {
           const children = getChildren(tok);
           const tight = children.length && children[0][0].t === 'Plain';
           const attrs = getAttrs(tok);
-          if (tight) {
-            attrs.tight = 'true';
-          }
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
-            state.openNode(listItemNodeType, {});
+            const childAttrs : { tight?: boolean } = {};
+            if (tight) {
+              childAttrs.tight = true;
+            }
+            state.openNode(listItemNodeType, childAttrs);
             this.parseTokens(state, child);
             state.closeNode();
           });

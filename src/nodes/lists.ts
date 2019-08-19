@@ -24,15 +24,22 @@ const extension: Extension = {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
+        attrs: { tight: { default: false } },
         defining: true,
-        parseDOM: [{ tag: 'li' }],
-        toDOM() {
-          return ['li', 0];
+        parseDOM: [
+          { tag: 'li', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
+        ],
+        toDOM(node) {
+          if (node.attrs.tight) {
+            return ['li', { 'data-tight': 'true' }, 0];
+          } else {
+            return ['li', 0];
+          }
         },
       },
       pandoc: {
-        writer: (output: PandocOutput, node: ProsemirrorNode, parent: ProsemirrorNode) => {
-          const itemBlockType = parent.attrs.tight ? 'Plain' : 'Para';
+        writer: (output: PandocOutput, node: ProsemirrorNode) => {
+          const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
           output.writeList(() => {
             node.forEach((itemNode: ProsemirrorNode) => {
               output.writeToken(itemBlockType, () => {
@@ -48,16 +55,9 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        attrs: { tight: { default: false } },
-        parseDOM: [
-          { tag: 'ul', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
-        ],
-        toDOM(node) {
-          if (node.attrs.tight) {
-            return ['ul', { 'data-tight': 'true' }, 0];
-          } else {
-            return ['ul', 0];
-          }
+        parseDOM: [{ tag: 'ul' }],
+        toDOM() {
+          return ['ul', 0];
         },
       },
       pandoc: {
@@ -79,7 +79,7 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        attrs: { order: { default: 1 }, tight: { default: false } },
+        attrs: { order: { default: 1 } },
         parseDOM: [
           {
             tag: 'ol',
@@ -89,7 +89,7 @@ const extension: Extension = {
               if (!order) {
                 order = 1;
               }
-              return { order, tight: el.hasAttribute('data-tight') };
+              return { order };
             },
           },
         ],
@@ -97,9 +97,6 @@ const extension: Extension = {
           const attrs: { [key: string]: string } = {};
           if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order;
-          }
-          if (node.attrs.tight) {
-            attrs['data-tight'] = 'true';
           }
           return ['ol', attrs, 0];
         },
