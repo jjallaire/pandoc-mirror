@@ -23,6 +23,7 @@ import markStrong from './marks/strong';
 import markStrikeout from './marks/strikeout';
 import markSuperscript from './marks/superscript';
 import markSubscript from './marks/subscript';
+import markSmallcaps from './marks/smallcaps';
 import nodeBlockquote from './nodes/blockquote';
 import nodeCodeBlock from './nodes/code_block';
 import nodeHardBreak from './nodes/hard_break';
@@ -55,6 +56,7 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
     markStrikeout,
     markSuperscript,
     markSubscript,
+    markSmallcaps,
 
     // nodes
     nodeText,

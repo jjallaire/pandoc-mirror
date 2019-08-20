@@ -23,6 +23,12 @@
   margin-right: 0;
 }
 
+/* SmallCaps */
+
+.ProseMirror .smallcaps {
+  font-variant: small-caps;
+}
+
 /* Impement support for data-tight on lists */
 
 .ProseMirror li[data-tight] > p {

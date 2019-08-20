@@ -10,6 +10,8 @@ This text has ~~strikeout~~ text.
 
 Here we try out superscript^super^ and subscript~sub~
 
+This is the [small caps]{.smallcaps} style.
+
 This is hard break.  
 Next line after hard break.
 
