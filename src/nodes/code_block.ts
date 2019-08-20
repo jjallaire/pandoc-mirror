@@ -7,7 +7,6 @@ import { PandocOutput, PandocToken } from 'api/pandoc';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 
 const CODE_BLOCK_ATTR = 0;
-const CODE_BLOCK_ATTR_PARAMS = 1;
 const CODE_BLOCK_TEXT = 1;
 
 const extension: Extension = {
