@@ -1,6 +1,5 @@
 import { Node as ProsemirrorNode, Fragment, MarkType, Mark } from 'prosemirror-model';
-import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion, PandocMarkWriterFn } from 'api/pandoc';
-
+import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion } from 'api/pandoc';
 
 export function pandocFromProsemirror(
     doc: ProsemirrorNode, 
@@ -76,44 +75,67 @@ class PandocWriter implements PandocOutput {
     
     if (expelEnclosingWhitespace) {
      
-      const inlines: ProsemirrorNode[] = [];
+      // build output spec
+      const output = {
+        spaceBefore: false,
+        nodes: new Array<ProsemirrorNode>(),
+        spaceAfter: false,
+      };
 
+      // if we see leading or trailing spaces we need to output them as tokens
+      // and substitute text nodes
       parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
-        inlines.push(node);       
-      });
 
-      this.writeToken(type, () => {
-        this.writeInlines(Fragment.from(inlines));
-      });  
+        // check for leading/trailing space in first/last nodes
+        if (node.isText) {
+  
+          let outputText = node.textContent;
 
-    } else {
-      this.writeToken(type, () => {
-        this.writeInlines(parent);
-      });  
-    }
-    
+          // checking for leading space in first node 
+          if ((index === 0) && node.textContent.match(/^\s+/)) {
+            output.spaceBefore = true;
+            outputText = outputText.trimLeft();
+          }      
 
-    /*
-    // expel enclosing spaces for mark types that request it
-        const expel = this.markWriters[mark.type.name].expelEnclosingWhitespace || false;
-        if (expel) {
-          const firstNode = markedNodes[0];
-          if (firstNode.isText) {
-            const match = firstNode.textContent.match(/^\s+/);
-            if (match) {
-              this.writeToken("Space");
-              this.writeText
-            }
-            this.nodeWriters[firstNode.type.name](this, firstNode); 
-            markedNodes.shift();
+          // check for trailing space in last node
+          if ((index === (parent.childCount-1)) && node.textContent.match(/\s+$/)) {
+            output.spaceAfter = true;
+            outputText = outputText.trimRight();
           }
+
+          // if we modified the node's text then create a new node
+          if (outputText !== node.textContent) {
+            output.nodes.push(node.type.schema.text(outputText, node.marks));
+          } else {
+            output.nodes.push(node);
+          }
+
+        } else {
+          output.nodes.push(node);   
         }
 
+      });
 
+      // output space tokens before/after mark as necessary
+      if (output.spaceBefore) {
+        this.writeToken('Space');
+      }
+      this.writeToken(type, () => {
+        this.writeInlines(Fragment.from(output.nodes));
+      }); 
+      if (output.spaceAfter) {
+        this.writeToken('Space');
+      }
 
+    // normal codepath (not expelling existing whitespace)
+    } else {
 
-    */
+      this.writeToken(type, () => {
+        this.writeInlines(parent);
+      });
 
+    }
+  
   }
 
   public writeList(content: () => void) {
