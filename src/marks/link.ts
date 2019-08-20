@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
-import { getMarkAttrs, markIsActive, getSelectionMarkRange } from 'api/mark';
+import { getMarkAttrs, markIsActive, getSelectionMarkRange, markInputRule } from 'api/mark';
 import { PandocToken, PandocOutput } from 'api/pandoc';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
@@ -89,6 +89,12 @@ const extension: Extension = {
 
   commands: (schema: Schema, ui: EditorUI) => {
     return [new Command('link', ['Shift-Mod-k', 'Shift-Mod-Z'], linkCommand(schema.marks.link, ui.editLink))];
+  },
+
+  inputRules: (schema: Schema) => {
+    return [
+      markInputRule(/(?:<)([^>]+)(?:>)$/, schema.marks.link, (match: string[]) => ({ href: match[1] })),   
+    ];
   },
 };
 

@@ -2,6 +2,7 @@ import { Mark, MarkSpec, MarkType, ResolvedPos } from 'prosemirror-model';
 import { EditorState, Selection } from 'prosemirror-state';
 
 import { PandocTokenReader, PandocMarkWriterFn } from './pandoc';
+import { InputRule } from 'prosemirror-inputrules';
 
 export interface PandocMark {
   readonly name: string;
@@ -84,4 +85,34 @@ export function getSelectionMarkRange(selection: Selection, markType: MarkType):
     range = { from: selection.from, to: selection.to };
   }
   return range;
+}
+
+// see https://discuss.prosemirror.net/t/input-rules-for-wrapping-marks/537/11
+// NOTE: may need to add an offset to the deletion, etc. to accomodate rules that need
+// to do an exclusion of prefix characters (e.g. em wants to exclude a * before it's * 
+// so it doesn't get mistaken for strong). The offset might be computable 
+// automatically though (investigate). In this code the offset would be added in
+// these 2 lines:
+//    tr.delete(start + offset, textStart)
+//    end = start + offset + match[1].length;
+//
+export function markInputRule(regexp: RegExp, markType: MarkType, getAttrs?: ((match: string[]) => object) | object) {
+  return new InputRule(regexp, (state: EditorState, match: string[], start: number, end: number) => {
+    const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
+    const tr = state.tr;
+    if (match[1]) {
+      const textStart = start + match[0].indexOf(match[1]);
+      const textEnd = textStart + match[1].length;
+      if (textEnd < end) { 
+        tr.delete(textEnd, end);
+      }
+      if (textStart > start) {
+        tr.delete(start, textStart);
+      }
+      end = start + match[1].length;
+    }
+    tr.addMark(start, end, markType.create(attrs));
+    tr.removeStoredMark(markType); // Do not continue with mark.
+    return tr;
+  });
 }
