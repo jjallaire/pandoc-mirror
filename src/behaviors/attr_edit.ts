@@ -1,7 +1,7 @@
 import { EditorState, Transaction, NodeSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { findParentNode, ContentNodeWithPos } from 'prosemirror-utils';
-import { Node as ProsemirrorNode, Mark, MarkType } from 'prosemirror-model';
+import { findParentNode } from 'prosemirror-utils';
+import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
 import { Command } from 'api/command';

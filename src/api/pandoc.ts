@@ -1,5 +1,5 @@
 
-import { Fragment, Mark, Node as ProsemirrorNode, MarkType } from 'prosemirror-model';
+import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
   markdownToAst(format: string, markdown: string): Promise<PandocAst>;

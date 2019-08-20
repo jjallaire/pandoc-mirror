@@ -7,7 +7,7 @@ import { CommandFn, Command } from 'api/command';
 import { PandocMark } from 'api/mark';
 import { PandocNode } from 'api/node';
 import { Extension } from 'api/extension';
-import { PandocTokenReader, PandocMarkWriter, PandocNodeWriterFn, PandocNodeWriter } from 'api/pandoc';
+import { PandocTokenReader, PandocMarkWriter, PandocNodeWriter } from 'api/pandoc';
 
 import { EditorConfig } from 'editor';
 
