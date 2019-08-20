@@ -4,10 +4,6 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-emit pandoc ast:
-   - expelEnclosingWhitespace (whitespace inside emphasis)
-
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 editing support for additional ordered list attributes (delimiter, etc.)
