@@ -1,19 +1,12 @@
 import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
 
-
-export function pandocToProsemirror(
-    ast: PandocAst, 
-    schema: Schema, 
-    readers: readonly PandocTokenReader[]) {
-
+export function pandocToProsemirror(ast: PandocAst, schema: Schema, readers: readonly PandocTokenReader[]) {
   const parser = new Parser(schema, readers);
   return parser.parse(ast);
-
 }
 
 class Parser {
-
   private readonly schema: Schema;
   private readonly handlers: { [token: string]: ParserTokenHandler };
 
@@ -119,7 +112,7 @@ class Parser {
           const attrs = getAttrs(tok);
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
-            const childAttrs : { tight?: boolean } = {};
+            const childAttrs: { tight?: boolean } = {};
             if (tight) {
               childAttrs.tight = true;
             }
@@ -136,7 +129,6 @@ class Parser {
 }
 
 class ParserState {
-
   private readonly schema: Schema;
   private readonly stack: IParserStackElement[];
   private marks: Mark[];

@@ -49,12 +49,11 @@ export const kEventUpdate = 'update';
 export const kEventSelectionChange = 'selectionChange';
 
 export class Editor {
-  
   private readonly parent: HTMLElement;
   private readonly ui: EditorUI;
   private readonly options: EditorOptions;
   private readonly hooks: EditorHooks;
-  private events: ReadonlyMap<string,Event>;
+  private events: ReadonlyMap<string, Event>;
   private readonly schema: Schema;
   private readonly view: EditorView;
   private readonly extensions: ExtensionManager;
@@ -98,7 +97,7 @@ export class Editor {
       this.extensions.pandocReaders(),
       this.extensions.pandocNodeWriters(),
       this.extensions.pandocMarkWriters(),
-      config.pandoc
+      config.pandoc,
     );
 
     // apply devtools if they are available
@@ -140,24 +139,22 @@ export class Editor {
     };
   }
 
-  public setMarkdown(markdown: string, emitUpdate = true) : Promise<void> {
-    
-    return this.pandocConverter.toProsemirror(markdown)
-      .then((doc: Node) => {
-        // re-initialize editor state
-        this.state = EditorState.create({
-          schema: this.state.schema,
-          doc,
-          plugins: this.state.plugins,
-        });
-        this.view.updateState(this.state);
-
-        // notify listeners if requested
-        if (emitUpdate) {
-          this.emitEvent(kEventUpdate);
-          this.emitEvent(kEventSelectionChange);
-        }
+  public setMarkdown(markdown: string, emitUpdate = true): Promise<void> {
+    return this.pandocConverter.toProsemirror(markdown).then((doc: Node) => {
+      // re-initialize editor state
+      this.state = EditorState.create({
+        schema: this.state.schema,
+        doc,
+        plugins: this.state.plugins,
       });
+      this.view.updateState(this.state);
+
+      // notify listeners if requested
+      if (emitUpdate) {
+        this.emitEvent(kEventUpdate);
+        this.emitEvent(kEventSelectionChange);
+      }
+    });
   }
 
   public getMarkdown(): Promise<string> {
@@ -213,8 +210,8 @@ export class Editor {
     }
   }
 
-  private initEvents() : ReadonlyMap<string,Event> {
-    const events = new Map<string,Event>();
+  private initEvents(): ReadonlyMap<string, Event> {
+    const events = new Map<string, Event>();
     events.set(kEventUpdate, new Event(kEventUpdate));
     events.set(kEventSelectionChange, new Event(kEventSelectionChange));
     return events;

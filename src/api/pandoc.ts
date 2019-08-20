@@ -1,4 +1,3 @@
-
 import { Fragment, Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface PandocEngine {
@@ -12,7 +11,7 @@ export interface PandocAst {
   meta: any;
 }
 
-export type PandocApiVersion = [number,number,number,number];
+export type PandocApiVersion = [number, number, number, number];
 
 export interface PandocToken {
   t: string;
@@ -44,16 +43,15 @@ export interface PandocNodeWriter {
 export type PandocNodeWriterFn = (output: PandocOutput, node: ProsemirrorNode) => void;
 
 export interface PandocMarkWriter {
-  
   // pandoc mark name
   readonly name: string;
-  
+
   // The 'priority' property allows us to dicate the order of nesting
   // for marks (this is required b/c Prosemirror uses a flat structure
   // whereby multiple marks are attached to text nodes). This allows us
   // to e.g. ensure that strong and em always occur outside code.
   readonly priority: number;
-  
+
   // writer function
   readonly write: PandocMarkWriterFn;
 }
@@ -61,15 +59,12 @@ export interface PandocMarkWriter {
 export type PandocMarkWriterFn = (output: PandocOutput, mark: Mark, parent: Fragment) => void;
 
 export interface PandocOutput {
-  write(value: any) : void;
-  writeToken(type: string, content?: (() => void) | any) : void;
-  writeMark(type: string, parent: Fragment, expelEnclosingWhitespace?: boolean) : void;
-  writeList(content: () => void) : void;
-  writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]) : void; 
-  writeText(text: string | null) : void;
-  writeBlocks(parent: ProsemirrorNode) : void; 
-  writeInlines(parent: Fragment) : void;
+  write(value: any): void;
+  writeToken(type: string, content?: (() => void) | any): void;
+  writeMark(type: string, parent: Fragment, expelEnclosingWhitespace?: boolean): void;
+  writeList(content: () => void): void;
+  writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]): void;
+  writeText(text: string | null): void;
+  writeBlocks(parent: ProsemirrorNode): void;
+  writeInlines(parent: Fragment): void;
 }
-
-
-

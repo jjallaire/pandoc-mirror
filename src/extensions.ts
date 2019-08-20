@@ -81,7 +81,6 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
 }
 
 export class ExtensionManager {
-
   private extensions: Extension[];
 
   public constructor() {
@@ -117,17 +116,16 @@ export class ExtensionManager {
     return this.pandocMarks().map((mark: PandocMark) => {
       return {
         name: mark.name,
-        ...mark.pandoc.writer
+        ...mark.pandoc.writer,
       };
     });
-    
   }
 
   public pandocNodeWriters(): readonly PandocNodeWriter[] {
     return this.pandocNodes().map((node: PandocNode) => {
       return {
         name: node.name,
-        write: node.pandoc.writer
+        write: node.pandoc.writer,
       };
     });
   }
@@ -152,8 +150,8 @@ export class ExtensionManager {
     });
   }
 
-  // NOTE: return value not readonly b/c it will be fed directly to a 
-  // Prosemirror interface that doesn't take readonly 
+  // NOTE: return value not readonly b/c it will be fed directly to a
+  // Prosemirror interface that doesn't take readonly
   public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {
     let keys: { [key: string]: CommandFn } = {};
     this.extensions.forEach(extension => {
@@ -164,8 +162,8 @@ export class ExtensionManager {
     return keys;
   }
 
-  // NOTE: return value not readonly b/c it will be fed directly to a 
-  // Prosemirror interface that doesn't take readonly 
+  // NOTE: return value not readonly b/c it will be fed directly to a
+  // Prosemirror interface that doesn't take readonly
   public inputRules(schema: Schema): InputRule[] {
     return this.collect<InputRule>((extension: Extension) => {
       if (extension.inputRules) {

@@ -1,4 +1,3 @@
-
 import { Fragment, Mark, MarkType, Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -7,12 +6,7 @@ import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { getMarkAttrs, markIsActive, getSelectionMarkRange } from 'api/mark';
 import { PandocToken, PandocOutput } from 'api/pandoc';
-import {
-  pandocAttrSpec,
-  pandocAttrParseDom,
-  pandocAttrToDomAttr,
-  pandocAttrReadAST,
-} from 'api/pandoc_attr';
+import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 import { EditorUI, LinkEditorFn, LinkEditResult, LinkProps } from 'api/ui';
 
 const TARGET_URL = 0;
@@ -87,8 +81,8 @@ const extension: Extension = {
               });
               output.write([mark.attrs.href || '', mark.attrs.title || '']);
             });
-          }
-        }
+          },
+        },
       },
     },
   ],

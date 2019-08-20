@@ -1,4 +1,3 @@
-
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { BlockCommand } from 'api/command';
@@ -23,7 +22,7 @@ const extension: Extension = {
           output.writeToken('Para', () => {
             output.writeInlines(node.content);
           });
-        }
+        },
       },
     },
   ],

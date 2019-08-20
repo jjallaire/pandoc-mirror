@@ -1,4 +1,3 @@
-
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 
@@ -25,7 +24,7 @@ const extension: Extension = {
         ],
         writer: (output: PandocOutput) => {
           output.writeToken('SoftBreak');
-        }
+        },
       },
     },
   ],

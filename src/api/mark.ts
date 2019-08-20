@@ -9,8 +9,8 @@ export interface PandocMark {
   readonly pandoc: {
     readonly readers: readonly PandocTokenReader[];
     readonly writer: {
-      priority: number,
-      write: PandocMarkWriterFn
+      priority: number;
+      write: PandocMarkWriterFn;
     };
   };
 }

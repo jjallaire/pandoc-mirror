@@ -1,4 +1,3 @@
-
 import { Schema, Mark, Fragment } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
@@ -29,8 +28,8 @@ const extension: Extension = {
           priority: 7,
           write: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
             output.writeMark('SmallCaps', parent);
-          }
-        }
+          },
+        },
       },
     },
   ],
@@ -41,4 +40,3 @@ const extension: Extension = {
 };
 
 export default extension;
-

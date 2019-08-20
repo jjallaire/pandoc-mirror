@@ -6,12 +6,7 @@ import { EditorState } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import {
-  pandocAttrSpec,
-  pandocAttrParseDom,
-  pandocAttrToDomAttr,
-  pandocAttrReadAST,
-} from 'api/pandoc_attr';
+import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 
 const HEADING_LEVEL = 0;
 const HEADING_ATTR = 1;
@@ -63,7 +58,7 @@ const extension: Extension = {
               output.writeInlines(node.content);
             });
           });
-        }
+        },
       },
     },
   ],

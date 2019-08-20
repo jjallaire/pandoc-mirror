@@ -20,7 +20,7 @@ const extension: Extension = {
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
           output.writeText(node.textContent);
-        }
+        },
       },
     },
   ],

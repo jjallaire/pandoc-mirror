@@ -28,7 +28,7 @@ const extension: Extension = {
           output.writeToken('BlockQuote', () => {
             output.writeBlocks(node);
           });
-        }
+        },
       },
     },
   ],

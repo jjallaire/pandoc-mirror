@@ -1,16 +1,10 @@
-
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
 
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { canInsertNode } from 'api/node';
-import {
-  pandocAttrSpec,
-  pandocAttrParseDom,
-  pandocAttrToDomAttr,
-  pandocAttrReadAST,
-} from 'api/pandoc_attr';
+import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
@@ -95,7 +89,7 @@ const extension: Extension = {
             });
             output.write([node.attrs.src, node.attrs.title || '']);
           });
-        }
+        },
       },
     },
   ],

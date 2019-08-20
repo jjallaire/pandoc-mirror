@@ -24,10 +24,10 @@ const extension: Extension = {
           {
             tag: 'pre',
             preserveWhitespace: true,
-            getAttrs: (node: Node | string) => { 
+            getAttrs: (node: Node | string) => {
               const el = node as Element;
               return pandocAttrParseDom(el, {});
-             },
+            },
           },
         ],
         toDOM(node: ProsemirrorNode) {
@@ -40,13 +40,13 @@ const extension: Extension = {
             token: 'CodeBlock',
             block: 'code_block',
             getAttrs: (tok: PandocToken) => ({
-              ...pandocAttrReadAST(tok, CODE_BLOCK_ATTR)
+              ...pandocAttrReadAST(tok, CODE_BLOCK_ATTR),
             }),
             getText: (tok: PandocToken) => tok.c[CODE_BLOCK_TEXT],
           },
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
-          output.writeToken("CodeBlock", () => {
+          output.writeToken('CodeBlock', () => {
             output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
             output.write(node.textContent);
           });

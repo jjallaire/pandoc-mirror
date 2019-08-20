@@ -1,21 +1,26 @@
 import { Node as ProsemirrorNode, Fragment, MarkType, Mark } from 'prosemirror-model';
-import { PandocAst, PandocToken, PandocOutput, PandocNodeWriterFn, PandocNodeWriter, PandocMarkWriter, PandocApiVersion } from 'api/pandoc';
+import {
+  PandocAst,
+  PandocToken,
+  PandocOutput,
+  PandocNodeWriterFn,
+  PandocNodeWriter,
+  PandocMarkWriter,
+  PandocApiVersion,
+} from 'api/pandoc';
 
 export function pandocFromProsemirror(
-    doc: ProsemirrorNode, 
-    apiVersion: 
-    PandocApiVersion, 
-    nodeWriters: readonly PandocNodeWriter[],
-    markWriters: readonly PandocMarkWriter[]) : PandocAst {
-
+  doc: ProsemirrorNode,
+  apiVersion: PandocApiVersion,
+  nodeWriters: readonly PandocNodeWriter[],
+  markWriters: readonly PandocMarkWriter[],
+): PandocAst {
   const writer = new PandocWriter(apiVersion, nodeWriters, markWriters);
   writer.writeBlocks(doc);
   return writer.output();
-
 }
 
 class PandocWriter implements PandocOutput {
-
   private readonly ast: PandocAst;
   private readonly nodeWriters: { [key: string]: PandocNodeWriterFn };
   private readonly markWriters: { [key: string]: PandocMarkWriter };
@@ -23,11 +28,10 @@ class PandocWriter implements PandocOutput {
   private readonly activeMarks: MarkType[];
 
   constructor(
-    apiVersion: PandocApiVersion, 
+    apiVersion: PandocApiVersion,
     nodeWriters: readonly PandocNodeWriter[],
-    markWriters: readonly PandocMarkWriter[]
+    markWriters: readonly PandocMarkWriter[],
   ) {
-    
     // create maps of node and mark writers
     this.nodeWriters = {};
     nodeWriters.forEach((writer: PandocNodeWriter) => {
@@ -37,7 +41,7 @@ class PandocWriter implements PandocOutput {
     markWriters.forEach((writer: PandocMarkWriter) => {
       this.markWriters[writer.name] = writer;
     });
-    
+
     this.ast = {
       blocks: [],
       'pandoc-api-version': apiVersion,
@@ -72,9 +76,7 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeMark(type: string, parent: Fragment, expelEnclosingWhitespace = false) {
-    
     if (expelEnclosingWhitespace) {
-     
       // build output spec
       const output = {
         spaceBefore: false,
@@ -85,20 +87,18 @@ class PandocWriter implements PandocOutput {
       // if we see leading or trailing spaces we need to output them as tokens
       // and substitute text nodes
       parent.forEach((node: ProsemirrorNode, offset: number, index: number) => {
-
         // check for leading/trailing space in first/last nodes
         if (node.isText) {
-  
           let outputText = node.textContent;
 
-          // checking for leading space in first node 
-          if ((index === 0) && node.textContent.match(/^\s+/)) {
+          // checking for leading space in first node
+          if (index === 0 && node.textContent.match(/^\s+/)) {
             output.spaceBefore = true;
             outputText = outputText.trimLeft();
-          }      
+          }
 
           // check for trailing space in last node
-          if ((index === (parent.childCount-1)) && node.textContent.match(/\s+$/)) {
+          if (index === parent.childCount - 1 && node.textContent.match(/\s+$/)) {
             output.spaceAfter = true;
             outputText = outputText.trimRight();
           }
@@ -109,11 +109,9 @@ class PandocWriter implements PandocOutput {
           } else {
             output.nodes.push(node);
           }
-
         } else {
-          output.nodes.push(node);   
+          output.nodes.push(node);
         }
-
       });
 
       // output space tokens before/after mark as necessary
@@ -122,20 +120,17 @@ class PandocWriter implements PandocOutput {
       }
       this.writeToken(type, () => {
         this.writeInlines(Fragment.from(output.nodes));
-      }); 
+      });
       if (output.spaceAfter) {
         this.writeToken('Space');
       }
 
-    // normal codepath (not expelling existing whitespace)
+      // normal codepath (not expelling existing whitespace)
     } else {
-
       this.writeToken(type, () => {
         this.writeInlines(parent);
       });
-
     }
-  
   }
 
   public writeList(content: () => void) {
@@ -145,7 +140,7 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeAttr(id: string, classes = [], keyvalue = []) {
-    this.write([id || "", classes, keyvalue]);
+    this.write([id || '', classes, keyvalue]);
   }
 
   public writeText(text: string | null) {
@@ -171,11 +166,9 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeInlines(parent: Fragment) {
-    
     // get the marks from a node that are not already on the stack of active marks
     const nodeMarks = (node: ProsemirrorNode) => {
-      
-      // get marks -- order marks by priority (code lowest so that we never include 
+      // get marks -- order marks by priority (code lowest so that we never include
       // other markup inside code)
       let marks: Mark[] = node.marks.sort((a: Mark, b: Mark) => {
         const aPriority = this.markWriters[a.type.name].priority;
@@ -205,7 +198,7 @@ class PandocWriter implements PandocOutput {
       currentChild++;
       return {
         node: parent.child(childIndex),
-        marks: nodeMarks(parent.child(childIndex))
+        marks: nodeMarks(parent.child(childIndex)),
       };
     };
     const putBackNode = () => {
@@ -214,7 +207,6 @@ class PandocWriter implements PandocOutput {
 
     // iterate through the nodes
     while (currentChild < parent.childCount) {
-
       // get the next node
       let next = nextNode();
 
@@ -222,33 +214,32 @@ class PandocWriter implements PandocOutput {
       // with all nodes that it contains, otherwise just process it as a plain
       // unmarked node
       if (next.marks.length > 0) {
-
         // get the mark and start building a list of marked nodes
         const mark = next.marks[0];
         const markedNodes: ProsemirrorNode[] = [next.node];
-        
+
         // inner iteration to find nodes that have this mark
         while (currentChild < parent.childCount) {
           next = nextNode();
           if (mark.type.isInSet(next.marks)) {
             markedNodes.push(next.node);
-          } else { // no mark found, "put back" the node
-            putBackNode(); 
+          } else {
+            // no mark found, "put back" the node
+            putBackNode();
             break;
           }
         }
 
         // call the mark writer after noting that this mark is active (which
         // will cause subsequent recursive invocations of this function to
-        // not re-process this mark) 
+        // not re-process this mark)
         this.activeMarks.push(mark.type);
         this.markWriters[mark.type.name].write(this, mark, Fragment.from(markedNodes));
         this.activeMarks.pop();
-
       } else {
         // ordinary unmarked node, call the node writer
-        this.nodeWriters[next.node.type.name](this, next.node); 
-      }    
+        this.nodeWriters[next.node.type.name](this, next.node);
+      }
     }
   }
 

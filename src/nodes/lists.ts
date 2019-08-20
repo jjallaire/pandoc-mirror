@@ -47,7 +47,7 @@ const extension: Extension = {
               });
             });
           });
-        }
+        },
       },
     },
     {
@@ -71,7 +71,7 @@ const extension: Extension = {
           output.writeToken('BulletList', () => {
             output.writeBlocks(node);
           });
-        }
+        },
       },
     },
     {

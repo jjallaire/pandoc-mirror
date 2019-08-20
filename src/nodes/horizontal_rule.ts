@@ -24,7 +24,7 @@ const extension: Extension = {
         ],
         writer: (output: PandocOutput) => {
           output.writeToken('HorizontalRule');
-        }
+        },
       },
     },
   ],

@@ -32,8 +32,8 @@ const extension: Extension = {
           priority: 5,
           write: (output: PandocOutput, _mark: Mark, parent: Fragment) => {
             output.writeMark('Strikeout', parent);
-          }
-        }
+          },
+        },
       },
     },
   ],

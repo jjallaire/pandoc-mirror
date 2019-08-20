@@ -1,14 +1,8 @@
-
 import { Fragment, Mark, Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
-import {
-  pandocAttrSpec,
-  pandocAttrParseDom,
-  pandocAttrToDomAttr,
-  pandocAttrReadAST,
-} from 'api/pandoc_attr';
+import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 import { PandocToken, PandocOutput } from 'api/pandoc';
 
 const CODE_ATTR = 0;
@@ -46,14 +40,14 @@ const extension: Extension = {
         writer: {
           priority: 20,
           write: (output: PandocOutput, mark: Mark, parent: Fragment) => {
-            output.writeToken("Code", () => {
+            output.writeToken('Code', () => {
               output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
               let code = '';
-              parent.forEach((node: ProsemirrorNode) => code = code + node.textContent);
+              parent.forEach((node: ProsemirrorNode) => (code = code + node.textContent));
               output.write(code);
             });
-          }
-        }
+          },
+        },
       },
     },
   ],
