@@ -102,6 +102,8 @@ export function delimiterMarkInputRule(delim: string, markType: MarkType) {
   return markInputRule(new RegExp(regex), markType);
 }
 
+
+
 export function markInputRule(regexp: RegExp, markType: MarkType, getAttrs?: ((match: string[]) => object) | object) {
   return new InputRule(regexp, (state: EditorState, match: string[], start: number, end: number) => {
     const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
