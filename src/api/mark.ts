@@ -96,6 +96,12 @@ export function getSelectionMarkRange(selection: Selection, markType: MarkType):
 //    tr.delete(start + offset, textStart)
 //    end = start + offset + match[1].length;
 //
+
+export function simpleDelimiterMarkInputRule(delim: string, markType: MarkType) {
+  const regex = `(?:${delim})([^${delim}]+)(?:${delim})$`;
+  return markInputRule(new RegExp(regex), markType);
+}
+
 export function markInputRule(regexp: RegExp, markType: MarkType, getAttrs?: ((match: string[]) => object) | object) {
   return new InputRule(regexp, (state: EditorState, match: string[], start: number, end: number) => {
     const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
