@@ -93,7 +93,16 @@ const extension: Extension = {
 
   inputRules: (schema: Schema) => {
     return [
-      markInputRule(/(?:<)([^>]+)(?:>)$/, schema.marks.link, (match: string[]) => ({ href: match[1] })),   
+      markInputRule(
+        /(?:<)([a-z]+:\/\/[^>]+)(?:>)$/, 
+        schema.marks.link, 
+        (match: string[]) => ({ href: match[1] })
+      ),   
+      markInputRule(
+        /(?:\[)([^\]]+)(?:\]\()([^\)]+)(?:\))$/, 
+        schema.marks.link, 
+        (match: string[]) => ({ href: match[2] })
+      )
     ];
   },
 };
