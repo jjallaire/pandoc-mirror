@@ -3,7 +3,7 @@ import { Schema, Mark, Fragment } from 'prosemirror-model';
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
-import { markInputRule, simpleDelimiterMarkInputRule } from 'api/mark';
+import { markInputRule, delimiterMarkInputRule } from 'api/mark';
 
 const extension: Extension = {
   marks: [
@@ -45,7 +45,7 @@ const extension: Extension = {
 
   inputRules: (schema: Schema) => {
     return [
-      simpleDelimiterMarkInputRule('\\*\\*', schema.marks.strong),
+      delimiterMarkInputRule('\\*\\*', schema.marks.strong),
     ];
   },
 };

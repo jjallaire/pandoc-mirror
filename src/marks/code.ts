@@ -4,7 +4,7 @@ import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
 import { PandocToken, PandocOutput } from 'api/pandoc';
-import { simpleDelimiterMarkInputRule } from 'api/mark';
+import { delimiterMarkInputRule } from 'api/mark';
 
 const CODE_ATTR = 0;
 const CODE_TEXT = 1;
@@ -59,7 +59,7 @@ const extension: Extension = {
 
   inputRules: (schema: Schema) => {
     return [
-      simpleDelimiterMarkInputRule('`', schema.marks.code),
+      delimiterMarkInputRule('`', schema.marks.code),
     ];
   },
 };

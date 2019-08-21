@@ -97,7 +97,7 @@ export function getSelectionMarkRange(selection: Selection, markType: MarkType):
 //    end = start + offset + match[1].length;
 //
 
-export function simpleDelimiterMarkInputRule(delim: string, markType: MarkType) {
+export function delimiterMarkInputRule(delim: string, markType: MarkType) {
   const regex = `(?:${delim})([^${delim}]+)(?:${delim})$`;
   return markInputRule(new RegExp(regex), markType);
 }
