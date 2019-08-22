@@ -2,7 +2,9 @@
 
 This is **bold** text. 
 
-This is *italic* text.
+*italic* at the beginning of a line.
+
+This is*italic* text.
 
 This **bold text with embedded *italic* text**.
 
