@@ -5,6 +5,7 @@ import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
+import { textblockTypeInputRule } from 'prosemirror-inputrules';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_TEXT = 1;
@@ -63,6 +64,12 @@ const extension: Extension = {
   commands: (schema: Schema) => {
     return [new BlockCommand('code_block', null, schema.nodes.code_block, schema.nodes.paragraph, {})];
   },
+
+  inputRules: (schema: Schema) => {
+    return [
+      textblockTypeInputRule(/^```/, schema.nodes.code_block)
+    ];
+  }
 };
 
 export default extension;
