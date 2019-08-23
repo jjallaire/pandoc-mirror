@@ -4,7 +4,6 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-input rules for marks (e.g. code, strong, etc.)
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
