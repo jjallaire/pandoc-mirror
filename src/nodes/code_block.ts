@@ -17,6 +17,7 @@ const extension: Extension = {
       spec: {
         content: 'text*',
         group: 'block',
+        marks: "",
         code: true,
         defining: true,
         attrs: { ...pandocAttrSpec },
