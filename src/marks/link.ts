@@ -115,6 +115,11 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
       return false;
     }
 
+    // if the current node doesn't allow this mark return false
+    if (!state.selection.$from.node().type.allowsMarkType(markType)) {
+      return false;
+    }
+
     if (dispatch) {
       // get link attributes if we have them
       let link: { [key: string]: any } = {};
