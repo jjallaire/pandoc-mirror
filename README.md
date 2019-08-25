@@ -13,7 +13,7 @@ handle meta fields
 
 SoftBreak handling: We can call pandoc with --wrap=preserve however this won't work well if
 significant text is added to the paragraph. May want to simply rely on the use of
---wrap=auto --columns=72 to automatically wrap 
+--wrap=auto --columns=72 to automatically wrap. Option?
 
 Options for hard breaks (\ or double-space)
 
