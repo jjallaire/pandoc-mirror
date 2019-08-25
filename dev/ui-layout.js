@@ -23,7 +23,7 @@ function initLayout() {
       },
       {
         type: 'right',
-        size: 500,
+        size: '40%',
         style: 'border-left: 1px solid silver; background-color: #fafafa;',
         resizable: true,
         overflow: 'scroll',
