@@ -44,4 +44,4 @@ Another line of code.
 
 > This is a blockquote. See how it runs!
 
-This is *`source code`*{.example} text.
+This is *`source code`{.example}* text.
