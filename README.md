@@ -38,7 +38,9 @@ be an additional node type with a custom node view (or something like that)
 
 allow overriding of editor keys (need to use EditorState.reconfigure for this)
 
-find/replace (e.g. https://github.com/mattberkowitz/prosemirror-find-replace)
+find/replace
+  https://tiptap.scrumpy.io/search-and-replace 
+  https://github.com/mattberkowitz/prosemirror-find-replace
 
 crit markup
 
