@@ -98,6 +98,15 @@ export class Editor {
       this.extensions.pandocNodeWriters(),
       this.extensions.pandocMarkWriters(),
       config.pandoc,
+      {
+        reader: {
+
+        },
+        writer: {
+          atxHeaders: true,
+          wrapColumn: 100
+        }
+      }
     );
 
     // apply devtools if they are available

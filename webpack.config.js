@@ -63,7 +63,7 @@ module.exports = {
 
       app.post('/pandoc/markdown', express.json(), function(request, response) {
         pandoc(
-          ['--from', 'json', '--to', request.body.format, '--atx-headers'],
+          ['--from', 'json', '--to', request.body.format].concat(request.body.options),
           JSON.stringify(request.body.ast),
           output => { response.json( { markdown: output }) }
         )

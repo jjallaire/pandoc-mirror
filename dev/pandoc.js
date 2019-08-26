@@ -2,8 +2,8 @@
 
 const pandocEngine = {
   
-  markdownToAst(format, markdown) {
-    return axios.post("/pandoc/ast", { format , markdown })
+  markdownToAst(markdown, format) {
+    return axios.post("/pandoc/ast", { markdown, format })
       .then(result => {
         if (result.data.ast)
           return result.data.ast;
@@ -12,8 +12,8 @@ const pandocEngine = {
       })
   },
   
-  astToMarkdown(format, ast) {
-    return axios.post("/pandoc/markdown", { format, ast } )
+  astToMarkdown(ast, format, options) {
+    return axios.post("/pandoc/markdown", { ast, format, options } )
       .then(result => {
         if (result.data.markdown)
           return result.data.markdown;
