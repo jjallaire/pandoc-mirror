@@ -8,9 +8,6 @@ pre-processing and post-processing for Rmd fenced code attributes (don't conform
 
 definition lists
 
-trailing node: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/extensions/TrailingNode.js
-
-
 
 support for ListNumberStyle.Example (@ syntax)
 support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
