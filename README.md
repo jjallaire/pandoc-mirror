@@ -4,6 +4,8 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
+The order in which marks appear is specified by the schema. We should reflect this!
+
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
