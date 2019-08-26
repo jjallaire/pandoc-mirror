@@ -4,24 +4,19 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-The order in which marks appear is specified by the schema. We should reflect this!
-
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
+
+definition lists
 
 editing support for additional ordered list attributes (delimiter, etc.)
 
 handle meta fields
 
-SoftBreak handling: We can call pandoc with --wrap=preserve however this won't work well if
-significant text is added to the paragraph. May want to simply rely on the use of
---wrap=auto --columns=72 to automatically wrap. Option?
-
-Options for hard breaks (\ or double-space)
-
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
 embedeed codemirror editor
+
+support for editing metadata using codemirror
 
 support for footnotes
 
