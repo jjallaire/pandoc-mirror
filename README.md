@@ -8,10 +8,16 @@ pre-processing and post-processing for Rmd fenced code attributes (don't conform
 
 definition lists
 
+trailing node: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/extensions/TrailingNode.js
+
+
+
 support for ListNumberStyle.Example (@ syntax)
 support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
 
 handle meta fields
+
+todo list: https://tiptap.scrumpy.io/todo-list
 
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
