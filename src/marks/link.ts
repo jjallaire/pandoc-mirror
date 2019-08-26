@@ -128,7 +128,7 @@ function linkCommand(markType: MarkType, onEditLink: LinkEditorFn) {
       }
 
       // show edit ui
-      onEditLink(link as LinkProps).then((result: LinkEditResult | null) => {
+      onEditLink({ ...link } as LinkProps).then((result: LinkEditResult | null) => {
         if (result) {
           // determine the range we will edit
           const range = getSelectionMarkRange(state.selection, markType);

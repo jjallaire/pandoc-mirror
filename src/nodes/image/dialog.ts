@@ -22,7 +22,7 @@ export function imageDialog(
   }
 
   // edit the image
-  onEditImage(image).then(result => {
+  onEditImage({ ...image }).then(result => {
     if (result) {
       const newImage = nodeType.createAndFill(result);
       if (newImage) {

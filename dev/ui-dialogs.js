@@ -75,6 +75,35 @@ const editorUI = {
     })
   },
   
+  editOrderedList(list) {
+
+    return new Promise(resolve => {
+  
+      showDialog({
+        id: 'orderedListDialog', 
+        title: 'Edit Ordered List', 
+        fields: [
+          { field: 'order', type: 'number', required: true },
+          { field: 'number_style', type: 'text', required: true },
+          { field: 'number_delim', type: 'text', required: true }
+        ],
+        buttons: null,
+        record: list, 
+        actions: {
+          save: (result) => {
+            resolve({ ...result, order: parseInt(result.order) })
+          },
+          cancel: () => resolve(null)
+        },
+        options: {
+          height: 400
+        }
+      });
+  
+    })
+
+  },
+
   editAttr(attr) {
   
     return new Promise(resolve => {

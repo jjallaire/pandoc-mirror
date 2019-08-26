@@ -80,6 +80,7 @@ const initToolbar = function(toolbar, editor) {
   toolbar.add(button('image', 'fa-image'))
   toolbar.add(kBreak)
   toolbar.add(button('attr_edit', 'fa-info'))
+  toolbar.add(button('ordered_list_edit', 'fa-list-alt'))
   toolbar.add(kSpacer)
   toolbar.add({
     type: 'button',

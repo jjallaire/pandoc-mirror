@@ -8,7 +8,8 @@ pre-processing and post-processing for Rmd fenced code attributes (don't conform
 
 definition lists
 
-editing support for additional ordered list attributes (delimiter, etc.)
+support for ListNumberStyle.Example (@ syntax)
+support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
 
 handle meta fields
 

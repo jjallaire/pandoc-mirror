@@ -28,15 +28,14 @@ Next line after soft break.
 - List
 - Here we go
 
-2. Ordered
-3. List
-4. Example of
+(i) Ordered
+(ii) List
+(ii) Example of
 
 This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank}*
 
 This is an image:
 
-![](content/google.png){#myImage .foo .bar width=400 height=200 style='border: 1px solid;'}
 
 ``` {.r data-foo=400}
 Here is a code block.

@@ -2,6 +2,7 @@ export interface EditorUI {
   alert: AlertFn;
   editLink: LinkEditorFn;
   editImage: ImageEditorFn;
+  editOrderedList: OrderedListEditorFn;
   editAttr: AttrEditorFn;
 }
 
@@ -12,6 +13,8 @@ export type AttrEditorFn = (attr: AttrProps) => Promise<AttrEditResult | null>;
 export type LinkEditorFn = (link: LinkProps) => Promise<LinkEditResult | null>;
 
 export type ImageEditorFn = (image: ImageProps) => Promise<ImageEditResult | null>;
+
+export type OrderedListEditorFn = (list: OrderedListProps) => Promise<OrderedListEditResult | null>;
 
 export interface AttrProps {
   readonly id?: string;
@@ -38,3 +41,11 @@ export interface ImageProps extends AttrProps {
 }
 
 export type ImageEditResult = ImageProps;
+
+export interface OrderedListProps {
+  readonly start: number;
+  readonly number_style: string;
+  readonly number_delim: string;
+}
+
+export type OrderedListEditResult = OrderedListProps;
