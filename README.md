@@ -26,7 +26,8 @@ inline math with MathQuill/MathJax:
 
 support for editing metadata using codemirror
 
-support for footnotes
+support for footnotes (contentDOM may be an important component of this, allows us to 
+point the editor at a node that it should render into)
 https://discuss.prosemirror.net/t/how-to-insert-linebreaks-and-formatting-in-footnotes/1828
 https://discuss.prosemirror.net/t/nested-inline-nodes/935/3
 https://discuss.prosemirror.net/t/getting-a-feel-for-nodeview/972/13
