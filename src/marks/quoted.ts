@@ -18,8 +18,6 @@ enum QuoteType {
   DoubleQuote = "DoubleQuote"
 }
 
-// TODO: paste handler
-
 const plugin = new PluginKey('remove_quoted');
 
 const extension: Extension = {
