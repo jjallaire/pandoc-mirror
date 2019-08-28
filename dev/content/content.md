@@ -12,6 +12,8 @@ This text has ~~strikeout~~ text.
 
 Here we try out superscript^super^ and subscript~sub~
 
+Let's try out ^[an inline footnote].
+
 This is the [small caps]{.smallcaps} style.
 
 This is hard break.  

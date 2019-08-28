@@ -27,6 +27,7 @@ import markSubscript from './marks/subscript';
 import markSmallcaps from './marks/smallcaps';
 import markQuoted from './marks/quoted';
 import nodeBlockquote from './nodes/blockquote';
+import nodeFootnote from './nodes/footnote';
 import nodeCodeBlock from './nodes/code_block';
 import nodeHardBreak from './nodes/hard_break';
 import nodeSoftBreak from './nodes/soft_break';
@@ -67,6 +68,7 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
     nodeParagraph,
     nodeHeading,
     nodeBlockquote,
+    nodeFootnote,
     nodeHorizontalRule,
     nodeCodeBlock,
     nodeLists,

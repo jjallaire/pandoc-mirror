@@ -45,5 +45,13 @@
   margin-bottom: 16px;
 }
 
+/* Footnote numbering */
+
+.ProseMirror footnote::after {
+  content: counter(prosemirror-footnote);
+  vertical-align: super;
+  font-size: 75%;
+  counter-increment: prosemirror-footnote;
+}
 
 

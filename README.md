@@ -31,6 +31,7 @@ point the editor at a node that it should render into)
   https://discuss.prosemirror.net/t/how-to-insert-linebreaks-and-formatting-in-footnotes/1828
   https://discuss.prosemirror.net/t/nested-inline-nodes/935/3
   https://discuss.prosemirror.net/t/getting-a-feel-for-nodeview/972/13
+  https://discuss.prosemirror.net/t/discussion-inline-nodes-with-content/496/20
 Note that numbered vs. named vs. inline notes are not part of the pandoc ast, so they 
 do not round trip (on output they are always numbered and in the footer)x
 
