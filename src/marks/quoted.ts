@@ -1,24 +1,24 @@
 import { Schema, Mark, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
-import { smartQuotes } from 'prosemirror-inputrules';
 
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { InputRule } from 'prosemirror-inputrules';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { findChildrenByMark } from 'prosemirror-utils';
-import { getMarkRange, getSelectionMarkRange } from 'api/mark';
+import { getMarkRange } from 'api/mark';
 import { transactionNodesAffected } from 'api/transaction';
 
 const QUOTE_TYPE = 0;
 const QUOTED_CHILDREN = 1;
+
+const kDoubleQuoted = /“[^”]*”/;
+const kSingleQuoted = /‘[^’]*’/;
 
 enum QuoteType {
   SingleQuote = "SingleQuote",
   DoubleQuote = "DoubleQuote"
 }
 
-const kDoubleQuoted = /“[^”]*”/;
-const kSingleQuoted = /‘[^’]*’/;
+// TODO: paste handler
 
 const plugin = new PluginKey('remove_quoted');
 
@@ -31,10 +31,17 @@ const extension: Extension = {
           type: {},
         },
         parseDOM: [
-          { tag: "span[class='quoted']" },
+          { tag: "span[class='quoted']",
+            getAttrs(dom: Node | string) {
+              const el = dom as Element;
+              return {
+                type: el.getAttribute('data-type'),
+              }; 
+            },
+          }
         ],
-        toDOM() {
-          return ['span', { class: 'quoted' }, 0];
+        toDOM(mark: Mark) {
+          return ['span', { class: 'quoted', 'data-type': mark.attrs.type }, 0];
         },
       },
       pandoc: {
@@ -81,94 +88,61 @@ const extension: Extension = {
   ],
 
   // plugin to add and remove 'quoted' marks as the user edits
-  
-  // https://discuss.prosemirror.net/t/adding-style-on-the-fly/703/11
-
   plugins: (schema: Schema) => {
     return [
       new Plugin({
         key: plugin,
-        appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
+        appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
           
+          //  transaction to append
           const tr = newState.tr;
-          transactions.forEach(transaction => {
-            if (transaction.docChanged) { // mask out changes that don't affect contents (e.g. selection)
-              transaction.steps.forEach(step => {
-                step.getMap().forEach((_oldStart: number, _oldEnd: number, newStart: number, newEnd: number) => {
-                  newState.doc.nodesBetween(newStart, newEnd, (parentNode: ProsemirrorNode, parentPos: number) => {
 
-                    // screen by nodes that allow quoted marks
-                    if (parentNode.type.allowsMarkType(schema.marks.quoted)) {
+          // iterate over all nodes affected by these transactions
+          transactionNodesAffected(newState, transactions, (parentNode: ProsemirrorNode, parentPos: number) => {
 
-                      // find quoted marks where the text is no longer surrounded by quotes
-                      const quotedNodes = findChildrenByMark(parentNode, schema.marks.quoted, true);
-                      quotedNodes.forEach(quotedNode => {
-                        const quotedRange = getMarkRange(newState.doc.resolve(parentPos + 1 + quotedNode.pos), 
-                                                        schema.marks.quoted);
-                        if (quotedRange) {
+            // only examine nodes that allow quoted marks
+            if (parentNode.type.allowsMarkType(schema.marks.quoted)) {
 
-                          const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
-                          if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
-                            tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
-                          }
-                        }
-                      });
+              // find quoted marks where the text is no longer quoted (remove the mark)
+              const quotedNodes = findChildrenByMark(parentNode, schema.marks.quoted, true);
+              quotedNodes.forEach(quotedNode => {
+                const quotedRange = getMarkRange(newState.doc.resolve(parentPos + 1 + quotedNode.pos), 
+                                                schema.marks.quoted);
+                if (quotedRange) {
 
-                      const markQuotes = (type: QuoteType) => {
-                        const re = type === QuoteType.DoubleQuote ? /“[^”]*”/g : /‘[^’]*’/g;
-                        let match = re.exec(parentNode.textContent);
-                        while (match !== null) {
-                          const from = parentPos + 1 + match.index;
-                          const to = from + match[0].length;
-                          if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
-                            const mark = schema.mark('quoted', { type });
-                            tr.addMark(from, to, mark);
-                          }
-                          match = re.exec(parentNode.textContent);
-                        }
-                      };
-                      markQuotes(QuoteType.DoubleQuote);
-                      markQuotes(QuoteType.SingleQuote);
-                    }
-                  });
-                });
+                  const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
+                  if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
+                    tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
+                  }
+                }
               });
+
+              // find quoted text that doesn't have a quoted mark (add the mark)
+              const markQuotes = (type: QuoteType) => {
+                const re = new RegExp(type === QuoteType.DoubleQuote ? kDoubleQuoted : kSingleQuoted, 'g');
+                let match = re.exec(parentNode.textContent);
+                while (match !== null) {
+                  const from = parentPos + 1 + match.index;
+                  const to = from + match[0].length;
+                  if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
+                    const mark = schema.mark('quoted', { type });
+                    tr.addMark(from, to, mark);
+                  }
+                  match = re.exec(parentNode.textContent);
+                }
+              };
+              markQuotes(QuoteType.DoubleQuote);
+              markQuotes(QuoteType.SingleQuote);
             }
           });
+            
+          // return transaction to append
           return tr;
         }
       })
     ];
-  },
-
-  
-
-  inputRules: (schema: Schema) => {
-    return [
-      // quoteInputRule(schema, QuoteType.DoubleQuote),
-      // quoteInputRule(schema, QuoteType.SingleQuote),
-      ...smartQuotes
-    ];
-  },
+  }
 };
-
-function quoteInputRule(schema: Schema, type: QuoteType) {
-  const dblQuote = type === QuoteType.DoubleQuote;
-  const char = dblQuote ? '"' : "'";
-  const quotes = quotesForType(type);
-  return new InputRule(
-    new RegExp(`(?:^|[\\s\\{\\[\\(\\<'"\\u2018\\u201C])((?:${char}|${quotes.begin})[^${char}]+${char})$`), 
-    (state: EditorState, match: string[], start: number, end: number) => {
-      const tr = state.tr;
-      const quoteStart = start + match[0].indexOf(match[1]);
-      const quoted = match[1].slice(1, match[1].length - 1);
-      tr.addMark(quoteStart, end, schema.marks.quoted.create({ type }));
-      tr.insertText(quotes.begin + quoted + quotes.end, quoteStart, end);
-      tr.removeStoredMark(schema.marks.quoted); // Do not continue with mark.
-      return tr;
-  });
-}
-
 
 function quotesForType(type: QuoteType) {
   const dblQuote = type === QuoteType.DoubleQuote;
@@ -177,8 +151,5 @@ function quotesForType(type: QuoteType) {
     end: dblQuote ? "”" : "’"
   };
 }
-
-
-
 
 export default extension;

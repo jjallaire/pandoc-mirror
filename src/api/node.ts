@@ -13,6 +13,8 @@ export interface PandocNode {
   };
 }
 
+export type NodeTraversalFn = (node: Node, pos: number, parent: Node, index: number) => boolean | void | null | undefined;
+
 export function nodeIsActive(state: EditorState, type: NodeType, attrs = {}) {
   const predicate = (n: Node) => n.type === type;
   const node = findSelectedNodeOfType(type)(state.selection) || findParentNode(predicate)(state.selection);
