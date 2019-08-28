@@ -1,4 +1,4 @@
-import { Schema, Mark, Fragment } from 'prosemirror-model';
+import { Schema, Mark, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
 import { smartQuotes } from 'prosemirror-inputrules';
 
 import { Extension } from 'api/extension';
@@ -7,6 +7,7 @@ import { InputRule } from 'prosemirror-inputrules';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { findChildrenByMark } from 'prosemirror-utils';
 import { getMarkRange, getSelectionMarkRange } from 'api/mark';
+import { transactionNodesAffected } from 'api/transaction';
 
 const QUOTE_TYPE = 0;
 const QUOTED_CHILDREN = 1;
@@ -15,6 +16,9 @@ enum QuoteType {
   SingleQuote = "SingleQuote",
   DoubleQuote = "DoubleQuote"
 }
+
+const kDoubleQuoted = /“[^”]*”/;
+const kSingleQuoted = /‘[^’]*’/;
 
 const plugin = new PluginKey('remove_quoted');
 
@@ -76,27 +80,59 @@ const extension: Extension = {
     },
   ],
 
-  // plugin to fixup 'quoted' mark as the user edits (e.g. removes a quote)
+  // plugin to add and remove 'quoted' marks as the user edits
   
+  // https://discuss.prosemirror.net/t/adding-style-on-the-fly/703/11
+
   plugins: (schema: Schema) => {
     return [
       new Plugin({
         key: plugin,
         appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
           
-          // TODO: the code below only handles deletion of the beginning quote so 
-          // won't be good enough. Rather, we'll likely need to inspect the newState
-          // and add/remove marks as necessary, e.g. using:
-          //  const quotedNodes = findChildrenByMark(newState.doc, schema.marks.quoted, true);
-         
           const tr = newState.tr;
           transactions.forEach(transaction => {
-            if (transaction.storedMarks && schema.marks.quoted.isInSet(transaction.storedMarks)) {
-              const range = getSelectionMarkRange(tr.selection, schema.marks.quoted);
-              const text = newState.doc.textBetween(range.from, range.to);
-              if (!/”[^”]*”/.test(text) && !/‘[^’]’/.test(text)) {
-                tr.removeMark(range.from, range.to, schema.marks.quoted);
-              }
+            if (transaction.docChanged) { // mask out changes that don't affect contents (e.g. selection)
+              transaction.steps.forEach(step => {
+                step.getMap().forEach((_oldStart: number, _oldEnd: number, newStart: number, newEnd: number) => {
+                  newState.doc.nodesBetween(newStart, newEnd, (parentNode: ProsemirrorNode, parentPos: number) => {
+
+                    // screen by nodes that allow quoted marks
+                    if (parentNode.type.allowsMarkType(schema.marks.quoted)) {
+
+                      // find quoted marks where the text is no longer surrounded by quotes
+                      const quotedNodes = findChildrenByMark(parentNode, schema.marks.quoted, true);
+                      quotedNodes.forEach(quotedNode => {
+                        const quotedRange = getMarkRange(newState.doc.resolve(parentPos + 1 + quotedNode.pos), 
+                                                        schema.marks.quoted);
+                        if (quotedRange) {
+
+                          const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
+                          if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
+                            tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
+                          }
+                        }
+                      });
+
+                      const markQuotes = (type: QuoteType) => {
+                        const re = type === QuoteType.DoubleQuote ? /“[^”]*”/g : /‘[^’]*’/g;
+                        let match = re.exec(parentNode.textContent);
+                        while (match !== null) {
+                          const from = parentPos + 1 + match.index;
+                          const to = from + match[0].length;
+                          if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
+                            const mark = schema.mark('quoted', { type });
+                            tr.addMark(from, to, mark);
+                          }
+                          match = re.exec(parentNode.textContent);
+                        }
+                      };
+                      markQuotes(QuoteType.DoubleQuote);
+                      markQuotes(QuoteType.SingleQuote);
+                    }
+                  });
+                });
+              });
             }
           });
           return tr;
@@ -109,8 +145,8 @@ const extension: Extension = {
 
   inputRules: (schema: Schema) => {
     return [
-      quoteInputRule(schema, QuoteType.DoubleQuote),
-      quoteInputRule(schema, QuoteType.SingleQuote),
+      // quoteInputRule(schema, QuoteType.DoubleQuote),
+      // quoteInputRule(schema, QuoteType.SingleQuote),
       ...smartQuotes
     ];
   },
@@ -133,6 +169,7 @@ function quoteInputRule(schema: Schema, type: QuoteType) {
   });
 }
 
+
 function quotesForType(type: QuoteType) {
   const dblQuote = type === QuoteType.DoubleQuote;
   return {
@@ -140,6 +177,8 @@ function quotesForType(type: QuoteType) {
     end: dblQuote ? "”" : "’"
   };
 }
+
+
 
 
 export default extension;
