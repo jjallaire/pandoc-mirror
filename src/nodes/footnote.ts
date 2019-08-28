@@ -1,9 +1,9 @@
-import { wrappingInputRule } from 'prosemirror-inputrules';
+
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { NodeView, EditorView } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
-import { PandocOutput, PandocToken } from 'api/pandoc';
+import { PandocOutput } from 'api/pandoc';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
 const plugin = new PluginKey('footnote_View');
@@ -69,6 +69,7 @@ class FootnoteView implements NodeView {
     this.getPos = getPos;
     this.dom = window.document.createElement("footnote");
     this.contentDOM = window.document.createElement("div");
+    this.dom.appendChild(this.contentDOM);
   }
 
 }
