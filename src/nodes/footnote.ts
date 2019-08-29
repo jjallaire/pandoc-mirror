@@ -1,10 +1,12 @@
 
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { NodeView, EditorView } from 'prosemirror-view';
+import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
+import { Editor } from 'editor';
+import { findParentNode } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote_View');
 
@@ -41,12 +43,28 @@ const extension: Extension = {
   ],
 
   plugins: (schema: Schema) => {
+
+
+
     return [
 
       // apply smarty rules to plain text pastes
       new Plugin({
         key: plugin,
+
         props: {
+
+          // apply 'active' class to footnotes when the cursor is inside the footnote
+          decorations(state: EditorState) {
+            const selection = state.selection;
+            const decorations: Decoration[] = [];
+            const footnoteNode = findParentNode((n: ProsemirrorNode) => n.type === schema.nodes.footnote)(selection);
+            if (footnoteNode) {
+              decorations.push(Decoration.node(footnoteNode.pos, footnoteNode.pos + footnoteNode.node.nodeSize, { class: 'active'} ));
+            }
+            return DecorationSet.create(state.doc, decorations);
+          },
+        
           nodeViews: {
             footnote(node, view, getPos) {
               return new FootnoteView(node, view, getPos);
@@ -66,6 +84,8 @@ class FootnoteView implements NodeView {
   private view: EditorView;
   private getPos: () => number;
 
+  
+
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
     this.node = node;
     this.view = view;
@@ -75,8 +95,14 @@ class FootnoteView implements NodeView {
     this.dom.appendChild(this.contentDOM);
   }
 
-
+  public update(_node: ProsemirrorNode, _decorations: Decoration[]) {
+    // handle change of decorations (e.g. class: 'active' => inactive)
+    return true;
+  }
+    
 }
+
+
 
 export default extension;
 
