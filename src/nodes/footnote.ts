@@ -60,8 +60,8 @@ const extension: Extension = {
 
 class FootnoteView implements NodeView {
   
-  public dom: Node;
-  public contentDOM: Node;
+  public dom: HTMLElement;
+  public contentDOM: HTMLElement;
   private node: ProsemirrorNode;
   private view: EditorView;
   private getPos: () => number;
@@ -70,10 +70,11 @@ class FootnoteView implements NodeView {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
-    this.dom = window.document.createElement("footnote");
+    this.dom = window.document.createElement("footnote");    
     this.contentDOM = window.document.createElement("div");
     this.dom.appendChild(this.contentDOM);
   }
+
 
 }
 
