@@ -19,6 +19,15 @@ const extension: Extension = {
         inline: true,
         content: 'block+',
         group: 'inline',
+
+        // NOTE: Setting atom to true makes the footnote an atomically selectable
+        // entity in the editor and therefore keeps focus on it when the footnote
+        // view pops up. Not sure if this is on the whole more desirable behavior 
+        // as it requires a mouse gesture to go from the selected footnote to the 
+        // footnote editing pane. 
+        
+        // atom: true,
+
         parseDOM: [{ tag: 'footnote' }],
         toDOM() {
           return ['footnote', 0];
