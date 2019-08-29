@@ -58,7 +58,27 @@
   position: relative;
 }
 
-.ProseMirror footnote > div {
+.ProseMirror footnote > div,
+.ProseMirror footnote > div > p {
+  display: inline-block;
+  width: 2px;
+  margin-left: -2px;
+  max-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ProseMirror footnote.active > div,
+.ProseMirror footnote.active > div > p {
+  display: block;
+  white-space: normal;
+  width: inherit;
+  margin-left: initial;
+  overflow: initial;
+  max-height: none;
+}
+
+.ProseMirror footnote.active > div {
   position: absolute;
   left: 100px;
   top: 0;
@@ -66,10 +86,8 @@
   height: 300px;
   border: 1px solid grey;
   background-color: yellow;
-}
-
-.ProseMirror footnote.active > div {
-  background-color: pink;
 } 
+
+
 
 

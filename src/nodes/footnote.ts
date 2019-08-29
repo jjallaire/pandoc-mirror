@@ -84,7 +84,8 @@ class FootnoteView implements NodeView {
   private view: EditorView;
   private getPos: () => number;
 
-  
+  // TODO: may need to use ignoreMutation hook if we mess with the contentDOM
+  // TODO: scroll container for contentDOM
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
     this.node = node;
