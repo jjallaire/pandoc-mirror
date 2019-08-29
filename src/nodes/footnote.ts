@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { NodeView, EditorView } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
-import { PandocOutput } from 'api/pandoc';
+import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
 const plugin = new PluginKey('footnote_View');
@@ -25,7 +25,10 @@ const extension: Extension = {
         readers: [
           {
             token: 'Note',
-            node: 'footnote'
+            block: 'footnote',
+            getChildren: (tok: PandocToken) => {
+              return tok.c;
+            }
           },
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
