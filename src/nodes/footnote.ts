@@ -5,7 +5,7 @@ import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-vie
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
-import { findParentNode } from 'prosemirror-utils';
+import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 
 // TODO: consider using marks for footnotes? https://discuss.prosemirror.net/t/discussion-inline-nodes-with-content/496/2
 
@@ -19,6 +19,7 @@ const extension: Extension = {
         inline: true,
         content: 'block+',
         group: 'inline',
+        atom: true,
         parseDOM: [{ tag: 'footnote' }],
         toDOM() {
           return ['footnote', 0];
@@ -60,7 +61,8 @@ const extension: Extension = {
           decorations(state: EditorState) {
             const selection = state.selection;
             const decorations: Decoration[] = [];
-            const footnoteNode = findParentNode((n: ProsemirrorNode) => n.type === schema.nodes.footnote)(selection);
+            const footnoteNode = findSelectedNodeOfType(schema.nodes.footnote)(selection) ||
+                                 findParentNode((n: ProsemirrorNode) => n.type === schema.nodes.footnote)(selection);
             if (footnoteNode) {
               decorations.push(Decoration.node(footnoteNode.pos, footnoteNode.pos + footnoteNode.node.nodeSize, { class: 'active'} ));
             }
