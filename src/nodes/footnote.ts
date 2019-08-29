@@ -4,11 +4,12 @@ import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-vie
 
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
-import { Editor } from 'editor';
+import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
 
-const plugin = new PluginKey('footnote_View');
+// TODO: consider using marks for footnotes? https://discuss.prosemirror.net/t/discussion-inline-nodes-with-content/496/2
+
+const plugin = new PluginKey('footnote_view');
 
 const extension: Extension = {
   nodes: [
@@ -48,9 +49,10 @@ const extension: Extension = {
 
     return [
 
-      // apply smarty rules to plain text pastes
       new Plugin({
         key: plugin,
+
+
 
         props: {
 
