@@ -19,7 +19,6 @@ const extension: Extension = {
         inline: true,
         content: 'block+',
         group: 'inline',
-        atom: true,
         parseDOM: [{ tag: 'footnote' }],
         toDOM() {
           return ['footnote', 0];
