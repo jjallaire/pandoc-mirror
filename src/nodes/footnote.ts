@@ -10,6 +10,7 @@ import { findNodeOfTypeInSelection } from 'api/node';
 
 const plugin = new PluginKey('footnote_view');
 
+// TODO: Copy/Paste creates wacky outcome
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
 // TODO: what to do about nesting of marks, etc.

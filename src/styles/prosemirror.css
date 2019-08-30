@@ -71,13 +71,21 @@
   width: initial;
   overflow-y: scroll;
 
+  font-size: 0.9rem;
+
   position: absolute;
-  left: 100px;
-  top: 0;
-  width: 300px;
-  height: 300px;
-  border: 1px solid grey;
-  background-color: yellow;
+  left: -0.1em;
+  top: 1em;
+  width: 400px;
+  height: 100px;
+
+  padding: 8px;
+  padding-top: 0px;
+  
+  border: 1px solid #e6dfc6;
+  background-color:  #FFF8DC;
+  z-index: 1000;
+
 } 
 
 
