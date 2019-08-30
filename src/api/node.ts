@@ -1,6 +1,6 @@
 import { Node, NodeSpec, NodeType } from 'prosemirror-model';
-import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
-import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
+import { EditorState, Selection, NodeSelection, Transaction } from 'prosemirror-state';
+import { findParentNode, findSelectedNodeOfType, ContentNodeWithPos } from 'prosemirror-utils';
 
 import { PandocTokenReader, PandocNodeWriterFn } from './pandoc';
 
@@ -14,6 +14,10 @@ export interface PandocNode {
 }
 
 export type NodeTraversalFn = (node: Node, pos: number, parent: Node, index: number) => boolean | void | null | undefined;
+
+export function findNodeOfTypeInSelection(selection: Selection, type: NodeType) : ContentNodeWithPos | undefined {
+  return findSelectedNodeOfType(type)(selection) || findParentNode((n: Node) => n.type === type)(selection);
+}
 
 export function nodeIsActive(state: EditorState, type: NodeType, attrs = {}) {
   const predicate = (n: Node) => n.type === type;

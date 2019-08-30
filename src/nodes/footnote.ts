@@ -6,6 +6,7 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
 import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
+import { findNodeOfTypeInSelection } from 'api/node';
 
 const plugin = new PluginKey('footnote_view');
 
@@ -64,8 +65,7 @@ const extension: Extension = {
           decorations(state: EditorState) {
             const selection = state.selection;
             const decorations: Decoration[] = [];
-            const footnoteNode = findSelectedNodeOfType(schema.nodes.footnote)(selection) ||
-                                 findParentNode((n: ProsemirrorNode) => n.type === schema.nodes.footnote)(selection);
+            const footnoteNode = findNodeOfTypeInSelection(selection, schema.nodes.footnote);
             if (footnoteNode) {
               decorations.push(
                 Decoration.node(
