@@ -9,6 +9,13 @@ import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote_view');
 
+// TODO: Insert Footnote
+// TODO: ui treatment/positioning
+// TODO: what to do about nesting of marks, etc.
+// TODO: double-enter in footnote
+// TODO: css in code?
+// TODO: is the footnote tag a thing? (use div or span)
+
 const extension: Extension = {
   nodes: [
     {
@@ -96,17 +103,10 @@ class FootnoteView implements NodeView {
   public dom: HTMLElement;
   public contentDOM: HTMLElement;
 
-
   private node: ProsemirrorNode;
   private view: EditorView;
   private getPos: () => number;
 
-  // TODO: Insert Footnote
-  // TODO: ui treatment/positioning
-  // TODO: what to do about nesting of marks, etc.
-  // TODO: double-enter in footnote
-  // TODO: css in code?
-  // TODO: scroll container for contentDOM
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
     this.node = node;
