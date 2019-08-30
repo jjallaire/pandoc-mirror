@@ -60,9 +60,8 @@
 
 .ProseMirror footnote > div {
   display: inline-block;
-  max-height: 0em;
-  width: 0px;
-  white-space: nowrap;
+  max-height: 0;
+  width: 0;
   overflow: hidden;
 }
 
@@ -71,7 +70,6 @@
   display: block;
   max-height: none;
   width: initial;
-  white-space: normal;
   overflow-y: scroll;
 
   position: absolute;
