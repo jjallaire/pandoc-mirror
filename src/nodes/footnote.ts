@@ -61,7 +61,8 @@ const extension: Extension = {
         props: {
 
           // apply 'active' class to footnotes when the footnote is either selected completely (atom: true 
-          // will result in full selections) or within a selection
+          // will result in full selections) or within a selection. this in turn will result
+          // in the footnote's contents becoming visible/editable in an absolutely positioned div
           decorations(state: EditorState) {
             const footnoteNode = findNodeOfTypeInSelection(state.selection, schema.nodes.footnote);
             if (footnoteNode) {
@@ -77,6 +78,7 @@ const extension: Extension = {
             }
           },
         
+          // custom node view (implements collapsed / active state for footnotes)
           nodeViews: {
             footnote(node, view, getPos) {
               return new FootnoteView(node, view, getPos);
@@ -97,13 +99,16 @@ class FootnoteView implements NodeView {
   private view: EditorView;
   private getPos: () => number;
 
-
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
+
+    // create footnote 
     this.dom = window.document.createElement("span");
     this.dom.classList.add('footnote');    
+
+    // create a div that will be used for editing (+ it's scrolling container)
     const scrollContainer = window.document.createElement("div");
     this.contentDOM = window.document.createElement("div");
     scrollContainer.appendChild(this.contentDOM);
