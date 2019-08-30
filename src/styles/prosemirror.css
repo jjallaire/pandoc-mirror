@@ -45,27 +45,27 @@
   margin-bottom: 16px;
 }
 
-/* Footnote numbering */
+/* Footnote handling */
 
-.ProseMirror footnote::after {
+.ProseMirror .footnote::after {
   content: counter(prosemirror-footnote);
   vertical-align: super;
   font-size: 75%;
   counter-increment: prosemirror-footnote;
 }
 
-.ProseMirror footnote {
+.ProseMirror .footnote {
   position: relative;
 }
 
-.ProseMirror footnote > div {
+.ProseMirror .footnote > div {
   display: inline-block;
   max-height: 0;
   width: 0;
   overflow: hidden;
 }
 
-.ProseMirror footnote.active > div {
+.ProseMirror .footnote.active > div {
   display: block;
   max-height: initial;
   width: initial;

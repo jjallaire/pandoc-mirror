@@ -24,9 +24,9 @@ const extension: Extension = {
         inline: true,
         content: 'block+',
         group: 'inline',
-        parseDOM: [{ tag: 'footnote' }],
+        parseDOM: [{tag: "span[class='footnote']" } ],
         toDOM() {
-          return ['footnote', 0];
+          return ['span', { class: 'footnote' }, 0];
         },
       },
       pandoc: {
@@ -103,7 +103,8 @@ class FootnoteView implements NodeView {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
-    this.dom = window.document.createElement("footnote");    
+    this.dom = window.document.createElement("span");
+    this.dom.classList.add('footnote');    
     const scrollContainer = window.document.createElement("div");
     scrollContainer.classList.add("footnote-container");
     this.contentDOM = window.document.createElement("div");
