@@ -106,7 +106,6 @@ class FootnoteView implements NodeView {
     this.dom = window.document.createElement("span");
     this.dom.classList.add('footnote');    
     const scrollContainer = window.document.createElement("div");
-    scrollContainer.classList.add("footnote-container");
     this.contentDOM = window.document.createElement("div");
     scrollContainer.appendChild(this.contentDOM);
     this.dom.appendChild(scrollContainer);
