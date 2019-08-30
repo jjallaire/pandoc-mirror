@@ -66,9 +66,8 @@
 }
 
 .ProseMirror footnote.active > div {
- 
   display: block;
-  max-height: none;
+  max-height: initial;
   width: initial;
   overflow-y: scroll;
 
