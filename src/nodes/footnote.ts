@@ -7,8 +7,6 @@ import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
 import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 
-// TODO: consider using marks for footnotes? https://discuss.prosemirror.net/t/discussion-inline-nodes-with-content/496/2
-
 const plugin = new PluginKey('footnote_view');
 
 const extension: Extension = {
@@ -61,18 +59,23 @@ const extension: Extension = {
       new Plugin({
         key: plugin,
 
-
-
         props: {
 
-          // apply 'active' class to footnotes when the cursor is inside the footnote
+          // apply 'active' class to footnotes when the footnote is either selected completely (atom: true 
+          // will result in full selections) or within a selection
           decorations(state: EditorState) {
             const selection = state.selection;
             const decorations: Decoration[] = [];
             const footnoteNode = findSelectedNodeOfType(schema.nodes.footnote)(selection) ||
                                  findParentNode((n: ProsemirrorNode) => n.type === schema.nodes.footnote)(selection);
             if (footnoteNode) {
-              decorations.push(Decoration.node(footnoteNode.pos, footnoteNode.pos + footnoteNode.node.nodeSize, { class: 'active'} ));
+              decorations.push(
+                Decoration.node(
+                  footnoteNode.pos, 
+                  footnoteNode.pos + footnoteNode.node.nodeSize, 
+                  { class: 'active' } 
+                )
+              );
             }
             return DecorationSet.create(state.doc, decorations);
           },
@@ -92,11 +95,17 @@ class FootnoteView implements NodeView {
   
   public dom: HTMLElement;
   public contentDOM: HTMLElement;
+
+
   private node: ProsemirrorNode;
   private view: EditorView;
   private getPos: () => number;
 
-  // TODO: may need to use ignoreMutation hook if we mess with the contentDOM
+  // TODO: Insert Footnote
+  // TODO: ui treatment/positioning
+  // TODO: what to do about nesting of marks, etc.
+  // TODO: double-enter in footnote
+  // TODO: css in code?
   // TODO: scroll container for contentDOM
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
@@ -104,11 +113,15 @@ class FootnoteView implements NodeView {
     this.view = view;
     this.getPos = getPos;
     this.dom = window.document.createElement("footnote");    
+    const scrollContainer = window.document.createElement("div");
+    scrollContainer.classList.add("footnote-container");
     this.contentDOM = window.document.createElement("div");
-    this.dom.appendChild(this.contentDOM);
+    scrollContainer.appendChild(this.contentDOM);
+    this.dom.appendChild(scrollContainer);
   }
 
-  public update(_node: ProsemirrorNode, _decorations: Decoration[]) {
+  public update(_node: ProsemirrorNode, decorations: Decoration[]) {
+
     // handle change of decorations (e.g. class: 'active' => inactive)
     return true;
   }
