@@ -63,19 +63,18 @@ const extension: Extension = {
           // apply 'active' class to footnotes when the footnote is either selected completely (atom: true 
           // will result in full selections) or within a selection
           decorations(state: EditorState) {
-            const selection = state.selection;
-            const decorations: Decoration[] = [];
-            const footnoteNode = findNodeOfTypeInSelection(selection, schema.nodes.footnote);
+            const footnoteNode = findNodeOfTypeInSelection(state.selection, schema.nodes.footnote);
             if (footnoteNode) {
-              decorations.push(
+              return DecorationSet.create(state.doc, [
                 Decoration.node(
                   footnoteNode.pos, 
                   footnoteNode.pos + footnoteNode.node.nodeSize, 
                   { class: 'active' } 
                 )
-              );
+              ]);
+            } else {
+              return DecorationSet.empty;
             }
-            return DecorationSet.create(state.doc, decorations);
           },
         
           nodeViews: {
