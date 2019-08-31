@@ -16,7 +16,6 @@ import behaviorCursor from './behaviors/cursor';
 import behaviorHistory from './behaviors/history';
 import behaviorSmarty from './behaviors/smarty';
 import behaviorAttrEdit from './behaviors/attr_edit';
-import behaviorTrailingP from './behaviors/trailing_p';
 import markCode from './marks/code';
 import markEm from './marks/em';
 import markLink from './marks/link';
@@ -50,7 +49,6 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
     behaviorSmarty,
     behaviorHistory,
     behaviorAttrEdit,
-    behaviorTrailingP,
 
     // marks
     markEm,
