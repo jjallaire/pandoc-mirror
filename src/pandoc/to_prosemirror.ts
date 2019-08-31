@@ -18,7 +18,7 @@ class Parser {
   public parse(ast: any): ProsemirrorNode {
     const state: ParserState = new ParserState(this.schema);
     this.parseTokens(state, ast.blocks);
-    return state.topNode();
+    return state.doc();
   }
 
   private parseTokens(state: ParserState, tokens: PandocToken[]) {
@@ -135,12 +135,15 @@ class ParserState {
 
   constructor(schema: Schema) {
     this.schema = schema;
-    this.stack = [{ type: this.schema.topNodeType, attrs: {}, content: [] }];
+    this.stack = [{ type: this.schema.nodes.body, attrs: {}, content: [] }];
     this.marks = Mark.none;
   }
 
-  public topNode(): ProsemirrorNode {
-    return this.top().type.createAndFill(null, this.top().content) as ProsemirrorNode;
+  public doc(): ProsemirrorNode {
+    const content: ProsemirrorNode[] = [];
+    content.push(this.top().type.createAndFill(null, this.top().content) as ProsemirrorNode);
+    content.push(this.schema.nodes.notes.createAndFill(null, []) as ProsemirrorNode);
+    return this.schema.topNodeType.createAndFill({}, content) as ProsemirrorNode;
   }
 
   public addText(text: string) {

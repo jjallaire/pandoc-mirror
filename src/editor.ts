@@ -225,9 +225,35 @@ export class Editor {
   private initSchema(): Schema {
     // build in doc node + nodes from extensions
     const nodes: { [name: string]: NodeSpec } = {
+      
       doc: {
-        content: 'block+',
+        content: 'body notes',
       },
+     
+      body: {
+        content: 'block+',
+        parseDOM: [{ tag: 'div[class="body"]' }],
+        toDOM() {
+          return ['div', { class: 'body' }, 0];
+        },
+      },
+
+      notes: {
+        content: 'note*',
+        parseDOM: [{ tag: 'div[class="notes"]' }],
+        toDOM() {
+          return ['div', { class: 'notes' }, 0];
+        },
+      },
+
+      note: {
+        content: 'block+',
+        parseDOM: [{ tag: 'div[class="note"]' }],
+        toDOM() {
+          return ['div', { class: 'note' }, 0];
+        },
+      },
+        
     };
     this.extensions.pandocNodes().forEach((node: PandocNode) => {
       nodes[node.name] = node.spec;

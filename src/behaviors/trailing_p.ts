@@ -1,11 +1,11 @@
 
 
-import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
+import { Plugin, PluginKey, EditorState, Transaction, Selection } from 'prosemirror-state';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
 import { Extension } from 'api/extension';
 import { Schema } from 'prosemirror-model';
-import { Editor } from 'editor';
+import { findEditingRootNode } from 'api/node';
 
 const plugin = new PluginKey('trailingp');
 
@@ -30,19 +30,28 @@ const extension: Extension = {
       }),
       state: {
         init: (_config, state: EditorState) => {
-          return !isParagraphNode(state.tr.doc.lastChild, schema);
+          return insertTrailingP(state.selection, schema);
         },
         apply: (tr: Transaction, value: any) => {
           if (!tr.docChanged) {
             return value;
           }
-          return !isParagraphNode(tr.doc.lastChild, schema);
+          return insertTrailingP(tr.selection, schema);
         }
       }
     }),
    ];
   },
 };
+
+function insertTrailingP(selection: Selection, schema: Schema) {
+  const editingRoot = findEditingRootNode(selection, schema);
+  if (editingRoot) {
+    return !isParagraphNode(editingRoot.node.lastChild, schema);
+  } else {
+    return false;
+  }
+}
 
 function isParagraphNode(node: ProsemirrorNode | null | undefined, schema: Schema) {
   if (node) {

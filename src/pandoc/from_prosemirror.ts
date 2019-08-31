@@ -16,7 +16,8 @@ export function pandocFromProsemirror(
   markWriters: readonly PandocMarkWriter[],
 ): PandocAst {
   const writer = new PandocWriter(apiVersion, nodeWriters, markWriters);
-  writer.writeBlocks(doc);
+  const bodyNode = doc.firstChild as ProsemirrorNode;
+  writer.writeBlocks(bodyNode);
   return writer.output();
 }
 
