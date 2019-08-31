@@ -92,12 +92,12 @@ const extension: Extension = {
 
 class FootnoteView implements NodeView {
   
-  public dom: HTMLElement;
-  public contentDOM: HTMLElement;
+  public readonly dom: HTMLElement;
+  public readonly contentDOM: HTMLElement;
 
-  private node: ProsemirrorNode;
-  private view: EditorView;
-  private getPos: () => number;
+  private readonly node: ProsemirrorNode;
+  private readonly view: EditorView;
+  private readonly getPos: () => number;
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
     this.node = node;
