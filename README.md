@@ -4,6 +4,8 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
+re-introduce trailing_p (account for body or note as content root)
+
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
