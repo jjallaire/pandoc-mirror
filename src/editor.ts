@@ -170,10 +170,6 @@ export class Editor {
     return this.pandocConverter.fromProsemirror(this.state.doc);
   }
 
-  public getJSON(): any {
-    return this.state.doc.toJSON();
-  }
-
   public focus() {
     this.view.focus();
   }

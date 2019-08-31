@@ -5,7 +5,6 @@ import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-vie
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
-import { findParentNode, findSelectedNodeOfType } from 'prosemirror-utils';
 import { findNodeOfTypeInSelection } from 'api/node';
 
 const plugin = new PluginKey('footnote_view');
