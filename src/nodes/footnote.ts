@@ -11,6 +11,11 @@ const plugin = new PluginKey('footnote_view');
 
 // TODO: Implement trailing_p for notes
 
+// design: hidden part of document at end with 
+// popup gutter editor that swaps in the node for
+// synchronized editing w/ main (a la footnote exampls)
+
+
 // TODO: Copy/Paste creates wacky outcome
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
