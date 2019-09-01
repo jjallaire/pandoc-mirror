@@ -9,6 +9,8 @@ import { findNodeOfTypeInSelection } from 'api/node';
 
 const plugin = new PluginKey('footnote_view');
 
+// TODO: Implement trailing_p for notes
+
 // TODO: Copy/Paste creates wacky outcome
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
