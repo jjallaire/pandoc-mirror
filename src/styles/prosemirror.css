@@ -48,9 +48,6 @@
 
 /* Footnote handling */
 
-.ProseMirror .notes {
-  display: none;
-}
 
 .ProseMirror sup.footnote {
   vertical-align: baseline;
@@ -58,6 +55,11 @@
   cursor: default;
   top: -0.4em;
 }
+
+.ProseMirror .notes {
+  display: none;
+}
+
 
 
 
