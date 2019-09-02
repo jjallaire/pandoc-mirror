@@ -5,6 +5,7 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
 import { findNodeOfTypeInSelection } from 'api/node';
+import { findChildrenByType } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote');
 
@@ -36,19 +37,21 @@ const extension: Extension = {
         atom: true,
         parseDOM: [
           { 
-            tag: "sup[class='footnote']", 
+            tag: "span[class='footnote']", 
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
+                class: 'footnote',
                 ref: el.getAttribute('data-ref'),
+                number: el.getAttribute('data-number')
               };
             },
           }
         ],
         toDOM(node: ProsemirrorNode) {
           return [
-            'sup', 
-            { class: 'footnote', 'data-ref': node.attrs.ref }, 
+            'span', 
+            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-number': node.attrs.number }, 
             node.attrs.number.toString()
           ];
         },
@@ -67,21 +70,51 @@ const extension: Extension = {
     },
   ],
 
-  plugins: (_schema: Schema) => {
+  plugins: (schema: Schema) => {
     return [
       new Plugin({
         key: plugin,
-        /*
+        
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          //  transaction to append
-          const tr = newState.tr;
+          
+          // footnote with no corresponding note note -- insert blank node.
 
+          // node with no corresponding footnote -- remove
+
+          // footnote with duplicate ref, generate new id + copy node
+
+          // renumber footnotes
+        
+          //  transaction to append
+          if (transactions.some(transaction => transaction.docChanged)) {
+            const tr = newState.tr;
+
+            // references to body and notes
+            const body = findChildrenByType(newState.doc, schema.nodes.body)[0];
+            const notes = findChildrenByType(newState.doc, schema.nodes.notes)[0];
+
+            // renumber
+            
+            
+            const footnotes = findChildrenByType(body.node, schema.nodes.footnote, true);
+            footnotes.forEach((footnoteNode, index) => {
+              tr.setNodeMarkup(footnoteNode.pos + 1, schema.nodes.footnote, {
+                ...footnoteNode.node.attrs,
+                number: index+1
+              });
+            });
+
+            return tr;
+          }
+
+          /*
           // return transaction to append
           if (tr.docChanged) {
             return tr;
           }
+          */
         }
-        */
+        
       })
     ];
   }
