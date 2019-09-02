@@ -71,6 +71,7 @@ const extension: Extension = {
     return [
       new Plugin({
         key: plugin,
+        /*
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
           //  transaction to append
           const tr = newState.tr;
@@ -80,6 +81,7 @@ const extension: Extension = {
             return tr;
           }
         }
+        */
       })
     ];
   }
