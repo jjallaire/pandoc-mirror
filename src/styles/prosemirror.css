@@ -59,10 +59,15 @@
   display: none;
 }
 
-/*
 .ProseMirror .footnote {
-  position: relative;
+  display: inline-block;
+  max-width: 1em;
+  max-height: 1.0em;
+  white-space: nowrap;
+  overflow: hidden;
 }
+
+/*
 
 .ProseMirror .footnote > div {
   display: inline-block;

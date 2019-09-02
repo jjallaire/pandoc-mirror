@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
 import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
@@ -45,7 +45,7 @@ const extension: Extension = {
           }
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['span', { class: 'footnote', 'data-ref': node.attrs.ref  }, 0];
+          return ['span', { class: 'footnote', 'data-ref': node.attrs.ref  }, ' '];
         },
       },
       pandoc: {
