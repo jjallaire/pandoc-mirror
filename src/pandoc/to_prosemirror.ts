@@ -122,6 +122,26 @@ class Parser {
           });
           state.closeNode();
         };
+
+        // footnotes
+      } else if (reader.note) {
+        if (!this.schema.nodes[reader.note]) {
+          continue;
+        }
+        const nodeType = this.schema.nodes[reader.note];
+        handlers[reader.token] = (state: ParserState, tok: PandocToken) => {
+          // generate unique id
+          const ref = new Date().valueOf().toString(36) + Math.random().toString(36).substr(2);
+          
+          // add inline node to the body 
+          state.addNode(nodeType, { ref } , []);
+
+          // add note to notes collection (will be handled specially by closeNode b/c it 
+          // has schema.nodes.node type)
+          state.openNode(this.schema.nodes.note, { id: ref });
+          this.parseTokens(state, getChildren(tok));
+          state.closeNode();
+        };
       }
     }
     return handlers;
@@ -131,18 +151,20 @@ class Parser {
 class ParserState {
   private readonly schema: Schema;
   private readonly stack: IParserStackElement[];
+  private readonly notes: ProsemirrorNode[];
   private marks: Mark[];
 
   constructor(schema: Schema) {
     this.schema = schema;
     this.stack = [{ type: this.schema.nodes.body, attrs: {}, content: [] }];
+    this.notes = [];
     this.marks = Mark.none;
   }
 
   public doc(): ProsemirrorNode {
     const content: ProsemirrorNode[] = [];
     content.push(this.top().type.createAndFill(null, this.top().content) as ProsemirrorNode);
-    content.push(this.schema.nodes.notes.createAndFill(null, []) as ProsemirrorNode);
+    content.push(this.schema.nodes.notes.createAndFill(null, this.notes) as ProsemirrorNode);
     return this.schema.topNodeType.createAndFill({}, content) as ProsemirrorNode;
   }
 
@@ -167,7 +189,11 @@ class ParserState {
       return null;
     }
     if (this.stack.length) {
-      this.top().content.push(node);
+      if (type === this.schema.nodes.note) {
+        this.notes.push(node);
+      } else {
+        this.top().content.push(node);
+      }
     }
     return node;
   }

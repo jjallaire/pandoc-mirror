@@ -45,6 +45,7 @@
   margin-bottom: 16px;
 }
 
+
 /* Footnote handling */
 
 .ProseMirror .footnote::after {
@@ -54,6 +55,11 @@
   counter-increment: prosemirror-footnote;
 }
 
+.ProseMirror .notes {
+  display: none;
+}
+
+/*
 .ProseMirror .footnote {
   position: relative;
 }
@@ -87,6 +93,7 @@
   z-index: 1000;
 
 } 
+*/
 
 
 

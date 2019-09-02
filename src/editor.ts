@@ -1,7 +1,7 @@
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { MarkSpec, Node, NodeSpec, Schema } from 'prosemirror-model';
+import { MarkSpec, Node as ProsemirrorNode, NodeSpec, Schema } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import 'prosemirror-view/style/prosemirror.css';
@@ -147,7 +147,7 @@ export class Editor {
   }
 
   public setMarkdown(markdown: string, emitUpdate = true): Promise<void> {
-    return this.pandocConverter.toProsemirror(markdown).then((doc: Node) => {
+    return this.pandocConverter.toProsemirror(markdown).then((doc: ProsemirrorNode) => {
       // re-initialize editor state
       this.state = EditorState.create({
         schema: this.state.schema,
@@ -245,9 +245,21 @@ export class Editor {
 
       note: {
         content: 'block+',
-        parseDOM: [{ tag: 'div[class="note"]' }],
-        toDOM() {
-          return ['div', { class: 'note' }, 0];
+        attrs: {
+          id: {}
+        },
+        parseDOM: [
+          { tag: 'div[class="note"]',
+            getAttrs(dom: Node | string) {
+              const el = dom as Element;
+              return {
+                id: el.getAttribute('id')
+              };
+            }
+          }
+        ],
+        toDOM(node: ProsemirrorNode) {
+          return ['div', { id: node.attrs.id, class: 'note' }, 0];
         },
       },
     };
@@ -302,7 +314,7 @@ export class Editor {
     return [keymap(commandKeys), keymap(extensionKeys)];
   }
 
-  private emptyDoc(): Node {
+  private emptyDoc(): ProsemirrorNode {
     return this.schema.nodeFromJSON({
       type: 'doc',
       content: [

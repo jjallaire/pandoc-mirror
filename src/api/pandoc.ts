@@ -27,6 +27,7 @@ export interface PandocTokenReader {
   readonly block?: string;
   readonly list?: string;
   readonly mark?: string;
+  readonly note?: string;
   readonly text?: boolean;
 
   // functions for getting attributes and children

@@ -28,21 +28,31 @@ const extension: Extension = {
       name: 'footnote',
       spec: {
         inline: true,
-        content: 'block+',
+        attrs: {
+          ref: {},
+        },
         group: 'inline',
-        parseDOM: [{ tag: "span[class='footnote']" }],
-        toDOM() {
-          return ['span', { class: 'footnote' }, 0];
+        atom: true,
+        parseDOM: [
+          { 
+            tag: "span[class='footnote']", 
+            getAttrs(dom: Node | string) {
+              const el = dom as Element;
+              return {
+                ref: el.getAttribute('data-ref'),
+              };
+            },
+          }
+        ],
+        toDOM(node: ProsemirrorNode) {
+          return ['span', { class: 'footnote', 'data-ref': node.attrs.ref  }, 0];
         },
       },
       pandoc: {
         readers: [
           {
             token: 'Note',
-            block: 'footnote',
-            getChildren: (tok: PandocToken) => {
-              return tok.c;
-            },
+            note: 'footnote',
           },
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
@@ -53,6 +63,11 @@ const extension: Extension = {
       },
     },
   ],
+
+};
+
+
+/*
 
   plugins: (schema: Schema) => {
     return [
@@ -84,8 +99,11 @@ const extension: Extension = {
       }),
     ];
   },
-};
 
+*/
+
+
+/*
 class FootnoteView implements NodeView {
   public readonly dom: HTMLElement;
   public readonly contentDOM: HTMLElement;
@@ -115,5 +133,6 @@ class FootnoteView implements NodeView {
     return true;
   }
 }
+*/
 
 export default extension;
