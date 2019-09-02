@@ -48,57 +48,18 @@
 
 /* Footnote handling */
 
-.ProseMirror .footnote::after {
-  content: counter(prosemirror-footnote);
-  vertical-align: super;
-  font-size: 75%;
-  counter-increment: prosemirror-footnote;
-}
-
 .ProseMirror .notes {
   display: none;
 }
 
-.ProseMirror .footnote {
-  display: inline-block;
-  max-width: 1em;
-  max-height: 1.0em;
-  white-space: nowrap;
-  overflow: hidden;
+.ProseMirror sup.footnote {
+  vertical-align: baseline;
+  position: relative;
+  cursor: default;
+  top: -0.4em;
 }
 
-/*
 
-.ProseMirror .footnote > div {
-  display: inline-block;
-  max-height: 0;
-  width: 0;
-  overflow: hidden;
-}
-
-.ProseMirror .footnote.active > div {
-  display: block;
-  max-height: initial;
-  width: initial;
-  overflow-y: scroll;
-
-  font-size: 0.9rem;
-
-  position: absolute;
-  left: -0.1em;
-  top: 1em;
-  width: 400px;
-  height: 100px;
-
-  padding: 8px;
-  padding-top: 0px;
-  
-  border: 1px solid #e6dfc6;
-  background-color:  #FFF8DC;
-  z-index: 1000;
-
-} 
-*/
 
 
 

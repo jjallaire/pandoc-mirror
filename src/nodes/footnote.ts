@@ -29,13 +29,14 @@ const extension: Extension = {
       spec: {
         inline: true,
         attrs: {
+          number: { default: 1 },
           ref: {},
         },
         group: 'inline',
         atom: true,
         parseDOM: [
           { 
-            tag: "span[class='footnote']", 
+            tag: "sup[class='footnote']", 
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
@@ -45,7 +46,11 @@ const extension: Extension = {
           }
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['span', { class: 'footnote', 'data-ref': node.attrs.ref  }, ' '];
+          return [
+            'sup', 
+            { class: 'footnote', 'data-ref': node.attrs.ref }, 
+            node.attrs.number.toString()
+          ];
         },
       },
       pandoc: {
