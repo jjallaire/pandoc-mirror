@@ -56,9 +56,7 @@ const extension: Extension = {
           },
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
-          output.writeToken('Note', () => {
-            output.writeBlocks(node);
-          });
+          output.writeNote(node);
         },
       },
     },

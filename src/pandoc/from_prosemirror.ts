@@ -15,8 +15,9 @@ export function pandocFromProsemirror(
   nodeWriters: readonly PandocNodeWriter[],
   markWriters: readonly PandocMarkWriter[],
 ): PandocAst {
-  const writer = new PandocWriter(apiVersion, nodeWriters, markWriters);
-  const bodyNode = doc.firstChild as ProsemirrorNode;
+  const bodyNode = doc.child(0);
+  const notesNode = doc.child(1);
+  const writer = new PandocWriter(apiVersion, nodeWriters, markWriters, notesNode);
   writer.writeBlocks(bodyNode);
   return writer.output();
 }
@@ -25,6 +26,7 @@ class PandocWriter implements PandocOutput {
   private readonly ast: PandocAst;
   private readonly nodeWriters: { [key: string]: PandocNodeWriterFn };
   private readonly markWriters: { [key: string]: PandocMarkWriter };
+  private readonly notes: { [key: string]: ProsemirrorNode };
   private readonly containers: any[][];
   private readonly activeMarks: MarkType[];
 
@@ -32,6 +34,7 @@ class PandocWriter implements PandocOutput {
     apiVersion: PandocApiVersion,
     nodeWriters: readonly PandocNodeWriter[],
     markWriters: readonly PandocMarkWriter[],
+    notes: ProsemirrorNode,
   ) {
     // create maps of node and mark writers
     this.nodeWriters = {};
@@ -42,6 +45,12 @@ class PandocWriter implements PandocOutput {
     markWriters.forEach((writer: PandocMarkWriter) => {
       this.markWriters[writer.name] = writer;
     });
+    // create map of notes
+    this.notes = {};
+    notes.forEach((note: ProsemirrorNode) => {
+      this.notes[note.attrs.id] = note;
+    });
+
 
     this.ast = {
       blocks: [],
@@ -158,6 +167,13 @@ class PandocWriter implements PandocOutput {
         }
       });
     }
+  }
+
+  public writeNote(note: ProsemirrorNode) {
+    const noteBody = this.notes[note.attrs.ref];
+    this.writeToken("Note", () => {
+      this.writeBlocks(noteBody);
+    });
   }
 
   public writeBlocks(parent: ProsemirrorNode) {
