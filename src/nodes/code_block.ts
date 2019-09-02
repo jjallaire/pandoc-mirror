@@ -17,7 +17,7 @@ const extension: Extension = {
       spec: {
         content: 'text*',
         group: 'block',
-        marks: "",
+        marks: '',
         code: true,
         defining: true,
         attrs: { ...pandocAttrSpec },
@@ -67,10 +67,8 @@ const extension: Extension = {
   },
 
   inputRules: (schema: Schema) => {
-    return [
-      textblockTypeInputRule(/^```/, schema.nodes.code_block)
-    ];
-  }
+    return [textblockTypeInputRule(/^```/, schema.nodes.code_block)];
+  },
 };
 
 export default extension;

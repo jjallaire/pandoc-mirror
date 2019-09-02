@@ -13,10 +13,14 @@ export interface PandocNode {
   };
 }
 
-export type NodeTraversalFn = (node: Node, pos: number, parent: Node, index: number) => boolean | void | null | undefined;
+export type NodeTraversalFn = (
+  node: Node,
+  pos: number,
+  parent: Node,
+  index: number,
+) => boolean | void | null | undefined;
 
-
-export function findNodeOfTypeInSelection(selection: Selection, type: NodeType) : ContentNodeWithPos | undefined {
+export function findNodeOfTypeInSelection(selection: Selection, type: NodeType): ContentNodeWithPos | undefined {
   return findSelectedNodeOfType(type)(selection) || findParentNode((n: Node) => n.type === type)(selection);
 }
 

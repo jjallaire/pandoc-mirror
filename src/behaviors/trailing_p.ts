@@ -1,5 +1,3 @@
-
-
 import { Plugin, PluginKey, EditorState, Transaction, Selection } from 'prosemirror-state';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
@@ -11,38 +9,38 @@ const plugin = new PluginKey('trailingp');
 
 const extension: Extension = {
   plugins: (schema: Schema) => {
-   return [
-    new Plugin({
-      key: plugin,
-      view: () => ({
-        update: view => {
-          const { state } = view;
-          const insertNodeAtEnd = plugin.getState(state);
-          if (!insertNodeAtEnd) {
-            return;
-          }
+    return [
+      new Plugin({
+        key: plugin,
+        view: () => ({
+          update: view => {
+            const { state } = view;
+            const insertNodeAtEnd = plugin.getState(state);
+            if (!insertNodeAtEnd) {
+              return;
+            }
 
-          // insert paragraph at the end of the body
-          const { doc, tr } = state;
-          const type = schema.nodes.paragraph; 
-          const body = doc.content.child(0);
-          const transaction = tr.insert(body.nodeSize-1, type.create());
-          view.dispatch(transaction);
+            // insert paragraph at the end of the body
+            const { doc, tr } = state;
+            const type = schema.nodes.paragraph;
+            const body = doc.content.child(0);
+            const transaction = tr.insert(body.nodeSize - 1, type.create());
+            view.dispatch(transaction);
+          },
+        }),
+        state: {
+          init: (_config, state: EditorState) => {
+            return insertTrailingP(state.selection, schema);
+          },
+          apply: (tr: Transaction, value: any) => {
+            if (!tr.docChanged) {
+              return value;
+            }
+            return insertTrailingP(tr.selection, schema);
+          },
         },
       }),
-      state: {
-        init: (_config, state: EditorState) => {
-          return insertTrailingP(state.selection, schema);
-        },
-        apply: (tr: Transaction, value: any) => {
-          if (!tr.docChanged) {
-            return value;
-          }
-          return insertTrailingP(tr.selection, schema);
-        }
-      }
-    }),
-   ];
+    ];
   },
 };
 

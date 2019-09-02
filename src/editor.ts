@@ -99,14 +99,12 @@ export class Editor {
       this.extensions.pandocMarkWriters(),
       config.pandoc,
       {
-        reader: {
-
-        },
+        reader: {},
         writer: {
           atxHeaders: true,
-          wrapColumn: 100
-        }
-      }
+          wrapColumn: 100,
+        },
+      },
     );
 
     // apply devtools if they are available
@@ -225,11 +223,10 @@ export class Editor {
   private initSchema(): Schema {
     // build in doc node + nodes from extensions
     const nodes: { [name: string]: NodeSpec } = {
-      
       doc: {
         content: 'body notes',
       },
-     
+
       body: {
         content: 'block+',
         parseDOM: [{ tag: 'div[class="body"]' }],
@@ -253,7 +250,6 @@ export class Editor {
           return ['div', { class: 'note' }, 0];
         },
       },
-        
     };
     this.extensions.pandocNodes().forEach((node: PandocNode) => {
       nodes[node.name] = node.spec;

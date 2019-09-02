@@ -44,9 +44,7 @@ const extension: Extension = {
   },
 
   inputRules: (schema: Schema) => {
-    return [
-      delimiterMarkInputRule('~~', schema.marks.strikeout),
-    ];
+    return [delimiterMarkInputRule('~~', schema.marks.strikeout)];
   },
 };
 

@@ -8,12 +8,10 @@ import { pandocFromProsemirror } from './from_prosemirror';
 const kMarkdownFormat = 'markdown' + '-auto_identifiers'; // don't inject identifiers for headers w/o them
 
 export interface PandocConverterOptions {
-  reader: {
-
-  };
+  reader: {};
   writer: {
     atxHeaders?: boolean;
-    wrapColumn?: number; 
+    wrapColumn?: number;
   };
 }
 
@@ -55,9 +53,9 @@ export class PandocConverter {
     if (!this.apiVersion) {
       throw new Error('API version not available (did you call toProsemirror first?)');
     }
-    
+
     const ast = pandocFromProsemirror(doc, this.apiVersion, this.nodeWriters, this.markWriters);
-    
+
     const options: string[] = [];
     if (this.options.writer.atxHeaders) {
       options.push('--atx-headers');
@@ -68,7 +66,7 @@ export class PandocConverter {
     } else {
       options.push('--wrap=none');
     }
-   
+
     return this.pandoc.astToMarkdown(ast, kMarkdownFormat, options);
   }
 }

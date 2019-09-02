@@ -14,8 +14,8 @@ const kDoubleQuoted = /“[^”]*”/;
 const kSingleQuoted = /‘[^’]*’/;
 
 enum QuoteType {
-  SingleQuote = "SingleQuote",
-  DoubleQuote = "DoubleQuote"
+  SingleQuote = 'SingleQuote',
+  DoubleQuote = 'DoubleQuote',
 }
 
 const plugin = new PluginKey('remove_quoted');
@@ -29,14 +29,15 @@ const extension: Extension = {
           type: {},
         },
         parseDOM: [
-          { tag: "span[class='quoted']",
+          {
+            tag: "span[class='quoted']",
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
                 type: el.getAttribute('data-type'),
-              }; 
+              };
             },
-          }
+          },
         ],
         toDOM(mark: Mark) {
           return ['span', { class: 'quoted', 'data-type': mark.attrs.type }, 0];
@@ -57,16 +58,16 @@ const extension: Extension = {
               const quotes = quotesForType(type);
               return [
                 {
-                  t: "Str",
-                  c: quotes.begin
+                  t: 'Str',
+                  c: quotes.begin,
                 },
                 ...tok.c[QUOTED_CHILDREN],
                 {
-                  t: "Str",
-                  c: quotes.end
+                  t: 'Str',
+                  c: quotes.end,
                 },
               ];
-            }
+            },
           },
         ],
         writer: {
@@ -75,7 +76,7 @@ const extension: Extension = {
             output.writeToken('Quoted', () => {
               output.writeToken(mark.attrs.type);
               output.writeList(() => {
-                const text = parent.cut(1, parent.size-1);
+                const text = parent.cut(1, parent.size - 1);
                 output.writeInlines(text);
               });
             });
@@ -91,23 +92,21 @@ const extension: Extension = {
       new Plugin({
         key: plugin,
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          
           //  transaction to append
           const tr = newState.tr;
 
           // iterate over all nodes affected by these transactions
           transactionNodesAffected(newState, transactions, (parentNode: ProsemirrorNode, parentPos: number) => {
-
             // only examine nodes that allow quoted marks
             if (parentNode.type.allowsMarkType(schema.marks.quoted)) {
-
               // find quoted marks where the text is no longer quoted (remove the mark)
               const quotedNodes = findChildrenByMark(parentNode, schema.marks.quoted, true);
               quotedNodes.forEach(quotedNode => {
-                const quotedRange = getMarkRange(newState.doc.resolve(parentPos + 1 + quotedNode.pos), 
-                                                schema.marks.quoted);
+                const quotedRange = getMarkRange(
+                  newState.doc.resolve(parentPos + 1 + quotedNode.pos),
+                  schema.marks.quoted,
+                );
                 if (quotedRange) {
-
                   const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
                   if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
                     tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
@@ -133,20 +132,20 @@ const extension: Extension = {
               markQuotes(QuoteType.SingleQuote);
             }
           });
-            
+
           // return transaction to append
           return tr;
-        }
-      })
+        },
+      }),
     ];
-  }
+  },
 };
 
 function quotesForType(type: QuoteType) {
   const dblQuote = type === QuoteType.DoubleQuote;
   return {
-    begin: dblQuote ? "“" : "‘",
-    end: dblQuote ? "”" : "’"
+    begin: dblQuote ? '“' : '‘',
+    end: dblQuote ? '”' : '’',
   };
 }
 

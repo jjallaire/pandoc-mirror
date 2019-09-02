@@ -1,4 +1,3 @@
-
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 
@@ -11,10 +10,9 @@ const plugin = new PluginKey('footnote_view');
 
 // TODO: Implement trailing_p for notes
 
-// design: hidden part of document at end with 
+// design: hidden part of document at end with
 // popup gutter editor that swaps in the node for
 // synchronized editing w/ main (a la footnote exampls)
-
 
 // TODO: Copy/Paste creates wacky outcome
 // TODO: Insert Footnote
@@ -32,7 +30,7 @@ const extension: Extension = {
         inline: true,
         content: 'block+',
         group: 'inline',
-        parseDOM: [{tag: "span[class='footnote']" } ],
+        parseDOM: [{ tag: "span[class='footnote']" }],
         toDOM() {
           return ['span', { class: 'footnote' }, 0];
         },
@@ -44,7 +42,7 @@ const extension: Extension = {
             block: 'footnote',
             getChildren: (tok: PandocToken) => {
               return tok.c;
-            }
+            },
           },
         ],
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
@@ -57,48 +55,38 @@ const extension: Extension = {
   ],
 
   plugins: (schema: Schema) => {
-
-
-
     return [
-
       new Plugin({
         key: plugin,
 
         props: {
-
-          // apply 'active' class to footnotes when the footnote is either selected completely (atom: true 
+          // apply 'active' class to footnotes when the footnote is either selected completely (atom: true
           // will result in full selections) or within a selection. this in turn will result
           // in the footnote's contents becoming visible/editable in an absolutely positioned div
           decorations(state: EditorState) {
             const footnoteNode = findNodeOfTypeInSelection(state.selection, schema.nodes.footnote);
             if (footnoteNode) {
               return DecorationSet.create(state.doc, [
-                Decoration.node(
-                  footnoteNode.pos, 
-                  footnoteNode.pos + footnoteNode.node.nodeSize, 
-                  { class: 'active' } 
-                )
+                Decoration.node(footnoteNode.pos, footnoteNode.pos + footnoteNode.node.nodeSize, { class: 'active' }),
               ]);
             } else {
               return DecorationSet.empty;
             }
           },
-        
+
           // custom node view (implements collapsed / active state for footnotes)
           nodeViews: {
             footnote(node, view, getPos) {
               return new FootnoteView(node, view, getPos);
-            }
-          }
-        }
-      })
+            },
+          },
+        },
+      }),
     ];
-  }
+  },
 };
 
 class FootnoteView implements NodeView {
-  
   public readonly dom: HTMLElement;
   public readonly contentDOM: HTMLElement;
 
@@ -111,28 +99,21 @@ class FootnoteView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
-    // create footnote 
-    this.dom = window.document.createElement("span");
-    this.dom.classList.add('footnote');    
+    // create footnote
+    this.dom = window.document.createElement('span');
+    this.dom.classList.add('footnote');
 
     // create a div that will be used for editing (+ it's scrolling container)
-    const scrollContainer = window.document.createElement("div");
-    this.contentDOM = window.document.createElement("div");
+    const scrollContainer = window.document.createElement('div');
+    this.contentDOM = window.document.createElement('div');
     scrollContainer.appendChild(this.contentDOM);
     this.dom.appendChild(scrollContainer);
   }
 
   public update(_node: ProsemirrorNode, decorations: Decoration[]) {
-
     // handle change of decorations (e.g. class: 'active' => inactive)
     return true;
   }
-    
 }
 
-
-
 export default extension;
-
-
-

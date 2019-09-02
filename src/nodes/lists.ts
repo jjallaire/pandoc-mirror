@@ -10,7 +10,6 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
-
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
 
@@ -18,21 +17,20 @@ const LIST_ATTRIB_ORDER = 0;
 const LIST_ATTRIB_NUMBER_STYLE = 1;
 const LIST_ATTRIB_NUMBER_DELIM = 2;
 
-
 enum ListNumberStyle {
-  DefaultStyle = "DefaultStyle",
-  Decimal = "Decimal",
-  LowerRoman = "LowerRoman",
-  UpperRoman = "UpperRoman",
-  LowerAlpha = "LowerAlpha",
-  UpperAlpha = "UpperAlpha",
+  DefaultStyle = 'DefaultStyle',
+  Decimal = 'Decimal',
+  LowerRoman = 'LowerRoman',
+  UpperRoman = 'UpperRoman',
+  LowerAlpha = 'LowerAlpha',
+  UpperAlpha = 'UpperAlpha',
 }
 
 enum ListNumberDelim {
-  DefaultDelim = "DefaultDelim",
-  Period = "Period",
-  OneParen = "OneParen",
-  TwoParens = "TwoParens",
+  DefaultDelim = 'DefaultDelim',
+  Period = 'Period',
+  OneParen = 'OneParen',
+  TwoParens = 'TwoParens',
 }
 
 const extension: Extension = {
@@ -96,22 +94,22 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        attrs: { 
+        attrs: {
           order: { default: 1 },
           number_style: { default: ListNumberStyle.Decimal },
-          number_delim: { default: ListNumberDelim.Period }
+          number_delim: { default: ListNumberDelim.Period },
         },
         parseDOM: [
           {
             tag: 'ol',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
-              
+
               let order: string | number | null = el.getAttribute('start');
               if (!order) {
                 order = 1;
               }
-              
+
               const numberStyle = typeToNumberStyle(el.getAttribute('type'));
               return { order, numberStyle };
             },
@@ -139,7 +137,7 @@ const extension: Extension = {
               return {
                 order: attribs[LIST_ATTRIB_ORDER],
                 number_style: attribs[LIST_ATTRIB_NUMBER_STYLE].t,
-                number_delim: attribs[LIST_ATTRIB_NUMBER_DELIM].t
+                number_delim: attribs[LIST_ATTRIB_NUMBER_DELIM].t,
               };
             },
             getChildren: (tok: PandocToken) => tok.c[LIST_CHILDREN],
@@ -175,7 +173,7 @@ const extension: Extension = {
     return [
       new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
-      new OrderedListEditCommand(schema, ui)
+      new OrderedListEditCommand(schema, ui),
     ];
   },
 
@@ -200,36 +198,38 @@ class ListCommand extends NodeCommand {
 
 class OrderedListEditCommand extends Command {
   constructor(schema: Schema, ui: EditorUI) {
-    super('ordered_list_edit', null, (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
-      
-      // see if a parent node is an ordered list
-      let node: ProsemirrorNode | null = null;
-      let pos: number = 0;
-      const nodeWithPos = findParentNodeOfType(schema.nodes.ordered_list)(state.selection);
-      if (nodeWithPos) {
-        node = nodeWithPos.node;
-        pos = nodeWithPos.pos;
-      }
+    super(
+      'ordered_list_edit',
+      null,
+      (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
+        // see if a parent node is an ordered list
+        let node: ProsemirrorNode | null = null;
+        let pos: number = 0;
+        const nodeWithPos = findParentNodeOfType(schema.nodes.ordered_list)(state.selection);
+        if (nodeWithPos) {
+          node = nodeWithPos.node;
+          pos = nodeWithPos.pos;
+        }
 
-      // return false (disabled) for no targets
-      if (!node) {
-        return false;
-      }
+        // return false (disabled) for no targets
+        if (!node) {
+          return false;
+        }
 
-      // execute command when requested
-      if (dispatch) {
-        editOrderedList(node as ProsemirrorNode, pos, state, dispatch, ui).then(() => {
-          if (view) {
-            view.focus();
-          }
-        });
-      }
+        // execute command when requested
+        if (dispatch) {
+          editOrderedList(node as ProsemirrorNode, pos, state, dispatch, ui).then(() => {
+            if (view) {
+              view.focus();
+            }
+          });
+        }
 
-      return true;
-    });
+        return true;
+      },
+    );
   }
 }
-
 
 function editOrderedList(
   node: ProsemirrorNode,
@@ -251,8 +251,8 @@ function editOrderedList(
   });
 }
 
-function numberStyleToType(style: ListNumberStyle) : string | null {
-  switch(style) {
+function numberStyleToType(style: ListNumberStyle): string | null {
+  switch (style) {
     case ListNumberStyle.DefaultStyle:
     case ListNumberStyle.Decimal:
       return 'l';
@@ -269,8 +269,8 @@ function numberStyleToType(style: ListNumberStyle) : string | null {
   }
 }
 
-function typeToNumberStyle(type: string | null) : ListNumberStyle {
-  switch(type) {
+function typeToNumberStyle(type: string | null): ListNumberStyle {
+  switch (type) {
     case 'l':
       return ListNumberStyle.Decimal;
     case 'a':
@@ -285,6 +285,5 @@ function typeToNumberStyle(type: string | null) : ListNumberStyle {
       return ListNumberStyle.Decimal;
   }
 }
-
 
 export default extension;
