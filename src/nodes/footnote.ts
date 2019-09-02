@@ -3,10 +3,10 @@ import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-vie
 
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { Plugin, PluginKey, EditorState } from 'prosemirror-state';
+import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
 import { findNodeOfTypeInSelection } from 'api/node';
 
-const plugin = new PluginKey('footnote_view');
+const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 
@@ -66,6 +66,23 @@ const extension: Extension = {
       },
     },
   ],
+
+  plugins: (_schema: Schema) => {
+    return [
+      new Plugin({
+        key: plugin,
+        appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
+          //  transaction to append
+          const tr = newState.tr;
+
+          // return transaction to append
+          if (tr.docChanged) {
+            return tr;
+          }
+        }
+      })
+    ];
+  }
 
 };
 

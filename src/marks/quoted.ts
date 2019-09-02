@@ -134,7 +134,9 @@ const extension: Extension = {
           });
 
           // return transaction to append
-          return tr;
+          if (tr.docChanged) {
+            return tr;
+          }
         },
       }),
     ];
