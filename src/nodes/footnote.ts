@@ -12,17 +12,8 @@ const plugin = new PluginKey('footnote');
 
 // TODO: Transactions which affect the content of notes need to write back to data-content
 
-// design: hidden part of document at end with
-// popup gutter editor that swaps in the node for
-// synchronized editing w/ main (a la footnote exampls)
-
-// TODO: Copy/Paste creates wacky outcome
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
-// TODO: what to do about nesting of marks, etc.
-// TODO: double-enter in footnote
-// TODO: css in code?
-// TODO: is the footnote tag a thing? (use div or span)
 
 const extension: Extension = {
   nodes: [
