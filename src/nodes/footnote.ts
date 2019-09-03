@@ -5,7 +5,8 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
 import { findNodeOfTypeInSelection } from 'api/node';
-import { findChildrenByType } from 'prosemirror-utils';
+import { findChildrenByType, findChildrenByAttr } from 'prosemirror-utils';
+import { createNoteId } from 'api/notes';
 
 const plugin = new PluginKey('footnote');
 
@@ -41,9 +42,7 @@ const extension: Extension = {
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
-                class: 'footnote',
-                ref: el.getAttribute('data-ref'),
-                number: el.getAttribute('data-number')
+                ref: el.getAttribute('data-ref')
               };
             },
           }
@@ -51,7 +50,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return [
             'span', 
-            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-number': node.attrs.number }, 
+            { class: 'footnote', 'data-ref': node.attrs.ref }, 
             node.attrs.number.toString()
           ];
         },
@@ -77,42 +76,60 @@ const extension: Extension = {
         
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
           
-          // footnote with no corresponding note note -- insert blank node.
-
-          // node with no corresponding footnote -- remove
-
-          // footnote with duplicate ref, generate new id + copy node
-
-          // renumber footnotes
-        
-          //  transaction to append
+          //  only process transactions which changed the document
           if (transactions.some(transaction => transaction.docChanged)) {
+
+            // transaction
             const tr = newState.tr;
 
-            // references to body and notes
-            const body = findChildrenByType(newState.doc, schema.nodes.body)[0];
-            const notes = findChildrenByType(newState.doc, schema.nodes.notes)[0];
+            // footnotes in the document
+            const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
+            
+            // notes container
+            const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
 
-            // renumber
-            
-            
-            const footnotes = findChildrenByType(body.node, schema.nodes.footnote, true);
-            footnotes.forEach((footnoteNode, index) => {
-              tr.setNodeMarkup(footnoteNode.pos + 1, schema.nodes.footnote, {
-                ...footnoteNode.node.attrs,
-                number: index+1
+            // if a footnote has a duplicate reference then generate a new id 
+            // and copy the node (mapping the copy to the new id)
+            const refs = new Set<string>();
+            footnotes.forEach((footnote, index) => {
+
+              const number = index + 1;
+              let ref = footnote.node.attrs.ref;
+
+              if (refs.has(ref)) {
+
+                // copy the note and append a new one
+                const sourceNote = findChildrenByType(newState.doc, schema.nodes.note, true)
+                  .find(note => note.node.attrs.id === ref);
+                
+                if (sourceNote) {
+
+                  // create a new unique id and change the ref to it
+                  ref = createNoteId();
+
+                  // create and insert new note with this id
+                  const newNote = schema.nodes.note.createAndFill({ id: ref }, sourceNote.node.content );
+                  tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
+                }
+                
+              } else {
+                refs.add(ref);
+              }
+
+              // set new footnote markup
+              tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
+                ...footnote.node.attrs,
+                ref,
+                number
               });
+
             });
 
-            return tr;
-          }
+            if (tr.docChanged) {
+              return tr;
+            }
 
-          /*
-          // return transaction to append
-          if (tr.docChanged) {
-            return tr;
           }
-          */
         }
         
       })

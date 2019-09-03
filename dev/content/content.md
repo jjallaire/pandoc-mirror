@@ -1,6 +1,6 @@
 ### Heading {#myHeading}
 
-This is **bold** text. 
+"This" is **bold** text. 
 
 *italic* at the beginning of a line.
 

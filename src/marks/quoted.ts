@@ -5,7 +5,7 @@ import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { findChildrenByMark } from 'prosemirror-utils';
 import { getMarkRange } from 'api/mark';
-import { transactionNodesAffected } from 'api/transaction';
+import { TextWithPos, mergedTextNodes } from 'api/text';
 
 const QUOTE_TYPE = 0;
 const QUOTED_CHILDREN = 1;
@@ -87,57 +87,69 @@ const extension: Extension = {
   ],
 
   // plugin to add and remove 'quoted' marks as the user edits
+  //
+  // TODO: this takes ~ 1ms on a 2015 MacBook Pro with a moderately sized document. Some potential 
+  // performance mediations:
+  //    (1) Create a global service for text matching (so the mergeTextNodes code runs only once)
+  //    (2) Find a way to examine the transaction steps to look at a more tightly scoped 
+  //        piece of the document (we used to do this but ran into errors w/ transactions that
+  //        removed multiple lines of content -- likely we need to do some sort of mapping of 
+  //        positions reported in transactions into the newState)
+  //
+
   plugins: (schema: Schema) => {
     return [
       new Plugin({
         key: plugin,
+        
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          //  transaction to append
-          const tr = newState.tr;
 
-          // iterate over all nodes affected by these transactions
-          transactionNodesAffected(newState, transactions, (parentNode: ProsemirrorNode, parentPos: number) => {
-            // only examine nodes that allow quoted marks
-            if (parentNode.type.allowsMarkType(schema.marks.quoted)) {
-              // find quoted marks where the text is no longer quoted (remove the mark)
-              const quotedNodes = findChildrenByMark(parentNode, schema.marks.quoted, true);
-              quotedNodes.forEach(quotedNode => {
-                const quotedRange = getMarkRange(
-                  newState.doc.resolve(parentPos + 1 + quotedNode.pos),
-                  schema.marks.quoted,
-                );
-                if (quotedRange) {
-                  const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
-                  if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
-                    tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
-                  }
+          if (transactions.some(transaction => transaction.docChanged)) {
+
+            const tr = newState.tr;
+
+            // find quoted marks where the text is no longer quoted (remove the mark)
+            const quotedNodes = findChildrenByMark(newState.doc, schema.marks.quoted, true);
+            quotedNodes.forEach(quotedNode => {
+              const quotedRange = getMarkRange(newState.doc.resolve(quotedNode.pos), schema.marks.quoted);
+              if (quotedRange) {
+                const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
+                if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
+                  tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
                 }
-              });
+              }
+            });
 
-              // find quoted text that doesn't have a quoted mark (add the mark)
-              const markQuotes = (type: QuoteType) => {
-                const re = new RegExp(type === QuoteType.DoubleQuote ? kDoubleQuoted : kSingleQuoted, 'g');
-                let match = re.exec(parentNode.textContent);
+            // find quoted text that doesn't have a quoted mark (add the mark)
+            const textNodes = mergedTextNodes(
+              newState.doc, 
+              (_node: ProsemirrorNode, parentNode: ProsemirrorNode) => parentNode.type.allowsMarkType(schema.marks.quoted)
+            );
+            const markQuotes = (type: QuoteType) => {
+              const re = new RegExp(type === QuoteType.DoubleQuote ? kDoubleQuoted : kSingleQuoted, 'g');
+              textNodes.forEach(textNode => {
+                re.lastIndex = 0;
+                let match = re.exec(textNode.text);
                 while (match !== null) {
-                  const from = parentPos + 1 + match.index;
+                  const from = textNode.pos + match.index;
                   const to = from + match[0].length;
                   if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
                     const mark = schema.mark('quoted', { type });
                     tr.addMark(from, to, mark);
                   }
-                  match = re.exec(parentNode.textContent);
+                  match = re.exec(textNode.text);
                 }
-              };
-              markQuotes(QuoteType.DoubleQuote);
-              markQuotes(QuoteType.SingleQuote);
-            }
-          });
+              });
+            };
+            markQuotes(QuoteType.DoubleQuote);
+            markQuotes(QuoteType.SingleQuote);
 
-          // return transaction to append
-          if (tr.docChanged) {
-            return tr;
-          }
+            if (tr.docChanged) {
+              return tr;
+            }
+          }         
         },
+    
       }),
     ];
   },
