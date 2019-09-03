@@ -101,8 +101,14 @@ const extension: Extension = {
             // matching note found 
             if (note) {
 
-              // update content (used to propagate user edits back to data-content)
-              content = JSON.stringify(note.node.content.toJSON());
+              // update content if this particular note changed
+              // (used to propagate user edits back to data-content)
+              if (transactionsHaveChange(
+                  transactions, oldState, newState,
+                  node => node.type === schema.nodes.note && node.attrs.id === ref)
+                 ) {
+                content = JSON.stringify(note.node.content.toJSON());
+              }
 
               // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
               if (refs.has(ref)) {
