@@ -79,8 +79,7 @@ const extension: Extension = {
             // notes container
             const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
 
-            // if a footnote has a duplicate reference then generate a new id
-            // and create a new node
+            // iterate through footnotes in the newState
             const refs = new Set<string>();
             footnotes.forEach((footnote, index) => {
               // alias ref
@@ -102,8 +101,9 @@ const extension: Extension = {
                 );
               }
 
-              // if we've already processed this ref then it's a duplicate we need to resolve
+              // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
               else if (refs.has(ref)) {
+                
                 // create a new unique id and change the ref to it
                 ref = createNoteId();
 
