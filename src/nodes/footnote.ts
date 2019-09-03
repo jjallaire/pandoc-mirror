@@ -10,9 +10,20 @@ const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 
-// TODO: only run the code if a footnote was affected (same for quotes)
+// https://discuss.prosemirror.net/t/find-new-node-instances-and-track-them/96/7
 
-// TODO: Transactions which affect the content of notes need to write back to data-content
+// we could get those ranges and then see if:
+//  1) any of them include footnotes
+//  2) any of them are inside notes
+// then do the full scan if true
+
+// https://discuss.prosemirror.net/t/reacting-to-node-adding-removing-changing/676/4
+// https://discuss.prosemirror.net/t/adding-style-on-the-fly/703
+
+// https://discuss.prosemirror.net/t/tracked-changes-with-strict-document-format/1142/4
+// https://github.com/ProseMirror/prosemirror-changeset
+
+// TODO: only run the code if a footnote was affected (same for quotes)
 
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
