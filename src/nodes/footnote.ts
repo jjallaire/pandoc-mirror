@@ -24,27 +24,27 @@ const extension: Extension = {
         attrs: {
           number: { default: 1 },
           ref: {},
-          content: { default: '' }
+          content: { default: '' },
         },
         group: 'inline',
         atom: true,
         parseDOM: [
-          { 
-            tag: "span[class='footnote']", 
+          {
+            tag: "span[class='footnote']",
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
                 ref: el.getAttribute('data-ref'),
-                content: el.getAttribute('data-content')
+                content: el.getAttribute('data-content'),
               };
             },
-          }
+          },
         ],
         toDOM(node: ProsemirrorNode) {
           return [
-            'span', 
-            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-content': node.attrs.content }, 
-            node.attrs.number.toString()
+            'span',
+            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-content': node.attrs.content },
+            node.attrs.number.toString(),
           ];
         },
       },
@@ -63,60 +63,54 @@ const extension: Extension = {
   ],
 
   plugins: (schema: Schema) => {
-
     return [
       new Plugin({
         key: plugin,
-        
+
         appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          
           //  only process transactions which changed the document
           if (transactions.some(transaction => transaction.docChanged)) {
-
             // transaction
             const tr = newState.tr;
 
             // footnotes in the document
             const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
-            
+
             // notes container
             const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
 
-            // if a footnote has a duplicate reference then generate a new id 
-            // and create a new node 
+            // if a footnote has a duplicate reference then generate a new id
+            // and create a new node
             const refs = new Set<string>();
             footnotes.forEach((footnote, index) => {
-
               // alias ref
               let ref = footnote.node.attrs.ref;
 
               // get reference to note (if any)
-              const note = findChildrenByType(newState.doc, schema.nodes.note, true)
-                .find(noteWithPos => noteWithPos.node.attrs.id === ref);
+              const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
+                noteWithPos => noteWithPos.node.attrs.id === ref,
+              );
 
-              // we may be creating a new note to append 
+              // we may be creating a new note to append
               let newNote: any;
 
               // if there is no note then create one using the content attr
               if (!note) {
-                
                 newNote = schema.nodes.note.createAndFill(
-                  { id: ref }, 
-                  Fragment.fromJSON(schema, JSON.parse(footnote.node.attrs.content))
+                  { id: ref },
+                  Fragment.fromJSON(schema, JSON.parse(footnote.node.attrs.content)),
                 );
-               
               }
 
               // if we've already processed this ref then it's a duplicate we need to resolve
               else if (refs.has(ref)) {
-
                 // create a new unique id and change the ref to it
                 ref = createNoteId();
 
                 // create and insert new note with this id
-                newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content );
-              } 
-              
+                newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
+              }
+
               // create newNote if necessary
               if (newNote) {
                 tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
@@ -124,29 +118,24 @@ const extension: Extension = {
 
               // indicate that we've seen this ref
               refs.add(ref);
-              
+
               // set new footnote markup
               tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
                 ...footnote.node.attrs,
                 ref,
-                number: index+1
+                number: index + 1,
               });
-
             });
 
             if (tr.docChanged) {
               return tr;
             }
-
           }
-        }
-        
-      })
+        },
+      }),
     ];
-  }
-
+  },
 };
-
 
 /*
 
@@ -182,7 +171,6 @@ const extension: Extension = {
   },
 
 */
-
 
 /*
 class FootnoteView implements NodeView {

@@ -131,11 +131,10 @@ class Parser {
         }
         const nodeType = this.schema.nodes[reader.note];
         handlers[reader.token] = (state: ParserState, tok: PandocToken) => {
-          
           // generate unique id
           const ref = createNoteId();
 
-          // add note to notes collection (will be handled specially by closeNode b/c it 
+          // add note to notes collection (will be handled specially by closeNode b/c it
           // has schema.nodes.node type)
           state.openNode(this.schema.nodes.note, { id: ref });
           this.parseTokens(state, getChildren(tok));
@@ -145,8 +144,8 @@ class Parser {
           // between different documents
           const content = JSON.stringify(noteNode.content.toJSON());
 
-          // add inline node to the body 
-          state.addNode(nodeType, { ref, content } , []);
+          // add inline node to the body
+          state.addNode(nodeType, { ref, content }, []);
         };
       }
     }

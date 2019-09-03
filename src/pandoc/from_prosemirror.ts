@@ -51,7 +51,6 @@ class PandocWriter implements PandocOutput {
       this.notes[note.attrs.id] = note;
     });
 
-
     this.ast = {
       blocks: [],
       'pandoc-api-version': apiVersion,
@@ -171,7 +170,7 @@ class PandocWriter implements PandocOutput {
 
   public writeNote(note: ProsemirrorNode) {
     const noteBody = this.notes[note.attrs.ref];
-    this.writeToken("Note", () => {
+    this.writeToken('Note', () => {
       this.writeBlocks(noteBody);
     });
   }

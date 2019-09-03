@@ -1,5 +1,3 @@
-
-
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
 export interface TextWithPos {
@@ -7,13 +5,14 @@ export interface TextWithPos {
   readonly pos: number;
 }
 
-export function mergedTextNodes(doc: ProsemirrorNode, filter?: (node: ProsemirrorNode, parentNode: ProsemirrorNode) => boolean) : TextWithPos[] {
+export function mergedTextNodes(
+  doc: ProsemirrorNode,
+  filter?: (node: ProsemirrorNode, parentNode: ProsemirrorNode) => boolean,
+): TextWithPos[] {
   const textNodes: TextWithPos[] = [];
   let nodeIndex = 0;
   doc.descendants((node, pos, parentNode) => {
-
     if (node.isText) {
-
       // apply filter
       if (filter && !filter(node, parentNode)) {
         return false;
@@ -36,5 +35,4 @@ export function mergedTextNodes(doc: ProsemirrorNode, filter?: (node: Prosemirro
     }
   });
   return textNodes;
-
 }

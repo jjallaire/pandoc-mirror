@@ -246,17 +246,18 @@ export class Editor {
       note: {
         content: 'block+',
         attrs: {
-          id: {}
+          id: {},
         },
         parseDOM: [
-          { tag: 'div[class="note"]',
+          {
+            tag: 'div[class="note"]',
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
-                id: el.getAttribute('id')
+                id: el.getAttribute('id'),
               };
-            }
-          }
+            },
+          },
         ],
         toDOM(node: ProsemirrorNode) {
           return ['div', { id: node.attrs.id, class: 'note' }, 0];
