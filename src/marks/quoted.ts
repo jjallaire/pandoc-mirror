@@ -88,16 +88,7 @@ const extension: Extension = {
   ],
 
   // plugin to add and remove 'quoted' marks as the user edits
-  //
-  // TODO: this takes ~ 1ms on a 2015 MacBook Pro with a moderately sized document. Some potential
-  // performance mediations:
-  //    (1) Create a global service for text matching (so the mergeTextNodes code runs only once)
-  //    (2) Find a way to examine the transaction steps to look at a more tightly scoped
-  //        piece of the document (we used to do this but ran into errors w/ transactions that
-  //        removed multiple lines of content -- likely we need to do some sort of mapping of
-  //        positions reported in transactions into the newState)
-  //
-
+  
   plugins: (schema: Schema) => {
     return [
       new Plugin({
