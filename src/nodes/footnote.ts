@@ -1,10 +1,12 @@
 import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
 import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
 import { findChildrenByType } from 'prosemirror-utils';
+import { ChangeSet } from 'prosemirror-changeset';
 
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
 import { createNoteId } from 'api/notes';
+import { transactionsHaveChange } from 'api/transaction';
 
 const plugin = new PluginKey('footnote');
 
@@ -80,85 +82,92 @@ const extension: Extension = {
       new Plugin({
         key: plugin,
 
-        appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          //  only process transactions which changed the document
-          if (transactions.some(transaction => transaction.docChanged)) {
-            // transaction
-            const tr = newState.tr;
+        appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
 
-            // footnotes in the document
-            const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
-
-            // notes container
-            const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
-
-            // iterate through footnotes in the newState
-            const refs = new Set<string>();
-            footnotes.forEach((footnote, index) => {
-
-              // alias ref and content (either or both may be updated)
-              let { ref, content } = footnote.node.attrs;
-              
-              // we may be creating a new note to append
-              let newNote: any;
-
-              // get reference to note (if any)
-              const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
-                noteWithPos => noteWithPos.node.attrs.id === ref,
-              );
-
-              // matching note found 
-              if (note) {
-
-                // update content (used to propagate user edits back to data-content)
-                content = JSON.stringify(note.node.content.toJSON());
-
-                // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
-                if (refs.has(ref)) {
-
-                  // create a new unique id and change the ref to it
-                  ref = createNoteId();
-
-                  // create and insert new note with this id
-                  newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
-                }
-
-              // if there is no note then create one using the content attr
-              } else {
-                newNote = schema.nodes.note.createAndFill(
-                  { id: ref },
-                  Fragment.fromJSON(schema, JSON.parse(content)),
-                );
-              }
-
-              // insert newNote if necessary
-              if (newNote) {
-                tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
-              }
-
-              // indicate that we've seen this ref
-              refs.add(ref);
-
-              // set new footnote markup
-              tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
-                ...footnote.node.attrs,
-                ref,
-                content,
-                number: index + 1,
-              });
-            });
-
-            if (tr.docChanged) {
-              return tr;
-            }
+          // bail if there were no changes affecting footnotes/notes
+          const footnoteChange = (node: ProsemirrorNode) => node.type === schema.nodes.footnote || node.type === schema.nodes.note;
+          if (!transactionsHaveChange(transactions, oldState, newState, footnoteChange)) {
+            return;
           }
-        },
+
+          // transaction
+          const tr = newState.tr;
+
+          // footnotes in the document
+          const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
+
+          // notes container
+          const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
+
+          // iterate through footnotes in the newState
+          const refs = new Set<string>();
+          footnotes.forEach((footnote, index) => {
+
+            // alias ref and content (either or both may be updated)
+            let { ref, content } = footnote.node.attrs;
+            
+            // we may be creating a new note to append
+            let newNote: any;
+
+            // get reference to note (if any)
+            const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
+              noteWithPos => noteWithPos.node.attrs.id === ref,
+            );
+
+            // matching note found 
+            if (note) {
+
+              // update content (used to propagate user edits back to data-content)
+              content = JSON.stringify(note.node.content.toJSON());
+
+              // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
+              if (refs.has(ref)) {
+
+                // create a new unique id and change the ref to it
+                ref = createNoteId();
+
+                // create and insert new note with this id
+                newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
+              }
+
+            // if there is no note then create one using the content attr
+            } else {
+              newNote = schema.nodes.note.createAndFill(
+                { id: ref },
+                Fragment.fromJSON(schema, JSON.parse(content)),
+              );
+            }
+
+            // insert newNote if necessary
+            if (newNote) {
+              tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
+            }
+
+            // indicate that we've seen this ref
+            refs.add(ref);
+
+            // set new footnote markup
+            tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
+              ...footnote.node.attrs,
+              ref,
+              content,
+              number: index + 1,
+            });
+          });
+
+          if (tr.docChanged) {
+            return tr;
+          }
+        }
+      
       }),
     ];
   },
 };
 
 /*
+
+  TODO: come back to this code when we implement the footnote ui
 
   plugins: (schema: Schema) => {
     return [
