@@ -134,15 +134,19 @@ class Parser {
           
           // generate unique id
           const ref = createNoteId();
-          
-          // add inline node to the body 
-          state.addNode(nodeType, { ref } , []);
 
           // add note to notes collection (will be handled specially by closeNode b/c it 
           // has schema.nodes.node type)
           state.openNode(this.schema.nodes.note, { id: ref });
           this.parseTokens(state, getChildren(tok));
-          state.closeNode();
+          const noteNode = state.closeNode();
+
+          // store json version of node in an attribute of the footnote (we can copy/paste)
+          // between different documents
+          const content = JSON.stringify(noteNode.content.toJSON());
+
+          // add inline node to the body 
+          state.addNode(nodeType, { ref, content } , []);
         };
       }
     }

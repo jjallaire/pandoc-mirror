@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
 import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
 import { findChildrenByType } from 'prosemirror-utils';
 
@@ -9,6 +9,8 @@ import { createNoteId } from 'api/notes';
 const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
+
+// TODO: Transactions which affect the content of notes need to write back to data-content
 
 // design: hidden part of document at end with
 // popup gutter editor that swaps in the node for
@@ -31,6 +33,7 @@ const extension: Extension = {
         attrs: {
           number: { default: 1 },
           ref: {},
+          content: { default: '' }
         },
         group: 'inline',
         atom: true,
@@ -40,7 +43,8 @@ const extension: Extension = {
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
-                ref: el.getAttribute('data-ref')
+                ref: el.getAttribute('data-ref'),
+                content: el.getAttribute('data-content')
               };
             },
           }
@@ -48,7 +52,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return [
             'span', 
-            { class: 'footnote', 'data-ref': node.attrs.ref }, 
+            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-content': node.attrs.content }, 
             node.attrs.number.toString()
           ];
         },
@@ -88,38 +92,53 @@ const extension: Extension = {
             const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
 
             // if a footnote has a duplicate reference then generate a new id 
-            // and copy the node (mapping the copy to the new id)
+            // and create a new node 
             const refs = new Set<string>();
             footnotes.forEach((footnote, index) => {
 
-              const number = index + 1;
+              // alias ref
               let ref = footnote.node.attrs.ref;
 
-              if (refs.has(ref)) {
+              // get reference to note (if any)
+              const note = findChildrenByType(newState.doc, schema.nodes.note, true)
+                .find(noteWithPos => noteWithPos.node.attrs.id === ref);
 
-                // copy the note and append a new one
-                const sourceNote = findChildrenByType(newState.doc, schema.nodes.note, true)
-                  .find(note => note.node.attrs.id === ref);
+              // we may be creating a new note to append 
+              let newNote: any;
+
+              // if there is no note then create one using the content attr
+              if (!note) {
                 
-                if (sourceNote) {
-
-                  // create a new unique id and change the ref to it
-                  ref = createNoteId();
-
-                  // create and insert new note with this id
-                  const newNote = schema.nodes.note.createAndFill({ id: ref }, sourceNote.node.content );
-                  tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
-                }
-                
-              } else {
-                refs.add(ref);
+                newNote = schema.nodes.note.createAndFill(
+                  { id: ref }, 
+                  Fragment.fromJSON(schema, JSON.parse(footnote.node.attrs.content))
+                );
+               
               }
 
+              // if we've already processed this ref then it's a duplicate we need to resolve
+              else if (refs.has(ref)) {
+
+                // create a new unique id and change the ref to it
+                ref = createNoteId();
+
+                // create and insert new note with this id
+                newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content );
+              } 
+              
+              // create newNote if necessary
+              if (newNote) {
+                tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
+              }
+
+              // indicate that we've seen this ref
+              refs.add(ref);
+              
               // set new footnote markup
               tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
                 ...footnote.node.attrs,
                 ref,
-                number
+                number: index+1
               });
 
             });
