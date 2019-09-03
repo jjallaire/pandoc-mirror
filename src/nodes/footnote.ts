@@ -1,11 +1,9 @@
-import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
-import { NodeView, EditorView, Decoration, DecorationSet } from 'prosemirror-view';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
+import { findChildrenByType } from 'prosemirror-utils';
 
 import { Extension } from 'api/extension';
-import { PandocOutput, PandocToken } from 'api/pandoc';
-import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
-import { findNodeOfTypeInSelection } from 'api/node';
-import { findChildrenByType, findChildrenByAttr } from 'prosemirror-utils';
+import { PandocOutput } from 'api/pandoc';
 import { createNoteId } from 'api/notes';
 
 const plugin = new PluginKey('footnote');
@@ -70,6 +68,7 @@ const extension: Extension = {
   ],
 
   plugins: (schema: Schema) => {
+
     return [
       new Plugin({
         key: plugin,
