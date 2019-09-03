@@ -10,6 +10,8 @@ const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 
+// TODO: only run the code if a footnote was affected (same for quotes)
+
 // TODO: Transactions which affect the content of notes need to write back to data-content
 
 // TODO: Insert Footnote
@@ -82,36 +84,43 @@ const extension: Extension = {
             // iterate through footnotes in the newState
             const refs = new Set<string>();
             footnotes.forEach((footnote, index) => {
-              // alias ref
-              let ref = footnote.node.attrs.ref;
+
+              // alias ref and content (either or both may be updated)
+              let { ref, content } = footnote.node.attrs;
+              
+              // we may be creating a new note to append
+              let newNote: any;
 
               // get reference to note (if any)
               const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
                 noteWithPos => noteWithPos.node.attrs.id === ref,
               );
 
-              // we may be creating a new note to append
-              let newNote: any;
+              // matching note found 
+              if (note) {
+
+                // update content (used to propagate user edits back to data-content)
+                content = JSON.stringify(note.node.content.toJSON());
+
+                // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
+                if (refs.has(ref)) {
+
+                  // create a new unique id and change the ref to it
+                  ref = createNoteId();
+
+                  // create and insert new note with this id
+                  newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
+                }
 
               // if there is no note then create one using the content attr
-              if (!note) {
+              } else {
                 newNote = schema.nodes.note.createAndFill(
                   { id: ref },
-                  Fragment.fromJSON(schema, JSON.parse(footnote.node.attrs.content)),
+                  Fragment.fromJSON(schema, JSON.parse(content)),
                 );
               }
 
-              // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
-              else if (refs.has(ref)) {
-                
-                // create a new unique id and change the ref to it
-                ref = createNoteId();
-
-                // create and insert new note with this id
-                newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
-              }
-
-              // create newNote if necessary
+              // insert newNote if necessary
               if (newNote) {
                 tr.insert(notes.pos + 1, newNote as ProsemirrorNode);
               }
@@ -123,6 +132,7 @@ const extension: Extension = {
               tr.setNodeMarkup(footnote.pos, schema.nodes.footnote, {
                 ...footnote.node.attrs,
                 ref,
+                content,
                 number: index + 1,
               });
             });
