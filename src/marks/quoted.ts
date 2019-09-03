@@ -6,6 +6,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { findChildrenByMark } from 'prosemirror-utils';
 import { getMarkRange } from 'api/mark';
 import { TextWithPos, mergedTextNodes } from 'api/text';
+import { transactionsHaveChange } from 'api/transaction';
 
 const QUOTE_TYPE = 0;
 const QUOTED_CHILDREN = 1;
@@ -102,49 +103,56 @@ const extension: Extension = {
       new Plugin({
         key: plugin,
 
-        appendTransaction: (transactions: Transaction[], _oldState: EditorState, newState: EditorState) => {
-          if (transactions.some(transaction => transaction.docChanged)) {
-            const tr = newState.tr;
+        appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
 
-            // find quoted marks where the text is no longer quoted (remove the mark)
-            const quotedNodes = findChildrenByMark(newState.doc, schema.marks.quoted, true);
-            quotedNodes.forEach(quotedNode => {
-              const quotedRange = getMarkRange(newState.doc.resolve(quotedNode.pos), schema.marks.quoted);
-              if (quotedRange) {
-                const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
-                if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
-                  tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
+          // bail if the transactions didn't affect any quotes
+          const quoteRe = /[“”‘’]/;
+          const quoteChange = (node: ProsemirrorNode) => node.isText && quoteRe.test(node.textContent);
+          if (!transactionsHaveChange(transactions, oldState, newState, quoteChange)) {
+            return;
+          }
+
+          const tr = newState.tr;
+
+          // find quoted marks where the text is no longer quoted (remove the mark)
+          const quotedNodes = findChildrenByMark(newState.doc, schema.marks.quoted, true);
+          quotedNodes.forEach(quotedNode => {
+            const quotedRange = getMarkRange(newState.doc.resolve(quotedNode.pos), schema.marks.quoted);
+            if (quotedRange) {
+              const text = newState.doc.textBetween(quotedRange.from, quotedRange.to);
+              if (!kDoubleQuoted.test(text) && !kSingleQuoted.test(text)) {
+                tr.removeMark(quotedRange.from, quotedRange.to, schema.marks.quoted);
+              }
+            }
+          });
+
+          // find quoted text that doesn't have a quoted mark (add the mark)
+          const textNodes = mergedTextNodes(newState.doc, (_node: ProsemirrorNode, parentNode: ProsemirrorNode) =>
+            parentNode.type.allowsMarkType(schema.marks.quoted),
+          );
+          const markQuotes = (type: QuoteType) => {
+            const re = new RegExp(type === QuoteType.DoubleQuote ? kDoubleQuoted : kSingleQuoted, 'g');
+            textNodes.forEach(textNode => {
+              re.lastIndex = 0;
+              let match = re.exec(textNode.text);
+              while (match !== null) {
+                const from = textNode.pos + match.index;
+                const to = from + match[0].length;
+                if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
+                  const mark = schema.mark('quoted', { type });
+                  tr.addMark(from, to, mark);
                 }
+                match = re.exec(textNode.text);
               }
             });
+          };
+          markQuotes(QuoteType.DoubleQuote);
+          markQuotes(QuoteType.SingleQuote);
 
-            // find quoted text that doesn't have a quoted mark (add the mark)
-            const textNodes = mergedTextNodes(newState.doc, (_node: ProsemirrorNode, parentNode: ProsemirrorNode) =>
-              parentNode.type.allowsMarkType(schema.marks.quoted),
-            );
-            const markQuotes = (type: QuoteType) => {
-              const re = new RegExp(type === QuoteType.DoubleQuote ? kDoubleQuoted : kSingleQuoted, 'g');
-              textNodes.forEach(textNode => {
-                re.lastIndex = 0;
-                let match = re.exec(textNode.text);
-                while (match !== null) {
-                  const from = textNode.pos + match.index;
-                  const to = from + match[0].length;
-                  if (!newState.doc.rangeHasMark(from, to, schema.marks.quoted)) {
-                    const mark = schema.mark('quoted', { type });
-                    tr.addMark(from, to, mark);
-                  }
-                  match = re.exec(textNode.text);
-                }
-              });
-            };
-            markQuotes(QuoteType.DoubleQuote);
-            markQuotes(QuoteType.SingleQuote);
-
-            if (tr.docChanged) {
-              return tr;
-            }
+          if (tr.docChanged) {
+            return tr;
           }
+          
         },
       }),
     ];
