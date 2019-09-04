@@ -24,7 +24,6 @@ Nulla facilisi. Donec nec facilisis est. Aenean porttitor volutpat mauris, a imp
 This is soft break.
 Next line after soft break.
 
-***
 
 - Unordered
 - List

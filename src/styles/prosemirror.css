@@ -99,36 +99,26 @@
   font-size: 0.9rem;
 }
 
+.ProseMirror .note p {
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+}
+
 .ProseMirror .note.active {
-  display: initial;
+  display: flex;
 }
 
 .ProseMirror .footnote.active {
   outline: 2px solid #8cf;
 }
 
-/*
-
-https://stackoverflow.com/questions/32070029/positionabsolute-and-fill-remaining-space-in-div
-*/
-
-.ProseMirror .note .note-label,
-.ProseMirror .note .note-content {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
 .ProseMirror .note .note-label {
-  left: 0;
-  width: calc(16px + 2em);
+  flex: none;
   padding-right: 8px;
-  padding-left: 8px;
 }
 
 .ProseMirror .note .note-content {
-  left: calc(16px + 2em);
-  right: 0;
+  flex: 1;
 }
 
 
