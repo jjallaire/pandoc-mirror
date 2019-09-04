@@ -1,3 +1,14 @@
+/* Fill container */
+
+.ProseMirror {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  outline: none;
+}
+
 /* Add space around the hr to make clicking it easier */
 
 .ProseMirror hr {
@@ -45,9 +56,7 @@
   margin-bottom: 16px;
 }
 
-
 /* Footnote handling */
-
 
 .ProseMirror .footnote {
   vertical-align: baseline;
@@ -57,11 +66,45 @@
   top: -0.45em;
 }
 
+.ProseMirror .body,
 .ProseMirror .notes {
-  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 8px;
+  overflow-y: scroll;
+  background-color: white;
 }
 
+.ProseMirror .body {
+  top: 0;
+}
 
+.ProseMirror .notes {
+  height: 0;
+}
+
+.ProseMirror .body.editing-footnote {
+  bottom: 100px;
+  border-bottom: 1px solid silver;
+}
+
+.ProseMirror .notes.editing-footnote {
+  height: 100px;
+}
+
+.ProseMirror .note {
+  display: none; 
+}
+
+.ProseMirror .note.active {
+  display: initial;
+}
+
+.ProseMirror .footnote.active {
+  outline: 2px solid #8cf;
+}
 
 
 

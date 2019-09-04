@@ -1,18 +1,23 @@
 import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
 import { Plugin, PluginKey, EditorState, Transaction } from 'prosemirror-state';
-import { findChildrenByType } from 'prosemirror-utils';
-import { ChangeSet } from 'prosemirror-changeset';
+import { findChildrenByType, findSelectedNodeOfType, findParentNodeOfType, ContentNodeWithPos, NodeWithPos, findChildren } from 'prosemirror-utils';
+import { DecorationSet } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
 import { createNoteId } from 'api/notes';
+import { nodeDecoration } from 'api/decoration';
 import { transactionsHaveChange } from 'api/transaction';
+
 
 const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 // TODO: Insert Footnote
 // TODO: ui treatment/positioning
+// TODO: move focus to note editor
+// TODO: indicate footnote number in note editor
+// TODO: scroll to ensure footnote is visible in note editor
 
 const extension: Extension = {
   nodes: [
@@ -65,6 +70,58 @@ const extension: Extension = {
     return [
       new Plugin({
         key: plugin,
+
+        props: {
+          // if a footnote is selected OR the selection is within a note, then apply
+          // css classes required to show the footnote editor
+          decorations(state: EditorState) {
+            
+            // see if either a footnote node or note (footnote editor) node has the selection
+            let footnoteNode: NodeWithPos | undefined = findSelectedNodeOfType(schema.nodes.footnote)(state.selection);
+            let noteNode: NodeWithPos | undefined = findParentNodeOfType(schema.nodes.note)(state.selection);
+            
+            // if they do then we need to enable footnote editing/behavior by 
+            // using decorators to inject appropriate css classes
+            if (footnoteNode || noteNode) {
+
+              // get body and notes nodes    
+              const bodyNode = findChildrenByType(state.doc, schema.nodes.body)[0];
+              const notesNode = findChildrenByType(state.doc, schema.nodes.notes)[0];
+
+              // resolve the specific footnote node or specific note node
+              if (footnoteNode) {
+                const ref = (footnoteNode as NodeWithPos).node.attrs.ref;
+                const matching = findChildren(notesNode.node, node => node.attrs.id === ref);
+                if (matching.length) {
+                  noteNode = matching[0];
+                  noteNode.pos = notesNode.pos + 1 + noteNode.pos; 
+                }
+              } else if (noteNode) {
+                const id = (noteNode as NodeWithPos).node.attrs.id;
+                const matching = findChildren(state.doc, node => node.type === schema.nodes.footnote && node.attrs.ref === id, true);
+                if (matching.length) {
+                  footnoteNode = matching[0];
+                }
+              }
+             
+              if (footnoteNode && noteNode) {
+                return DecorationSet.create(state.doc, [
+                  // make notes node visible
+                  nodeDecoration(noteNode, { class: 'active' }),
+                  nodeDecoration(footnoteNode, { class: 'active' }),
+
+                  // position body and notes nodes for footnote editing
+                  nodeDecoration(bodyNode, { class: 'editing-footnote' }),
+                  nodeDecoration(notesNode, { class: 'editing-footnote' }),
+                ]);
+              } else {
+                return DecorationSet.empty;
+              }
+            } else {
+              return DecorationSet.empty;
+            }
+          }
+        },
 
         appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
 

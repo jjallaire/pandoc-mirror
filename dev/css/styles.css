@@ -14,8 +14,6 @@
   right: 0;
   top: 0;
   bottom: 0;
-  padding: 8px;
-  background-color: white;
 }
 
 #editor {
@@ -25,6 +23,7 @@
 #markdown {
   margin: 0;
   font-size: 0.7em;
+  padding: 8px;
   background-color: #fafafa;
 }
 

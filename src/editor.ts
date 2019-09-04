@@ -58,7 +58,6 @@ export class Editor {
   private readonly view: EditorView;
   private readonly extensions: ExtensionManager;
   private readonly pandocConverter: PandocConverter;
-  private readonly onClickBelow: (ev: MouseEvent) => void;
 
   private state: EditorState;
 
@@ -112,16 +111,6 @@ export class Editor {
       this.hooks.applyDevTools(this.view, { EditorState });
     }
 
-    // set some css invariants on the editor and it's container
-    this.parent.style.overflowY = 'scroll';
-    const editorStyle = (this.view.dom as HTMLElement).style;
-    editorStyle.outline = 'none';
-    editorStyle.width = '100%';
-
-    // focus editor when container below it is clicked
-    this.onClickBelow = () => this.focus();
-    this.parent.addEventListener('click', this.onClickBelow);
-
     // focus editor immediately if requested
     if (this.options.autoFocus) {
       setTimeout(() => {
@@ -131,7 +120,6 @@ export class Editor {
   }
 
   public destroy() {
-    this.parent.removeEventListener('click', this.onClickBelow);
     this.view.destroy();
   }
 
