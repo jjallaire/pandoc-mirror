@@ -1,23 +1,27 @@
-import { Schema, Node as ProsemirrorNode } from "prosemirror-model";
-import { EditorView, DecorationSet, NodeView } from "prosemirror-view";
-import { findParentNodeOfType, NodeWithPos, findSelectedNodeOfType, findChildrenByType, findChildren } from "prosemirror-utils";
-import { EditorState } from "prosemirror-state";
+import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
+import { EditorView, DecorationSet, NodeView } from 'prosemirror-view';
+import {
+  findParentNodeOfType,
+  NodeWithPos,
+  findSelectedNodeOfType,
+  findChildrenByType,
+  findChildren,
+} from 'prosemirror-utils';
+import { EditorState } from 'prosemirror-state';
 
-import { nodeDecoration } from "api/decoration";
+import { nodeDecoration } from 'api/decoration';
 
 // selection-driven decorations (mostly css classes) required to activate the footnote editor
 export function footnoteEditorDecorations(schema: Schema) {
   return (state: EditorState) => {
-            
     // see if either a footnote node or note (footnote editor) node has the selection
     let footnoteNode: NodeWithPos | undefined = findSelectedNodeOfType(schema.nodes.footnote)(state.selection);
     let noteNode: NodeWithPos | undefined = findParentNodeOfType(schema.nodes.note)(state.selection);
-    
-    // if they do then we need to enable footnote editing/behavior by 
+
+    // if they do then we need to enable footnote editing/behavior by
     // using decorators to inject appropriate css classes
     if (footnoteNode || noteNode) {
-
-      // get body and notes nodes    
+      // get body and notes nodes
       const bodyNode = findChildrenByType(state.doc, schema.nodes.body)[0];
       const notesNode = findChildrenByType(state.doc, schema.nodes.notes)[0];
 
@@ -27,16 +31,20 @@ export function footnoteEditorDecorations(schema: Schema) {
         const matching = findChildren(notesNode.node, node => node.attrs.id === ref);
         if (matching.length) {
           noteNode = matching[0];
-          noteNode.pos = notesNode.pos + 1 + noteNode.pos; 
+          noteNode.pos = notesNode.pos + 1 + noteNode.pos;
         }
       } else if (noteNode) {
         const id = noteNode.node.attrs.id;
-        const matching = findChildren(state.doc, node => node.type === schema.nodes.footnote && node.attrs.ref === id, true);
+        const matching = findChildren(
+          state.doc,
+          node => node.type === schema.nodes.footnote && node.attrs.ref === id,
+          true,
+        );
         if (matching.length) {
           footnoteNode = matching[0];
         }
       }
-     
+
       if (footnoteNode && noteNode) {
         return DecorationSet.create(state.doc, [
           // make notes node visible
@@ -63,7 +71,7 @@ export function footnoteEditorNodeViews(_schema: Schema) {
   return {
     note(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
       return new NoteEditorView(node, view, getPos);
-    }
+    },
   };
 }
 
@@ -79,7 +87,7 @@ class NoteEditorView implements NodeView {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
- 
+
     // ['div', { id: node.attrs.id, class: 'note' }, 0]
     this.dom = window.document.createElement('div');
     this.dom.id = this.node.attrs.id;
@@ -87,7 +95,7 @@ class NoteEditorView implements NodeView {
 
     const label = window.document.createElement('div');
     label.classList.add('note-label');
-    label.contentEditable = "false";
+    label.contentEditable = 'false';
     label.innerHTML = `<p>${this.node.attrs.number}:</p>`;
     this.dom.appendChild(label);
 
@@ -98,14 +106,11 @@ class NoteEditorView implements NodeView {
   }
 }
 
-
 // custom handling for arrow keys that cause selection to escape the editor
 export function footnoteEditorKeyDownHandler(schema: Schema) {
-
   return (view: EditorView, event: KeyboardEvent) => {
-            
     // pass if the key isn't an arrow key
-    if (!event.key.startsWith("Arrow")) {
+    if (!event.key.startsWith('Arrow')) {
       return false;
     }
 
@@ -118,23 +123,23 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
 
     // TODO: more robust determination of selections to trigger behavior
 
-    switch(event.key) {
-      case "ArrowLeft": {
-        if (selection.empty && ((noteNode.pos + 2) === selection.from)) {
+    switch (event.key) {
+      case 'ArrowLeft': {
+        if (selection.empty && noteNode.pos + 2 === selection.from) {
           return true;
         }
       }
-      case "ArrowRight": {
-        // 
+      case 'ArrowRight': {
+        //
       }
-      case "ArrowUp": {
-        // 
+      case 'ArrowUp': {
+        //
       }
-      case "ArrowRight": {
-        // 
+      case 'ArrowRight': {
+        //
       }
     }
-   
+
     return false;
   };
 }

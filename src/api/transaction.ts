@@ -4,11 +4,11 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { ChangeSet } from 'prosemirror-changeset';
 
 export function transactionsHaveChange(
-    transactions: Transaction[], 
-    oldState: EditorState, 
-    newState: EditorState,
-    predicate: (node: ProsemirrorNode<any>, pos: number, parent: ProsemirrorNode<any>, index: number) => boolean) {
- 
+  transactions: Transaction[],
+  oldState: EditorState,
+  newState: EditorState,
+  predicate: (node: ProsemirrorNode<any>, pos: number, parent: ProsemirrorNode<any>, index: number) => boolean,
+) {
   // screen out transactions with no doc changes
   if (!transactions.some(transaction => transaction.docChanged)) {
     return false;

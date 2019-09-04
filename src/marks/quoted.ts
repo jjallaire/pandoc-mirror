@@ -88,14 +88,13 @@ const extension: Extension = {
   ],
 
   // plugin to add and remove 'quoted' marks as the user edits
-  
+
   plugins: (schema: Schema) => {
     return [
       new Plugin({
         key: plugin,
 
         appendTransaction: (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
-
           // bail if the transactions didn't affect any quotes
           const quoteRe = /[“”‘’]/;
           const quoteChange = (node: ProsemirrorNode) => node.isText && quoteRe.test(node.textContent);
@@ -143,7 +142,6 @@ const extension: Extension = {
           if (tr.docChanged) {
             return tr;
           }
-          
         },
       }),
     ];

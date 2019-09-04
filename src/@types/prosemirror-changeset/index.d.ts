@@ -5,7 +5,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 
-declare module 'prosemirror-changeset' { 
+declare module 'prosemirror-changeset' {
   import { Node } from 'prosemirror-model';
   import { StepMap } from 'prosemirror-transform';
 
@@ -23,11 +23,11 @@ declare module 'prosemirror-changeset' {
   }
   export class ChangeSet {
     changes: Change[];
-    addSteps(newDoc: Node, maps: StepMap[], data?: any[] | any): ChangeSet
+    addSteps(newDoc: Node, maps: StepMap[], data?: any[] | any): ChangeSet;
     startDoc: Node;
-    map(f: (range: Change) => any): ChangeSet
-    changedRange(b: ChangeSet, maps?: StepMap[]): { from: number, to: number } | null | undefined
-    static create(doc: Node, combine?: (a: any, b: any) => any): ChangeSet
+    map(f: (range: Change) => any): ChangeSet;
+    changedRange(b: ChangeSet, maps?: StepMap[]): { from: number; to: number } | null | undefined;
+    static create(doc: Node, combine?: (a: any, b: any) => any): ChangeSet;
   }
   export function simplifyChanges(changes: Change[], doc: Node): Change[];
 }

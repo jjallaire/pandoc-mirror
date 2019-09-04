@@ -16,7 +16,6 @@ const plugin = new PluginKey('footnote');
 // TODO: arrow selection back should move to before note (should not go to end of doc)
 // TODO: ESC key gesture to close footnote view?
 
-
 const extension: Extension = {
   nodes: [
     {
@@ -45,10 +44,7 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return [
             'span',
-            { class: 'footnote', 
-              'data-ref': node.attrs.ref, 
-              'data-content': node.attrs.content 
-            },
+            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-content': node.attrs.content },
             node.attrs.number.toString(),
           ];
         },
@@ -70,19 +66,18 @@ const extension: Extension = {
   plugins: (schema: Schema) => {
     return [
       new Plugin({
-        
         key: plugin,
 
-        // footnote editor 
-        props: { 
+        // footnote editor
+        props: {
           handleKeyDown: footnoteEditorKeyDownHandler(schema),
           decorations: footnoteEditorDecorations(schema),
-          nodeViews: footnoteEditorNodeViews(schema)
+          nodeViews: footnoteEditorNodeViews(schema),
         },
 
         // footnote transactions (fixups, etc.)
         appendTransaction: footnoteAppendTransaction(schema),
-      })
+      }),
     ];
   },
 };

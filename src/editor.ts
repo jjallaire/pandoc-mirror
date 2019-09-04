@@ -235,7 +235,7 @@ export class Editor {
         content: 'block+',
         attrs: {
           id: {},
-          number: { default: 1 }
+          number: { default: 1 },
         },
         parseDOM: [
           {

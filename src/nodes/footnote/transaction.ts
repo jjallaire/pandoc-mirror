@@ -1,25 +1,22 @@
-import { Schema, Fragment, Node as ProsemirrorNode } from "prosemirror-model";
-import { Transaction, EditorState, TextSelection } from "prosemirror-state";
-import { transactionsHaveChange } from "api/transaction";
-import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from "prosemirror-utils";
+import { Schema, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
+import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
+import { transactionsHaveChange } from 'api/transaction';
+import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from 'prosemirror-utils';
 
-import { createNoteId } from "api/notes";
-
+import { createNoteId } from 'api/notes';
 
 // examine editor transactions and append a transaction that handles fixup of footnote numbers,
 // importing of pasted footnotes, selection propagation to the footnote editor, etc.
 
 export function footnoteAppendTransaction(schema: Schema) {
-
   return (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
-
     // transaction
     const tr = newState.tr;
 
     // do footnote fixups if there were any changes affecting footnotes
-    const footnoteChange = (node: ProsemirrorNode) => node.type === schema.nodes.footnote || node.type === schema.nodes.note;
+    const footnoteChange = (node: ProsemirrorNode) =>
+      node.type === schema.nodes.footnote || node.type === schema.nodes.note;
     if (transactionsHaveChange(transactions, oldState, newState, footnoteChange)) {
-     
       // footnotes in the document
       const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
 
@@ -29,13 +26,12 @@ export function footnoteAppendTransaction(schema: Schema) {
       // iterate through footnotes in the newState
       const refs = new Set<string>();
       footnotes.forEach((footnote, index) => {
-
         // footnote number
-        const number = index+1;
+        const number = index + 1;
 
         // alias ref and content (either or both may be updated)
         let { ref, content } = footnote.node.attrs;
-        
+
         // we may be creating a new note to append
         let newNote: any;
 
@@ -44,36 +40,38 @@ export function footnoteAppendTransaction(schema: Schema) {
           noteWithPos => noteWithPos.node.attrs.id === ref,
         );
 
-        // matching note found 
+        // matching note found
         if (note) {
-
           // update content if this particular note changed
           // (used to propagate user edits back to data-content)
-          if (transactionsHaveChange(
-              transactions, oldState, newState,
-              node => node.type === schema.nodes.note && node.attrs.id === ref)
-            ) {
+          if (
+            transactionsHaveChange(
+              transactions,
+              oldState,
+              newState,
+              node => node.type === schema.nodes.note && node.attrs.id === ref,
+            )
+          ) {
             content = JSON.stringify(note.node.content.toJSON());
           }
 
           // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
           if (refs.has(ref)) {
-
             // create a new unique id and change the ref to it
             ref = createNoteId();
 
             // create and insert new note with this id
             newNote = schema.nodes.note.createAndFill({ id: ref, number }, note.node.content);
-          
-          // otherwise update the note with the correct number
+
+            // otherwise update the note with the correct number
           } else {
             tr.setNodeMarkup(note.pos, schema.nodes.note, {
               ...note.node.attrs,
-              number
+              number,
             });
           }
 
-        // if there is no note then create one using the content attr
+          // if there is no note then create one using the content attr
         } else {
           newNote = schema.nodes.note.createAndFill(
             { id: ref, number },
@@ -103,7 +101,11 @@ export function footnoteAppendTransaction(schema: Schema) {
     const footnoteNode: NodeWithPos | undefined = findSelectedNodeOfType(schema.nodes.footnote)(newState.selection);
     if (footnoteNode) {
       const ref = footnoteNode.node.attrs.ref;
-      const noteNode = findChildren(newState.doc, node => node.type === schema.nodes.note && node.attrs.id === ref, true);
+      const noteNode = findChildren(
+        newState.doc,
+        node => node.type === schema.nodes.note && node.attrs.id === ref,
+        true,
+      );
       if (noteNode.length) {
         tr.setSelection(TextSelection.near(newState.doc.resolve(noteNode[0].pos)));
       }
@@ -112,7 +114,5 @@ export function footnoteAppendTransaction(schema: Schema) {
     if (tr.docChanged || tr.selectionSet) {
       return tr;
     }
-    
   };
-
 }
