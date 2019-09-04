@@ -253,87 +253,9 @@ class NoteView implements NodeView {
     this.contentDOM = this.dom;
 
   }
-
-  /*
-  public update(_node: ProsemirrorNode, decorations: Decoration[]) {
-    if (decorations.length) {
-      const state = this.view.state;
-      
-      this.view.dispatch(state.tr.setSelection(TextSelection.near(state.doc.resolve(this.getPos()))));
-    }
-    // handle change of decorations (e.g. class: 'active' => inactive)
-    return true;
-  }
-  */
+  
 }
 
-/*
 
-  TODO: come back to this code when we implement the footnote ui
-
-  plugins: (schema: Schema) => {
-    return [
-      new Plugin({
-        key: plugin,
-
-        props: {
-          // apply 'active' class to footnotes when the footnote is either selected completely (atom: true
-          // will result in full selections) or within a selection. this in turn will result
-          // in the footnote's contents becoming visible/editable in an absolutely positioned div
-          decorations(state: EditorState) {
-            const footnoteNode = findNodeOfTypeInSelection(state.selection, schema.nodes.footnote);
-            if (footnoteNode) {
-              return DecorationSet.create(state.doc, [
-                Decoration.node(footnoteNode.pos, footnoteNode.pos + footnoteNode.node.nodeSize, { class: 'active' }),
-              ]);
-            } else {
-              return DecorationSet.empty;
-            }
-          },
-
-          // custom node view (implements collapsed / active state for footnotes)
-          nodeViews: {
-            footnote(node, view, getPos) {
-              return new FootnoteView(node, view, getPos);
-            },
-          },
-        },
-      }),
-    ];
-  },
-
-*/
-
-/*
-class FootnoteView implements NodeView {
-  public readonly dom: HTMLElement;
-  public readonly contentDOM: HTMLElement;
-
-  private readonly node: ProsemirrorNode;
-  private readonly view: EditorView;
-  private readonly getPos: () => number;
-
-  constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
-    this.node = node;
-    this.view = view;
-    this.getPos = getPos;
-
-    // create footnote
-    this.dom = window.document.createElement('span');
-    this.dom.classList.add('footnote');
-
-    // create a div that will be used for editing (+ it's scrolling container)
-    const scrollContainer = window.document.createElement('div');
-    this.contentDOM = window.document.createElement('div');
-    scrollContainer.appendChild(this.contentDOM);
-    this.dom.appendChild(scrollContainer);
-  }
-
-  public update(_node: ProsemirrorNode, decorations: Decoration[]) {
-    // handle change of decorations (e.g. class: 'active' => inactive)
-    return true;
-  }
-}
-*/
 
 export default extension;
