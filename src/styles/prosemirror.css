@@ -117,7 +117,6 @@ https://stackoverflow.com/questions/32070029/positionabsolute-and-fill-remaining
   position: absolute;
   top: 0;
   bottom: 0;
-  overflow-y: scroll;
 }
 
 .ProseMirror .note .note-label {
