@@ -16,7 +16,6 @@ const plugin = new PluginKey('footnote');
 //
 
 // TODO: break into multiple files?
-// TODO: indicate footnote number in note editor
 // TODO: arrow selection back should move to before note (should not go to end of doc)
 // TODO: ESC key gesture to close footnote view?
 
@@ -74,6 +73,43 @@ const extension: Extension = {
         key: plugin,
 
         props: {
+
+          handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            
+            // pass if the key isn't an arrow key
+            if (!event.key.startsWith("Arrow")) {
+              return false;
+            }
+
+            // pass if the selection isn't in a note
+            const selection = view.state.selection;
+            const noteNode: NodeWithPos | undefined = findParentNodeOfType(schema.nodes.note)(selection);
+            if (!noteNode) {
+              return false;
+            }
+
+            // TODO: more robust determination of selections to trigger behavior
+            
+            switch(event.key) {
+              case "ArrowLeft": {
+                if (selection.empty && ((noteNode.pos + 2) === selection.from)) {
+                  return true;
+                }
+              }
+              case "ArrowRight": {
+                // 
+              }
+              case "ArrowUp": {
+                // 
+              }
+              case "ArrowRight": {
+                // 
+              }
+            }
+           
+            return false;
+          },
+
           // if a footnote is selected OR the selection is within a note, then apply
           // css classes required to show the footnote editor
           decorations(state: EditorState) {
@@ -275,6 +311,8 @@ class NoteView implements NodeView {
 
 
   }
+
+  
   
 }
 
