@@ -45,7 +45,10 @@ const extension: Extension = {
         toDOM(node: ProsemirrorNode) {
           return [
             'span',
-            { class: 'footnote', 'data-ref': node.attrs.ref, 'data-content': node.attrs.content },
+            { class: 'footnote', 
+              'data-ref': node.attrs.ref, 
+              'data-content': node.attrs.content 
+            },
             node.attrs.number.toString(),
           ];
         },
