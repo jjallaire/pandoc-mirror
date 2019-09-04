@@ -15,10 +15,12 @@ const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 // TODO: Insert Footnote
-// TODO: ui treatment/positioning
-// TODO: move focus to note editor
+//
+
 // TODO: indicate footnote number in note editor
-// TODO: scroll to ensure footnote is visible in note editor
+// TODO: arrow selection back should move to before note (should not go to end of doc)
+// TODO: ESC key gesture to close footnote view?
+
 
 const extension: Extension = {
   nodes: [
@@ -244,13 +246,24 @@ class NoteView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
+    
     // ['div', { id: node.attrs.id, class: 'note' }, 0]
-
-    // create note
     this.dom = window.document.createElement('div');
     this.dom.id = this.node.attrs.id;
     this.dom.classList.add('note');
-    this.contentDOM = this.dom;
+
+    const label = window.document.createElement('div');
+    label.classList.add('note-label');
+    label.contentEditable = "false";
+    label.innerHTML = "<p>1:</p>";
+    this.dom.appendChild(label);
+
+    const content = window.document.createElement('div');
+    content.classList.add('note-content');
+    this.contentDOM = content;
+    this.dom.appendChild(content);
+
+
 
   }
   

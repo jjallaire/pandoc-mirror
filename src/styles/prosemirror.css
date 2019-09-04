@@ -107,6 +107,34 @@
   outline: 2px solid #8cf;
 }
 
+/*
+
+https://stackoverflow.com/questions/32070029/positionabsolute-and-fill-remaining-space-in-div
+*/
+
+.ProseMirror .note .note-label,
+.ProseMirror .note .note-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow-y: scroll;
+}
+
+.ProseMirror .note .note-label {
+  left: 0;
+  width: calc(16px + 2em);
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.ProseMirror .note .note-content {
+  left: calc(16px + 2em);
+  right: 0;
+}
+
+
+
+
 
 
 
