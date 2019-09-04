@@ -136,7 +136,7 @@ class Parser {
 
           // add note to notes collection (will be handled specially by closeNode b/c it
           // has schema.nodes.node type)
-          state.openNode(this.schema.nodes.note, { id: ref });
+          state.openNote(ref);
           this.parseTokens(state, getChildren(tok));
           const noteNode = state.closeNode();
 
@@ -145,7 +145,7 @@ class Parser {
           const content = JSON.stringify(noteNode.content.toJSON());
 
           // add inline node to the body
-          state.addNode(nodeType, { ref, content }, []);
+          state.addNode(nodeType, { ref, number: noteNode.attrs.number, content }, []);
         };
       }
     }
@@ -158,12 +158,14 @@ class ParserState {
   private readonly stack: IParserStackElement[];
   private readonly notes: ProsemirrorNode[];
   private marks: Mark[];
+  private footnoteNumber: number;
 
   constructor(schema: Schema) {
     this.schema = schema;
     this.stack = [{ type: this.schema.nodes.body, attrs: {}, content: [] }];
     this.notes = [];
     this.marks = Mark.none;
+    this.footnoteNumber = 1;
   }
 
   public doc(): ProsemirrorNode {
@@ -221,6 +223,10 @@ class ParserState {
 
   public closeMark(mark: Mark) {
     this.marks = mark.removeFromSet(this.marks);
+  }
+
+  public openNote(ref: string) {
+    this.openNode(this.schema.nodes.note, { id: ref, number: this.footnoteNumber++ });
   }
 
   private top(): IParserStackElement {

@@ -8,8 +8,6 @@ import { PandocOutput } from 'api/pandoc';
 import { createNoteId } from 'api/notes';
 import { nodeDecoration } from 'api/decoration';
 import { transactionsHaveChange } from 'api/transaction';
-import { Editor } from 'editor';
-
 
 const plugin = new PluginKey('footnote');
 
@@ -17,6 +15,7 @@ const plugin = new PluginKey('footnote');
 // TODO: Insert Footnote
 //
 
+// TODO: break into multiple files?
 // TODO: indicate footnote number in note editor
 // TODO: arrow selection back should move to before note (should not go to end of doc)
 // TODO: ESC key gesture to close footnote view?
@@ -153,6 +152,9 @@ const extension: Extension = {
             const refs = new Set<string>();
             footnotes.forEach((footnote, index) => {
 
+              // footnote number
+              const number = index+1;
+
               // alias ref and content (either or both may be updated)
               let { ref, content } = footnote.node.attrs;
               
@@ -183,13 +185,20 @@ const extension: Extension = {
                   ref = createNoteId();
 
                   // create and insert new note with this id
-                  newNote = schema.nodes.note.createAndFill({ id: ref }, note.node.content);
+                  newNote = schema.nodes.note.createAndFill({ id: ref, number }, note.node.content);
+                
+                // otherwise update the note with the correct number
+                } else {
+                  tr.setNodeMarkup(note.pos, schema.nodes.note, {
+                    ...note.node.attrs,
+                    number
+                  });
                 }
 
               // if there is no note then create one using the content attr
               } else {
                 newNote = schema.nodes.note.createAndFill(
-                  { id: ref },
+                  { id: ref, number },
                   Fragment.fromJSON(schema, JSON.parse(content)),
                 );
               }
@@ -255,7 +264,7 @@ class NoteView implements NodeView {
     const label = window.document.createElement('div');
     label.classList.add('note-label');
     label.contentEditable = "false";
-    label.innerHTML = "<p>1:</p>";
+    label.innerHTML = `<p>${this.node.attrs.number}:</p>`;
     this.dom.appendChild(label);
 
     const content = window.document.createElement('div');

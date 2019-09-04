@@ -14,6 +14,10 @@ Here we try out superscript^super^ and subscript~sub~
 
 Let's try out^[an inline footnote] and then some text after the footnote.
 
+Let's try out^[an inline footnote] and then some text after the footnote.
+
+Let's try out^[an inline footnote] and then some text after the footnote.
+
 This is the [small caps]{.smallcaps} style.
 
 This is hard break.  

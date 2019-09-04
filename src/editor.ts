@@ -235,6 +235,7 @@ export class Editor {
         content: 'block+',
         attrs: {
           id: {},
+          number: { default: 1 }
         },
         parseDOM: [
           {
@@ -248,7 +249,7 @@ export class Editor {
           },
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['div', { id: node.attrs.id, class: 'note' }, 0];
+          return ['div', { id: node.attrs.id, class: 'note', 'data-number': node.attrs.number }, 0];
         },
       },
     };
