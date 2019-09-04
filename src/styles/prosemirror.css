@@ -96,6 +96,7 @@
 
 .ProseMirror .note {
   display: none; 
+  font-size: 0.9rem;
 }
 
 .ProseMirror .note.active {
