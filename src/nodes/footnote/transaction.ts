@@ -72,13 +72,11 @@ export function footnoteAppendTransaction(schema: Schema) {
           }
 
           // if there is no note then create one using the content attr
-        } else {
-          const fragment = content 
-            ? Fragment.fromJSON(schema, JSON.parse(content)) :
-            schema.nodes.paragraph.create();
+          // (this can happen for a copy/paste operation from another document)
+        } else if (content) {
           newNote = schema.nodes.note.createAndFill(
             { id: ref, number },
-            fragment,
+            Fragment.fromJSON(schema, JSON.parse(content)),
           );
         }
 
