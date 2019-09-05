@@ -4,12 +4,9 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
-re-introduce trailing_p (account for body or note as content root)
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
-
 
 support for ListNumberStyle.Example (@ syntax)
 support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
@@ -27,16 +24,6 @@ inline math with MathQuill/MathJax:
    https://discuss.prosemirror.net/t/odd-behavior-with-nodeview-and-atom-node/1521
 
 support for editing metadata using codemirror
-
-support for footnotes (contentDOM may be an important component of this, allows us to 
-point the editor at a node that it should render into)
-  https://discuss.prosemirror.net/t/how-to-insert-linebreaks-and-formatting-in-footnotes/1828
-  https://discuss.prosemirror.net/t/nested-inline-nodes/935/3
-  https://discuss.prosemirror.net/t/getting-a-feel-for-nodeview/972/13
-
-  CRITICAL: https://discuss.prosemirror.net/t/discussion-inline-nodes-with-content/496/20
-Note that numbered vs. named vs. inline notes are not part of the pandoc ast, so they 
-do not round trip (on output they are always numbered and in the footer)x
 
 add outline notifications / navigation
 
