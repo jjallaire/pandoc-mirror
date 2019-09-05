@@ -16,7 +16,6 @@ const plugin = new PluginKey('footnote');
 // TODO: Implement trailing_p for notes
 // TODO: Insert Footnote
 ///   - UI affordance
-///   - Get rid of auto-creation of empty note in transaction (no longer required)
 
 // TODO: flashing could be mediated by smarter decorator that triggers for 
 //       the initial TextSelection (log/debug decorator call and/or filterTransaction)
