@@ -20,12 +20,14 @@ const extension: Extension = {
               return;
             }
 
-            // insert paragraph at the end of the body
-            const { doc, tr } = state;
+            // insert paragraph at the end of the editing root
+            const tr = state.tr;
             const type = schema.nodes.paragraph;
-            const body = doc.content.child(0);
-            const transaction = tr.insert(body.nodeSize - 1, type.create());
-            view.dispatch(transaction);
+            const editingNode = editingRootNode(tr.selection, schema);
+            if (editingNode) {
+              tr.insert(editingNode.pos + editingNode.node.nodeSize - 1, type.create());
+              view.dispatch(tr);
+            }
           },
         }),
         state: {
@@ -45,12 +47,17 @@ const extension: Extension = {
 };
 
 function insertTrailingP(selection: Selection, schema: Schema) {
-  const editingRoot = findParentNodeOfType(schema.nodes.body)(selection);
+  const editingRoot = editingRootNode(selection, schema);
   if (editingRoot) {
     return !isParagraphNode(editingRoot.node.lastChild, schema);
   } else {
     return false;
   }
+}
+
+function editingRootNode(selection: Selection, schema: Schema) {
+  return findParentNodeOfType(schema.nodes.body)(selection) ||
+         findParentNodeOfType(schema.nodes.note)(selection);
 }
 
 function isParagraphNode(node: ProsemirrorNode | null | undefined, schema: Schema) {
