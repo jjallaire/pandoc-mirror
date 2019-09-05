@@ -11,7 +11,7 @@ definition lists
 support for ListNumberStyle.Example (@ syntax)
 support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
 
-handle meta fields
+handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 
 todo list: https://tiptap.scrumpy.io/todo-list
 
@@ -23,7 +23,7 @@ inline math with MathQuill/MathJax:
    https://pboysen.github.io/
    https://discuss.prosemirror.net/t/odd-behavior-with-nodeview-and-atom-node/1521
 
-support for editing metadata using codemirror
+
 
 add outline notifications / navigation
 
