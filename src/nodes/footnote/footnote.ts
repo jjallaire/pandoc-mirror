@@ -14,11 +14,6 @@ import { findChildrenByType } from 'prosemirror-utils';
 const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
-// TODO: Insert Footnote
-///   - UI affordance
-
-// TODO: flashing could be mediated by smarter decorator that triggers for 
-//       the initial TextSelection (log/debug decorator call and/or filterTransaction)
 
 // TODO: arrow selection back should move to before note (should not go to end of doc)
 //   use selection.endOfTextBlock. Delete key in footnote editor.
@@ -36,7 +31,7 @@ const extension: Extension = {
           content: { default: '' },
         },
         group: 'inline',
-        atom: true,
+        // atom: true,
         parseDOM: [
           {
             tag: "span[class='footnote']",
