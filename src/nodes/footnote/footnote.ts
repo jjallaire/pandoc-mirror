@@ -13,8 +13,6 @@ import { findChildrenByType } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote');
 
-// TODO: ESC key gesture to close footnote view?
-
 const extension: Extension = {
   nodes: [
     {
