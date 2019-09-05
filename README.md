@@ -4,6 +4,9 @@
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
+pandoc scholar: https://pandoc-scholar.github.io/
+pandoc jats:    https://github.com/mfenner/pandoc-jats
+
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
@@ -37,5 +40,5 @@ find/replace
   https://tiptap.scrumpy.io/search-and-replace 
   https://github.com/mattberkowitz/prosemirror-find-replace
 
-crit markup
+critic markup: http://criticmarkup.com/
 
