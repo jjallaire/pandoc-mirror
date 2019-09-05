@@ -120,7 +120,26 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       return false;
     }
 
-    // get first text block node (
+    // function to find and move selection to associated footnote
+    // will call this from Escape, ArrowLeft, and ArrowUp handlers below
+    const selectFootnote = () => {
+      const footnoteNode = findFootnoteNode(view.state.doc, noteNode.node.attrs.ref);
+      if (footnoteNode) {
+        const tr = view.state.tr;
+        tr.setSelection(TextSelection.near(tr.doc.resolve(footnoteNode.pos), -1));
+        view.dispatch(tr);
+      }
+    };
+
+    // if this is the Escape key then close the editor
+    if (event.key === "Escape") {
+      selectFootnote();
+      return true;
+    }
+
+    // otherwise check to see if the user is attemptign to arrow out of the first text block....
+  
+    // get first text block node 
     const firstTextBlock = firstNode(noteNode, node => node.isTextblock);
     if (!firstTextBlock) {
       return false;
@@ -133,18 +152,7 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       return false;
     }
 
-    // function to find and move selection to associated footnote
-    // will call this from ArrowLeft and ArrowUp handlers below
-    const selectFootnote = () => {
-      const footnoteNode = findFootnoteNode(view.state.doc, noteNode.node.attrs.ref);
-      if (footnoteNode) {
-        const tr = view.state.tr;
-        tr.setSelection(TextSelection.near(tr.doc.resolve(footnoteNode.pos), -1));
-        view.dispatch(tr);
-      }
-    };
-
-
+    // check for arrow gesture to exit
     switch (event.key) {
       case 'ArrowLeft':
         if (selection.anchor === beginFirst) {
@@ -161,16 +169,6 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       }
     }
   
-
-    
-
-    
-
-
-
-    // TODO: more robust determination of selections to trigger behavior
-
-    
     return false;
   };
 }

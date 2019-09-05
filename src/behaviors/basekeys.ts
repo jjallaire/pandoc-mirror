@@ -15,7 +15,6 @@ const extension: Extension = {
     bindKey('Alt-ArrowUp', joinUp);
     bindKey('Alt-ArrowDown', joinDown);
     bindKey('Mod-BracketLeft', lift);
-    bindKey('Escape', selectParentNode);
 
     return [keymap(keys), keymap(baseKeymap)];
   },
