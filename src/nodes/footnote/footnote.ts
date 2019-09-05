@@ -1,19 +1,28 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { Plugin, PluginKey, EditorState, Transaction, TextSelection } from 'prosemirror-state';
 
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
 import { footnoteEditorKeyDownHandler, footnoteEditorDecorations, footnoteEditorNodeViews } from './editor';
 import { footnoteAppendTransaction } from './transaction';
+import { Command } from 'api/command';
+import { createNoteId, findNoteNode } from 'api/notes';
+import { EditorView } from 'prosemirror-view';
+import { canInsertNode } from 'api/node';
+import { findChildrenByType } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote');
 
 // TODO: Implement trailing_p for notes
 // TODO: Insert Footnote
-// TODO: Use uuid for note ids
-// TODO: flashing when switching between footnotes
+///   - UI affordance
+///   - Get rid of auto-creation of empty note in transaction (no longer required)
+
+// TODO: flashing could be mediated by smarter decorator that triggers for 
+//       the initial TextSelection (log/debug decorator call and/or filterTransaction)
 
 // TODO: arrow selection back should move to before note (should not go to end of doc)
+//   use selection.endOfTextBlock. Delete key in footnote editor.
 // TODO: ESC key gesture to close footnote view?
 
 const extension: Extension = {
@@ -80,6 +89,50 @@ const extension: Extension = {
       }),
     ];
   },
+  
+  commands: (schema: Schema) => {
+    return [
+      new Command('footnote', ['Mod-^'], footnoteCommandFn(schema))
+    ];
+  },
 };
+
+
+function footnoteCommandFn(schema: Schema) {
+  
+  return (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
+    
+    if (!canInsertNode(state,  schema.nodes.footnote)) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr;
+      
+      // generate note id
+      const id = createNoteId();
+
+      // insert empty note
+      const notes = findChildrenByType(tr.doc, schema.nodes.notes, true)[0];
+      const note = schema.nodes.note.createAndFill( { id }, schema.nodes.paragraph.create() );
+      tr.insert(notes.pos + 1, note as ProsemirrorNode);
+    
+      // insert footnote linked to note
+      const footnote = schema.nodes.footnote.create({ ref: id });
+      tr.replaceSelectionWith(footnote);
+    
+      // open note editor
+      const noteNode = findNoteNode(tr.doc, id);
+      if (noteNode) {
+        tr.setSelection(TextSelection.near(tr.doc.resolve(noteNode.pos)));
+      }
+    
+      // dispatch transaction
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
 
 export default extension;

@@ -3,7 +3,7 @@ import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
 import { transactionsHaveChange } from 'api/transaction';
 import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from 'prosemirror-utils';
 
-import { createNoteId } from 'api/notes';
+import { createNoteId, findNoteNode } from 'api/notes';
 
 // examine editor transactions and append a transaction that handles fixup of footnote numbers,
 // importing of pasted footnotes, selection propagation to the footnote editor, etc.
@@ -73,9 +73,12 @@ export function footnoteAppendTransaction(schema: Schema) {
 
           // if there is no note then create one using the content attr
         } else {
+          const fragment = content 
+            ? Fragment.fromJSON(schema, JSON.parse(content)) :
+            schema.nodes.paragraph.create();
           newNote = schema.nodes.note.createAndFill(
             { id: ref, number },
-            Fragment.fromJSON(schema, JSON.parse(content)),
+            fragment,
           );
         }
 
@@ -101,13 +104,9 @@ export function footnoteAppendTransaction(schema: Schema) {
     const footnoteNode: NodeWithPos | undefined = findSelectedNodeOfType(schema.nodes.footnote)(newState.selection);
     if (footnoteNode) {
       const ref = footnoteNode.node.attrs.ref;
-      const noteNode = findChildren(
-        newState.doc,
-        node => node.type === schema.nodes.note && node.attrs.id === ref,
-        true,
-      );
-      if (noteNode.length) {
-        tr.setSelection(TextSelection.near(newState.doc.resolve(noteNode[0].pos)));
+      const noteNode = findNoteNode(tr.doc, ref);
+      if (noteNode) {
+        tr.setSelection(TextSelection.near(tr.doc.resolve(noteNode.pos)));
       }
     }
 
@@ -116,3 +115,4 @@ export function footnoteAppendTransaction(schema: Schema) {
     }
   };
 }
+
