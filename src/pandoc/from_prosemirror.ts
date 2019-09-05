@@ -48,7 +48,7 @@ class PandocWriter implements PandocOutput {
     // create map of notes
     this.notes = {};
     notes.forEach((note: ProsemirrorNode) => {
-      this.notes[note.attrs.id] = note;
+      this.notes[note.attrs.ref] = note;
     });
 
     this.ast = {

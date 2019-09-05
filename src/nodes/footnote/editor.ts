@@ -28,16 +28,16 @@ export function footnoteEditorDecorations(schema: Schema) {
       // resolve the specific footnote node or specific note node
       if (footnoteNode) {
         const ref = footnoteNode.node.attrs.ref;
-        const matching = findChildren(notesNode.node, node => node.attrs.id === ref);
+        const matching = findChildren(notesNode.node, node => node.attrs.ref === ref);
         if (matching.length) {
           noteNode = matching[0];
           noteNode.pos = notesNode.pos + 1 + noteNode.pos;
         }
       } else if (noteNode) {
-        const id = noteNode.node.attrs.id;
+        const ref = noteNode.node.attrs.ref;
         const matching = findChildren(
           state.doc,
-          node => node.type === schema.nodes.footnote && node.attrs.ref === id,
+          node => node.type === schema.nodes.footnote && node.attrs.ref === ref,
           true,
         );
         if (matching.length) {
@@ -88,9 +88,8 @@ class NoteEditorView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
-    // ['div', { id: node.attrs.id, class: 'note' }, 0]
     this.dom = window.document.createElement('div');
-    this.dom.id = this.node.attrs.id;
+    this.dom.setAttribute('data-ref', this.node.attrs.ref);
     this.dom.classList.add('note');
 
     const label = window.document.createElement('div');

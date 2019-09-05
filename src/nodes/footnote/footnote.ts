@@ -104,19 +104,19 @@ function footnoteCommandFn(schema: Schema) {
       const tr = state.tr;
       
       // generate note id
-      const id = createNoteId();
+      const ref = createNoteId();
 
       // insert empty note
       const notes = findChildrenByType(tr.doc, schema.nodes.notes, true)[0];
-      const note = schema.nodes.note.createAndFill( { id }, schema.nodes.paragraph.create() );
+      const note = schema.nodes.note.createAndFill( { ref }, schema.nodes.paragraph.create() );
       tr.insert(notes.pos + 1, note as ProsemirrorNode);
     
       // insert footnote linked to note
-      const footnote = schema.nodes.footnote.create({ ref: id });
+      const footnote = schema.nodes.footnote.create({ ref });
       tr.replaceSelectionWith(footnote);
     
       // open note editor
-      const noteNode = findNoteNode(tr.doc, id);
+      const noteNode = findNoteNode(tr.doc, ref);
       if (noteNode) {
         tr.setSelection(TextSelection.near(tr.doc.resolve(noteNode.pos)));
       }

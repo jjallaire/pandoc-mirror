@@ -226,7 +226,7 @@ class ParserState {
   }
 
   public openNote(ref: string) {
-    this.openNode(this.schema.nodes.note, { id: ref, number: this.footnoteNumber++ });
+    this.openNode(this.schema.nodes.note, { ref, number: this.footnoteNumber++ });
   }
 
   private top(): IParserStackElement {

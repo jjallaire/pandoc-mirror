@@ -12,7 +12,7 @@ export function createNoteId() {
 export function findNoteNode(doc: ProsemirrorNode, ref: string) : NodeWithPos | undefined {
   const noteNode = findChildren(
     doc,
-    node => node.type === doc.type.schema.nodes.note && node.attrs.id === ref,
+    node => node.type === doc.type.schema.nodes.note && node.attrs.ref === ref,
     true,
   );
   if (noteNode.length) {

@@ -234,7 +234,7 @@ export class Editor {
       note: {
         content: 'block+',
         attrs: {
-          id: {},
+          ref: {},
           number: { default: 1 },
         },
         parseDOM: [
@@ -243,13 +243,13 @@ export class Editor {
             getAttrs(dom: Node | string) {
               const el = dom as Element;
               return {
-                id: el.getAttribute('id'),
+                ref: el.getAttribute('data-ref'),
               };
             },
           },
         ],
         toDOM(node: ProsemirrorNode) {
-          return ['div', { id: node.attrs.id, class: 'note', 'data-number': node.attrs.number }, 0];
+          return ['div', { 'data-ref': node.attrs.ref, class: 'note', 'data-number': node.attrs.number }, 0];
         },
       },
     };

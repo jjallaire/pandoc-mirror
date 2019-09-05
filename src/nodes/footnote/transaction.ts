@@ -37,7 +37,7 @@ export function footnoteAppendTransaction(schema: Schema) {
 
         // get reference to note (if any)
         const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
-          noteWithPos => noteWithPos.node.attrs.id === ref,
+          noteWithPos => noteWithPos.node.attrs.ref === ref,
         );
 
         // matching note found
@@ -49,7 +49,7 @@ export function footnoteAppendTransaction(schema: Schema) {
               transactions,
               oldState,
               newState,
-              node => node.type === schema.nodes.note && node.attrs.id === ref,
+              node => node.type === schema.nodes.note && node.attrs.ref === ref,
             )
           ) {
             content = JSON.stringify(note.node.content.toJSON());
@@ -61,7 +61,7 @@ export function footnoteAppendTransaction(schema: Schema) {
             ref = createNoteId();
 
             // create and insert new note with this id
-            newNote = schema.nodes.note.createAndFill({ id: ref, number }, note.node.content);
+            newNote = schema.nodes.note.createAndFill({ ref, number }, note.node.content);
 
             // otherwise update the note with the correct number
           } else {
@@ -75,7 +75,7 @@ export function footnoteAppendTransaction(schema: Schema) {
           // (this can happen for a copy/paste operation from another document)
         } else if (content) {
           newNote = schema.nodes.note.createAndFill(
-            { id: ref, number },
+            { ref, number },
             Fragment.fromJSON(schema, JSON.parse(content)),
           );
         }
