@@ -1,6 +1,6 @@
-import { Node, NodeSpec, NodeType } from 'prosemirror-model';
+import { Node as ProsemirrorNode, NodeSpec, NodeType } from 'prosemirror-model';
 import { EditorState, Selection, NodeSelection, Transaction } from 'prosemirror-state';
-import { findParentNode, findSelectedNodeOfType, ContentNodeWithPos, findParentNodeOfType } from 'prosemirror-utils';
+import { findParentNode, findSelectedNodeOfType, ContentNodeWithPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
 
 import { PandocTokenReader, PandocNodeWriterFn } from './pandoc';
 
@@ -21,11 +21,32 @@ export type NodeTraversalFn = (
 ) => boolean | void | null | undefined;
 
 export function findNodeOfTypeInSelection(selection: Selection, type: NodeType): ContentNodeWithPos | undefined {
-  return findSelectedNodeOfType(type)(selection) || findParentNode((n: Node) => n.type === type)(selection);
+  return findSelectedNodeOfType(type)(selection) || findParentNode((n: ProsemirrorNode) => n.type === type)(selection);
 }
 
+export function firstNode(parent: NodeWithPos, predicate: (node: ProsemirrorNode) => boolean) {
+  let foundNode: NodeWithPos | undefined;
+  parent.node.descendants((node, pos) => {
+    if (!foundNode) {
+      if (predicate(node)) {
+        foundNode = {
+          node,
+          pos: parent.pos + 1 + pos
+        };
+        return false;
+      }
+    } else {
+      return false;
+    }
+  });
+  return foundNode;
+}
+
+
+
+
 export function nodeIsActive(state: EditorState, type: NodeType, attrs = {}) {
-  const predicate = (n: Node) => n.type === type;
+  const predicate = (n: ProsemirrorNode) => n.type === type;
   const node = findSelectedNodeOfType(type)(state.selection) || findParentNode(predicate)(state.selection);
 
   if (!Object.keys(attrs).length || !node) {
@@ -46,7 +67,7 @@ export function canInsertNode(state: EditorState, nodeType: NodeType) {
   return false;
 }
 
-export function insertAndSelectNode(node: Node, state: EditorState, dispatch: (tr: Transaction<any>) => void) {
+export function insertAndSelectNode(node: ProsemirrorNode, state: EditorState, dispatch: (tr: Transaction<any>) => void) {
   // create new transaction
   const tr = state.tr;
 

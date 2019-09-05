@@ -237,6 +237,8 @@ export class Editor {
           ref: {},
           number: { default: 1 },
         },
+        defining: true,
+        isolating: true,
         parseDOM: [
           {
             tag: 'div[class="note"]',

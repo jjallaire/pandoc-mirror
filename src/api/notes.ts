@@ -1,7 +1,7 @@
 
 
 import { findChildren, NodeWithPos } from 'prosemirror-utils';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { Node as ProsemirrorNode, NodeType } from 'prosemirror-model';
 
 import { uuidv4 } from './util';
 
@@ -10,15 +10,22 @@ export function createNoteId() {
 }
 
 export function findNoteNode(doc: ProsemirrorNode, ref: string) : NodeWithPos | undefined {
-  const noteNode = findChildren(
+  return findNodeWithRef(doc, doc.type.schema.nodes.note, ref);
+}
+
+export function findFootnoteNode(doc: ProsemirrorNode, ref: string) : NodeWithPos | undefined {
+  return findNodeWithRef(doc, doc.type.schema.nodes.footnote, ref);
+}
+
+function findNodeWithRef(doc: ProsemirrorNode, type: NodeType, ref: string) : NodeWithPos | undefined {
+  const foundNode = findChildren(
     doc,
-    node => node.type === doc.type.schema.nodes.note && node.attrs.ref === ref,
+    node => node.type === type && node.attrs.ref === ref,
     true,
   );
-  if (noteNode.length) {
-    return noteNode[0];
+  if (foundNode.length) {
+    return foundNode[0];
   } else {
     return undefined;
   }
 }
-

@@ -13,8 +13,6 @@ import { findChildrenByType } from 'prosemirror-utils';
 
 const plugin = new PluginKey('footnote');
 
-// TODO: arrow selection back should move to before note (should not go to end of doc)
-//   use selection.endOfTextBlock. Delete key in footnote editor.
 // TODO: ESC key gesture to close footnote view?
 
 const extension: Extension = {

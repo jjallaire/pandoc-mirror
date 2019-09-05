@@ -5,11 +5,13 @@ import {
   NodeWithPos,
   findSelectedNodeOfType,
   findChildrenByType,
-  findChildren,
+  findChildren
 } from 'prosemirror-utils';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { nodeDecoration } from 'api/decoration';
+import { firstNode } from 'api/node';
+import { findFootnoteNode } from 'api/notes';
 
 // selection-driven decorations (mostly css classes) required to activate the footnote editor
 export function footnoteEditorDecorations(schema: Schema) {
@@ -108,37 +110,67 @@ class NoteEditorView implements NodeView {
 // custom handling for arrow keys that cause selection to escape the editor
 export function footnoteEditorKeyDownHandler(schema: Schema) {
   return (view: EditorView, event: KeyboardEvent) => {
-    // pass if the key isn't an arrow key
-    if (!event.key.startsWith('Arrow')) {
-      return false;
-    }
+    
+    // alias selection
+    const selection = view.state.selection;
 
     // pass if the selection isn't in a note
-    const selection = view.state.selection;
     const noteNode: NodeWithPos | undefined = findParentNodeOfType(schema.nodes.note)(selection);
     if (!noteNode) {
       return false;
     }
 
-    // TODO: more robust determination of selections to trigger behavior
-
-    switch (event.key) {
-      case 'ArrowLeft': {
-        if (selection.empty && noteNode.pos + 2 === selection.from) {
-          return true;
-        }
-      }
-      case 'ArrowRight': {
-        //
-      }
-      case 'ArrowUp': {
-        //
-      }
-      case 'ArrowRight': {
-        //
-      }
+    // get first text block node (
+    const firstTextBlock = firstNode(noteNode, node => node.isTextblock);
+    if (!firstTextBlock) {
+      return false;
     }
 
+    // bail if we are not in the first text block node
+    const beginFirst = firstTextBlock.pos + 1;
+    const endFirst = beginFirst + firstTextBlock.node.nodeSize;
+    if (selection.anchor < beginFirst || selection.anchor > endFirst) {
+      return false;
+    }
+
+    // function to find and move selection to associated footnote
+    // will call this from ArrowLeft and ArrowUp handlers below
+    const selectFootnote = () => {
+      const footnoteNode = findFootnoteNode(view.state.doc, noteNode.node.attrs.ref);
+      if (footnoteNode) {
+        const tr = view.state.tr;
+        tr.setSelection(TextSelection.near(tr.doc.resolve(footnoteNode.pos), -1));
+        view.dispatch(tr);
+      }
+    };
+
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        if (selection.anchor === beginFirst) {
+          selectFootnote();
+          return true;
+        }
+        break;
+      case 'ArrowUp': {
+        if (view.endOfTextblock("up")) {
+          selectFootnote();
+          return true;
+        }
+        break;
+      }
+    }
+  
+
+    
+
+    
+
+
+
+    // TODO: more robust determination of selections to trigger behavior
+
+    
     return false;
   };
 }
