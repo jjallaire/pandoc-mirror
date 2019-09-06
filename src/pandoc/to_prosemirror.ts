@@ -1,6 +1,6 @@
 import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
-import { createNoteId } from 'api/notes';
+import { uuidv4 } from 'api/util';
 
 export function pandocToProsemirror(ast: PandocAst, schema: Schema, readers: readonly PandocTokenReader[]) {
   const parser = new Parser(schema, readers);
@@ -132,7 +132,7 @@ class Parser {
         const nodeType = this.schema.nodes[reader.note];
         handlers[reader.token] = (state: ParserState, tok: PandocToken) => {
           // generate unique id
-          const ref = createNoteId();
+          const ref = uuidv4();
 
           // add note to notes collection (will be handled specially by closeNode b/c it
           // has schema.nodes.node type)

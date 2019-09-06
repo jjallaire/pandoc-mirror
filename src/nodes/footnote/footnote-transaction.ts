@@ -3,7 +3,8 @@ import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
 import { transactionsHaveChange } from 'api/transaction';
 import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from 'prosemirror-utils';
 
-import { createNoteId, findNoteNode } from 'api/notes';
+import { findNoteNode } from './footnote';
+import { uuidv4 } from 'api/util';
 
 // examine editor transactions and append a transaction that handles fixup of footnote numbers,
 // importing of pasted footnotes, selection propagation to the footnote editor, etc.
@@ -58,7 +59,7 @@ export function footnoteAppendTransaction(schema: Schema) {
           // if we've already processed this ref then it's a duplicate, make a copy w/ a new ref/id
           if (refs.has(ref)) {
             // create a new unique id and change the ref to it
-            ref = createNoteId();
+            ref = uuidv4();
 
             // create and insert new note with this id
             newNote = schema.nodes.note.createAndFill({ ref, number }, note.node.content);

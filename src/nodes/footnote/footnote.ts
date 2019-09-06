@@ -1,12 +1,11 @@
-import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema, Fragment, NodeType } from 'prosemirror-model';
 import { Plugin, PluginKey, EditorState, Transaction, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { findChildrenByType, findParentNodeOfType } from 'prosemirror-utils';
+import { findChildrenByType, findParentNodeOfType, findSelectedNodeOfType, NodeWithPos, findChildren } from 'prosemirror-utils';
 
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
 import { Command } from 'api/command';
-import { createNoteId, findNoteNode } from 'api/notes';
 import { canInsertNode } from 'api/node';
 
 import { 
@@ -15,6 +14,7 @@ import {
   footnoteEditorNodeViews 
 } from './footnote-editor';
 import { footnoteAppendTransaction } from './footnote-transaction';
+import { uuidv4 } from 'api/util';
 
 const plugin = new PluginKey('footnote');
 
@@ -121,7 +121,7 @@ function insertFootnote(tr: Transaction, edit = true, content?: Fragment | Prose
   }
 
   // generate note id
-  const ref = createNoteId();
+  const ref = uuidv4();
 
   // insert empty note
   const notes = findChildrenByType(tr.doc, schema.nodes.notes, true)[0];
@@ -142,6 +142,38 @@ function insertFootnote(tr: Transaction, edit = true, content?: Fragment | Prose
 
   // return ref
   return ref;
+}
+
+
+
+export function selectedFootnote(state: EditorState) : NodeWithPos | undefined {
+  return findSelectedNodeOfType(state.schema.nodes.footnote)(state.selection);
+}
+
+export function selectedNote(state: EditorState) : NodeWithPos | undefined {
+  return findParentNodeOfType(state.schema.nodes.note)(state.selection);
+}
+
+
+export function findNoteNode(doc: ProsemirrorNode, ref: string) : NodeWithPos | undefined {
+  return findNodeOfTypeWithRef(doc, doc.type.schema.nodes.note, ref);
+}
+
+export function findFootnoteNode(doc: ProsemirrorNode, ref: string) : NodeWithPos | undefined {
+  return findNodeOfTypeWithRef(doc, doc.type.schema.nodes.footnote, ref);
+}
+
+function findNodeOfTypeWithRef(doc: ProsemirrorNode, type: NodeType, ref: string) : NodeWithPos | undefined {
+  const foundNode = findChildren(
+    doc,
+    node => node.type === type && node.attrs.ref === ref,
+    true,
+  );
+  if (foundNode.length) {
+    return foundNode[0];
+  } else {
+    return undefined;
+  }
 }
 
 

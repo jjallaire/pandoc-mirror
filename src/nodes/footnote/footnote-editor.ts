@@ -11,8 +11,9 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { nodeDecoration } from 'api/decoration';
 import { firstNode, lastNode } from 'api/node';
-import { findFootnoteNode } from 'api/notes';
 import { selectionIsWithin } from 'api/selection';
+
+import { findFootnoteNode } from './footnote';
 
 // selection-driven decorations (mostly css classes) required to activate the footnote editor
 export function footnoteEditorDecorations(schema: Schema) {
