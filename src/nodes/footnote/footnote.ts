@@ -1,5 +1,5 @@
 import { Node as ProsemirrorNode, Schema, Fragment, NodeType } from 'prosemirror-model';
-import { Plugin, PluginKey, EditorState, Transaction, TextSelection } from 'prosemirror-state';
+import { Plugin, PluginKey, EditorState, Transaction, TextSelection, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { findChildrenByType, findParentNodeOfType, findSelectedNodeOfType, NodeWithPos, findChildren } from 'prosemirror-utils';
 
@@ -13,12 +13,10 @@ import {
   footnoteEditorDecorations, 
   footnoteEditorNodeViews 
 } from './footnote-editor';
-import { footnoteAppendTransaction } from './footnote-transaction';
+import { footnoteAppendTransaction, footnoteFilterTransaction } from './footnote-transaction';
 import { uuidv4 } from 'api/util';
 
 const plugin = new PluginKey('footnote');
-
-// TODO: handle nesting of footnotes
 
 const extension: Extension = {
   nodes: [
@@ -80,6 +78,7 @@ const extension: Extension = {
         },
 
         // footnote transactions (fixups, etc.)
+        filterTransaction: footnoteFilterTransaction(schema),
         appendTransaction: footnoteAppendTransaction(schema),
       }),
     ];
@@ -146,12 +145,12 @@ function insertFootnote(tr: Transaction, edit = true, content?: Fragment | Prose
 
 
 
-export function selectedFootnote(state: EditorState) : NodeWithPos | undefined {
-  return findSelectedNodeOfType(state.schema.nodes.footnote)(state.selection);
+export function selectedFootnote(schema: Schema, selection: Selection) : NodeWithPos | undefined {
+  return findSelectedNodeOfType(schema.nodes.footnote)(selection);
 }
 
-export function selectedNote(state: EditorState) : NodeWithPos | undefined {
-  return findParentNodeOfType(state.schema.nodes.note)(state.selection);
+export function selectedNote(schema: Schema, selection: Selection) : NodeWithPos | undefined {
+  return findParentNodeOfType(schema.nodes.note)(selection);
 }
 
 

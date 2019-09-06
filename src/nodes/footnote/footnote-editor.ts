@@ -13,14 +13,14 @@ import { nodeDecoration } from 'api/decoration';
 import { firstNode, lastNode } from 'api/node';
 import { selectionIsWithin } from 'api/selection';
 
-import { findFootnoteNode } from './footnote';
+import { findFootnoteNode, selectedFootnote, selectedNote } from './footnote';
 
 // selection-driven decorations (mostly css classes) required to activate the footnote editor
 export function footnoteEditorDecorations(schema: Schema) {
   return (state: EditorState) => {
     // see if either a footnote node or note (footnote editor) node has the selection
-    let footnoteNode: NodeWithPos | undefined = findSelectedNodeOfType(schema.nodes.footnote)(state.selection);
-    let noteNode: NodeWithPos | undefined = findParentNodeOfType(schema.nodes.note)(state.selection);
+    let footnoteNode = selectedFootnote(schema, state.selection);
+    let noteNode = selectedNote(schema, state.selection);
 
     // if they do then we need to enable footnote editing/behavior by
     // using decorators to inject appropriate css classes

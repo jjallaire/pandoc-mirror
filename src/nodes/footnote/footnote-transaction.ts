@@ -3,12 +3,26 @@ import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
 import { transactionsHaveChange } from 'api/transaction';
 import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from 'prosemirror-utils';
 
-import { findNoteNode } from './footnote';
+import { findNoteNode, selectedNote } from './footnote';
 import { uuidv4 } from 'api/util';
+
+
+
+
+// examine transactions and filter out attempts to place foonotes within note bodies
+// (this is not allowed by pandoc markdown)
+export function footnoteFilterTransaction(schema: Schema) {
+  return (tr: Transaction, _state: EditorState) => {
+    const noteWithPos = selectedNote(schema, tr.selection);
+    if (noteWithPos && findChildrenByType(noteWithPos.node, schema.nodes.footnote).length) {
+      return false;
+    }
+    return true;
+  };
+}
 
 // examine editor transactions and append a transaction that handles fixup of footnote numbers,
 // importing of pasted footnotes, selection propagation to the footnote editor, etc.
-
 export function footnoteAppendTransaction(schema: Schema) {
   return (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
     // transaction
