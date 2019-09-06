@@ -217,6 +217,8 @@ export class Editor {
 
       body: {
         content: 'block+',
+        defining: true,
+        isolating: true,
         parseDOM: [{ tag: 'div[class="body"]' }],
         toDOM() {
           return ['div', { class: 'body' }, 0];
