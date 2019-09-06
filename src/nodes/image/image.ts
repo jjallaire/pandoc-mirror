@@ -1,5 +1,5 @@
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
-import { EditorState, NodeSelection, Transaction } from 'prosemirror-state';
+import { EditorState, NodeSelection, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 
 import { Command } from 'api/command';
 import { Extension } from 'api/extension';
@@ -8,9 +8,9 @@ import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrRead
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, ImageEditorFn } from 'api/ui';
 
-import { imageDialog } from './dialog';
-import { imagePlugin } from './plugin';
+import { imageDialog } from './image-dialog';
 import { EditorView } from 'prosemirror-view';
+import { imageDoubleClickOn, imageDrop } from './image-events';
 
 const TARGET_URL = 0;
 const TARGET_TITLE = 1;
@@ -18,6 +18,8 @@ const TARGET_TITLE = 1;
 const IMAGE_ATTR = 0;
 const IMAGE_ALT = 1;
 const IMAGE_TARGET = 2;
+
+const plugin = new PluginKey('image');
 
 const extension: Extension = {
   nodes: [
@@ -99,7 +101,17 @@ const extension: Extension = {
   },
 
   plugins: (schema: Schema, ui: EditorUI) => {
-    return [imagePlugin(schema.nodes.image, ui.editImage)];
+    return [
+      new Plugin({
+        key: plugin,
+        props: {
+          handleDoubleClickOn: imageDoubleClickOn(schema.nodes.image, ui.editImage),
+          handleDOMEvents: {
+            drop: imageDrop(schema.nodes.image),
+          },
+        }
+      })
+    ];
   },
 };
 

@@ -1,15 +1,20 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Plugin, PluginKey, EditorState, Transaction, TextSelection } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { findChildrenByType } from 'prosemirror-utils';
 
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
-import { footnoteEditorKeyDownHandler, footnoteEditorDecorations, footnoteEditorNodeViews } from './editor';
-import { footnoteAppendTransaction } from './transaction';
 import { Command } from 'api/command';
 import { createNoteId, findNoteNode } from 'api/notes';
-import { EditorView } from 'prosemirror-view';
 import { canInsertNode } from 'api/node';
-import { findChildrenByType } from 'prosemirror-utils';
+
+import { 
+  footnoteEditorKeyDownHandler, 
+  footnoteEditorDecorations, 
+  footnoteEditorNodeViews 
+} from './footnote-editor';
+import { footnoteAppendTransaction } from './footnote-transaction';
 
 const plugin = new PluginKey('footnote');
 

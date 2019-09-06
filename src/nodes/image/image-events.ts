@@ -1,23 +1,10 @@
 import { Node, NodeType } from 'prosemirror-model';
-import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { ImageEditorFn } from 'api/ui';
-import { imageDialog } from './dialog';
+import { imageDialog } from './image-dialog';
 
-export function imagePlugin(nodeType: NodeType, onEditImage: ImageEditorFn) {
-  return new Plugin({
-    key: new PluginKey('image'),
-    props: {
-      handleDoubleClickOn: doubleClickOn(nodeType, onEditImage),
-      handleDOMEvents: {
-        drop: drop(nodeType),
-      },
-    },
-  });
-}
-
-function doubleClickOn(nodeType: NodeType, onEditImage: ImageEditorFn) {
+export function imageDoubleClickOn(nodeType: NodeType, onEditImage: ImageEditorFn) {
   return (view: EditorView, _pos: number, node: Node) => {
     if (node.type === nodeType) {
       imageDialog(node, nodeType, view.state, view.dispatch, view, onEditImage);
@@ -28,7 +15,7 @@ function doubleClickOn(nodeType: NodeType, onEditImage: ImageEditorFn) {
   };
 }
 
-function drop(nodeType: NodeType) {
+export function imageDrop(nodeType: NodeType) {
   return (view: EditorView, event: Event) => {
     // alias to drag event so typescript knows about event.dataTransfer
     const dragEvent = event as DragEvent;

@@ -9,6 +9,11 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
+footnote input rule
+exit footnote via tab or arrow keys?
+
+prefixes for folders (e.g. footnote-transaction)
+
 definition lists
 
 support for ListNumberStyle.Example (@ syntax)

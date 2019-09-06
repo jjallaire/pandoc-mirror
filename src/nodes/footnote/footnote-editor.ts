@@ -122,11 +122,11 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
 
     // function to find and move selection to associated footnote
     // will call this from Escape, ArrowLeft, and ArrowUp handlers below
-    const selectFootnote = () => {
+    const selectFootnote = (before = true) => {
       const footnoteNode = findFootnoteNode(view.state.doc, noteNode.node.attrs.ref);
       if (footnoteNode) {
         const tr = view.state.tr;
-        tr.setSelection(TextSelection.near(tr.doc.resolve(footnoteNode.pos), -1));
+        tr.setSelection(TextSelection.near(tr.doc.resolve(footnoteNode.pos + (before ? 0 : 1))));
         view.dispatch(tr);
       }
     };
@@ -156,13 +156,13 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
     switch (event.key) {
       case 'ArrowLeft':
         if (selection.anchor === beginFirst) {
-          selectFootnote();
+          selectFootnote(true);
           return true;
         }
         break;
       case 'ArrowUp': {
         if (view.endOfTextblock("up")) {
-          selectFootnote();
+          selectFootnote(true);
           return true;
         }
         break;
