@@ -10,8 +10,9 @@ import {
 import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { nodeDecoration } from 'api/decoration';
-import { firstNode } from 'api/node';
+import { firstNode, lastNode } from 'api/node';
 import { findFootnoteNode } from 'api/notes';
+import { selectionIsWithin } from 'api/selection';
 
 // selection-driven decorations (mostly css classes) required to activate the footnote editor
 export function footnoteEditorDecorations(schema: Schema) {
@@ -137,35 +138,55 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       return true;
     }
 
-    // otherwise check to see if the user is attemptign to arrow out of the first text block....
+    // ...otherwise check to see if the user is attempting to arrow out of the footnote
   
-    // get first text block node 
+    // get first and last text block nodes (bail if we aren't in either)
     const firstTextBlock = firstNode(noteNode, node => node.isTextblock);
-    if (!firstTextBlock) {
+    const lastTextBlock = lastNode(noteNode, node => node.isTextblock);
+    if (!firstTextBlock && !lastTextBlock) {
       return false;
     }
 
-    // bail if we are not in the first text block node
-    const beginFirst = firstTextBlock.pos + 1;
-    const endFirst = beginFirst + firstTextBlock.node.nodeSize;
-    if (selection.anchor < beginFirst || selection.anchor > endFirst) {
-      return false;
+    // exiting from first text block w/ left or up arrow?
+    if (firstTextBlock) {
+      if (selectionIsWithin(selection, firstTextBlock)) {
+        switch (event.key) {
+          case 'ArrowLeft':
+            if (selection.anchor === (firstTextBlock.pos + 1)) {
+              selectFootnote(true);
+              return true;
+            }
+            break;
+          case 'ArrowUp': {
+            if (view.endOfTextblock("up")) {
+              selectFootnote(true);
+              return true;
+            }
+            break;
+          }
+        }
+      }
     }
 
-    // check for arrow gesture to exit
-    switch (event.key) {
-      case 'ArrowLeft':
-        if (selection.anchor === beginFirst) {
-          selectFootnote(true);
-          return true;
+    // exiting from last text block with right or down arrow?
+    if (lastTextBlock) {
+      if (selectionIsWithin(selection, lastTextBlock)) {
+        switch (event.key) {
+          case 'ArrowRight':
+            if (selection.anchor === (lastTextBlock.pos + lastTextBlock.node.nodeSize - 1)) {
+              selectFootnote(false);
+              return true;
+            }
+            break;
+          case 'ArrowDown': {
+            if (view.endOfTextblock("down")) {
+              selectFootnote(false);
+              return true;
+            }
+            break;
+          }
         }
-        break;
-      case 'ArrowUp': {
-        if (view.endOfTextblock("up")) {
-          selectFootnote(true);
-          return true;
-        }
-        break;
+
       }
     }
   

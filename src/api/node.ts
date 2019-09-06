@@ -42,8 +42,18 @@ export function firstNode(parent: NodeWithPos, predicate: (node: ProsemirrorNode
   return foundNode;
 }
 
-
-
+export function lastNode(parent: NodeWithPos, predicate: (node: ProsemirrorNode) => boolean) {
+  let last: NodeWithPos | undefined;
+  parent.node.descendants((node, pos) => {
+    if (predicate(node)) {
+      last = {
+        node,
+        pos: parent.pos + 1 + pos
+      };
+    }
+  });
+  return last;
+}
 
 export function nodeIsActive(state: EditorState, type: NodeType, attrs = {}) {
   const predicate = (n: ProsemirrorNode) => n.type === type;
