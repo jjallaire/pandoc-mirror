@@ -211,6 +211,10 @@ const extension: Extension = {
 // check box over that character. The check box then listens for change 
 // events and creates a transaction to toggle the character underneath it.
 function checkedListItemDecorations(schema: Schema) {
+  
+  const kChecked = '☒';
+  const kUnchecked = '☐';
+  
   return (state: EditorState) => {
 
     // decorations
@@ -222,20 +226,19 @@ function checkedListItemDecorations(schema: Schema) {
       const item = nodeWithPos.node;
       if (nodeWithPos.node.nodeSize >= 2) {
         const firstChar = item.textBetween(1, 2);
-        if (firstChar === '☐' || firstChar === '☒') {
-          const checked = firstChar === '☒';
+        if (firstChar === kUnchecked || firstChar === kChecked) {
           decorations.push(Decoration.widget(nodeWithPos.pos+2, 
             (view, getPos: () => number) => {
               const input = window.document.createElement("input");
               input.setAttribute('type', 'checkbox');
-              input.checked = checked;
+              input.checked = firstChar === kChecked;
               input.addEventListener("mousedown", (ev: Event) => {
                 ev.preventDefault(); // don't steal focus
               });
               input.addEventListener("change", (ev: Event) => {
                 const pos = getPos();
                 const tr = view.state.tr;
-                const char = input.checked ?  '☒' : '☐';
+                const char = input.checked ?  kChecked : kUnchecked;
                 tr.replaceRangeWith(pos, pos+1, schema.text(char));
                 view.dispatch(tr);
               });
