@@ -1,14 +1,16 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, NodeType, Schema, Slice } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
+import { EditorView, NodeView, DecorationSet, Decoration } from 'prosemirror-view';
 import { findParentNodeOfType } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
+import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
+import { findChildrenByType } from 'prosemirror-utils';
+
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -32,6 +34,8 @@ enum ListNumberDelim {
   OneParen = 'OneParen',
   TwoParens = 'TwoParens',
 }
+
+const plugin = new PluginKey('list_item');
 
 const extension: Extension = {
   nodes: [
@@ -159,6 +163,17 @@ const extension: Extension = {
     },
   ],
 
+  plugins: (schema: Schema) => {
+    return [
+      new Plugin({
+        key: plugin,
+        props: {
+          decorations: checkedListItemDecorations(schema)
+        },
+      }),
+    ];
+  },
+
   keymap: (schema: Schema) => {
     return {
       'Shift-Ctrl-8': wrapInList(schema.nodes.bullet_list),
@@ -189,6 +204,42 @@ const extension: Extension = {
     ];
   },
 };
+
+function checkedListItemDecorations(schema: Schema) {
+  return (state: EditorState) => {
+
+    // decorations
+    const decorations: Decoration[] = [];
+
+    // find all list items
+    const listItems = findChildrenByType(state.doc, schema.nodes.list_item);
+    listItems.forEach(nodeWithPos => {
+      const item = nodeWithPos.node;
+      if (nodeWithPos.node.nodeSize >= 2) {
+        const firstChar = item.textBetween(1, 2);
+        if (firstChar === '☐' || firstChar === '☒') {
+          const checked = firstChar === '☒';
+          decorations.push(Decoration.widget(nodeWithPos.pos+2, 
+            (view, getPos: () => number) => {
+              const input = window.document.createElement("input");
+              input.setAttribute('type', 'checkbox');
+              input.checked = checked;
+              input.addEventListener("change", (ev: Event) => {
+                const pos = getPos();
+                const tr = view.state.tr;
+                const char = checked ? '☐' : '☒' ;
+                tr.replaceRangeWith(pos, pos+1, schema.text(char));
+                view.dispatch(tr);
+              });
+              return input;
+            }));
+        }
+      }
+    });
+
+    return DecorationSet.create(state.doc, decorations);
+  };
+}
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {

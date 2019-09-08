@@ -56,6 +56,18 @@
   margin-bottom: 16px;
 }
 
+/* Task list handling */
+
+.ProseMirror li > p {
+  position: relative;
+}
+
+.ProseMirror li > p > input[type="checkbox"]:first-of-type {
+  position: absolute;
+  left: -3px;
+}
+
+
 /* Footnote handling */
 
 .ProseMirror .footnote {

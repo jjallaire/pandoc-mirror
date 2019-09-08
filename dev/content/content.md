@@ -1,5 +1,13 @@
 ### Heading {#myHeading}
 
+- [ ] an unchecked task list item
+- [x] Nulla facilisi. Donec nec facilisis est. Aenean porttitor volutpat mauris, a imperdiet libero molestie quis. Vivamus commodo purus id aliquet hendrerit. Aliquam ipsum ante, consectetur ut consectetur vitae, tempor sit amet justo. Aenean eget tempor quam. Integer eu metus facilisis, lacinia lectus vitae
+
+
+
+1. [ ] s
+2. [x] checked item
+
 "This" is **bold** text. 
 
 *italic* at the beginning of a line.
@@ -30,7 +38,9 @@ Next line after soft break.
 
 
 - Unordered
+
 - List
+
 - Here we go
 
 (i) Ordered
