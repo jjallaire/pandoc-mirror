@@ -205,6 +205,11 @@ const extension: Extension = {
   },
 };
 
+// Pandoc represents task lists by just inserting a '☒' or '☐' character at 
+// the beginning of the list item. Here we define a node decorator that looks
+// for list items w/ those characters at the beginning, then positions a 
+// check box over that character. The check box then listens for change 
+// events and creates a transaction to toggle the character underneath it.
 function checkedListItemDecorations(schema: Schema) {
   return (state: EditorState) => {
 
@@ -224,10 +229,13 @@ function checkedListItemDecorations(schema: Schema) {
               const input = window.document.createElement("input");
               input.setAttribute('type', 'checkbox');
               input.checked = checked;
+              input.addEventListener("mousedown", (ev: Event) => {
+                ev.preventDefault(); // don't steal focus
+              });
               input.addEventListener("change", (ev: Event) => {
                 const pos = getPos();
                 const tr = view.state.tr;
-                const char = checked ? '☐' : '☒' ;
+                const char = input.checked ?  '☒' : '☐';
                 tr.replaceRangeWith(pos, pos+1, schema.text(char));
                 view.dispatch(tr);
               });
