@@ -70,3 +70,23 @@ export interface PandocOutput {
   writeNote(note: ProsemirrorNode): void;
   writeInlines(parent: Fragment): void;
 }
+
+// collect the text from a collection of pandoc ast
+// elements (ignores marks, useful for ast elements
+// that support marks but whose prosemirror equivalent
+// does not, e.g. image alt text)
+export function collectText(c: PandocToken[]): string {
+  return c
+    .map(elem => {
+      if (elem.t === 'Str') {
+        return elem.c;
+      } else if (elem.t === 'Space') {
+        return ' ';
+      } else if (elem.c) {
+        return collectText(elem.c);
+      } else {
+        return '';
+      }
+    })
+    .join('');
+}
