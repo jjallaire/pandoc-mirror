@@ -3,8 +3,6 @@
 - [ ] an unchecked task list item
 - [x] Nulla facilisi. Donec nec facilisis est. Aenean porttitor volutpat mauris, a imperdiet libero molestie quis. Vivamus commodo purus id aliquet hendrerit. Aliquam ipsum ante, consectetur ut consectetur vitae, tempor sit amet justo. Aenean eget tempor quam. Integer eu metus facilisis, lacinia lectus vitae
 
-
-
 1. [ ] s
 2. [x] checked item
 

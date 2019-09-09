@@ -3,13 +3,16 @@ import { Node as ProsemirrorNode, NodeType, Schema, Slice } from 'prosemirror-mo
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView, NodeView, DecorationSet, Decoration } from 'prosemirror-view';
-import { findParentNodeOfType } from 'prosemirror-utils';
+import { findParentNodeOfType, findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 import { findChildrenByType } from 'prosemirror-utils';
+import { nodeDecoration } from 'api/decoration';
+
+// inputRule and insert command to insert checkmark. new list item w/ checkmark automagically?
 
 
 const LIST_ATTRIBS = 0;
@@ -43,7 +46,9 @@ const extension: Extension = {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
-        attrs: { tight: { default: false } },
+        attrs: { 
+          tight: { default: false } }
+        ,
         defining: true,
         parseDOM: [
           { tag: 'li', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
@@ -227,6 +232,7 @@ function checkedListItemDecorations(schema: Schema) {
       if (nodeWithPos.node.nodeSize >= 2) {
         const firstChar = item.textBetween(1, 2);
         if (firstChar === kUnchecked || firstChar === kChecked) {
+          // position a checkbox over the first character
           decorations.push(Decoration.widget(nodeWithPos.pos+2, 
             (view, getPos: () => number) => {
               const input = window.document.createElement("input");
@@ -244,6 +250,16 @@ function checkedListItemDecorations(schema: Schema) {
               });
               return input;
             }));
+          // mark the item as a task item
+          decorations.push(nodeDecoration(nodeWithPos, { class: 'task-item' }));
+          // mark the parent list w/ css class indicating it's a task list
+          const parentList = findParentNodeOfTypeClosestToPos(
+            state.doc.resolve(nodeWithPos.pos), 
+            schema.nodes.bullet_list
+          );
+          if (parentList) {
+            decorations.push(nodeDecoration(parentList, { class: 'task-list' }));
+          }
         }
       }
     });
