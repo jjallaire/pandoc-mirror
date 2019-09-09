@@ -9,6 +9,7 @@ import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -39,17 +40,36 @@ const extension: Extension = {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
-        attrs: { tight: { default: false } },
+        attrs: { 
+          tight: { default: false },
+          checked: { default: null }
+        },
         defining: true,
         parseDOM: [
-          { tag: 'li', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
+          { tag: 'li', 
+            getAttrs: (dom: Node | string) => { 
+              const el = dom as Element;
+              const attrs: any = {};
+              if (el.hasAttribute('data-tight')) {
+                attrs.tight = true;
+              }
+              if (el.hasAttribute('data-checked')) {
+                attrs.checked = el.getAttribute('data-checked') === 'true';
+              }
+              return attrs; 
+            },
+          }
         ],
         toDOM(node) {
+          const attrs: any = {};
           if (node.attrs.tight) {
-            return ['li', { 'data-tight': 'true' }, 0];
-          } else {
-            return ['li', 0];
+            attrs['data-tight'] = 'true';
           }
+          if (node.attrs.checked !== null) {
+            attrs['data-checked'] = node.attrs.checked ? 'true' : 'false';
+          }
+          return ['li', attrs, 0];
+          
         },
       },
       pandoc: {
@@ -269,6 +289,11 @@ class ListItemNodeView implements NodeView {
     if (node.attrs.tight) {
       this.dom.setAttribute('data-tight', 'true');
     }
+    let checked = false;
+    if (node.attrs.checked !== null) {
+      checked = node.attrs.checked;
+      this.dom.setAttribute('data-checked', checked ? 'true' : 'false');
+    }
 
     const container = window.document.createElement('div');
     container.classList.add('list-item-container');
@@ -277,7 +302,19 @@ class ListItemNodeView implements NodeView {
     const input = window.document.createElement('input');
     input.classList.add('list-item-checkbox');
     input.setAttribute('type', 'checkbox');
+    input.checked = checked;
     input.contentEditable = 'false';
+    input.addEventListener("mousedown", (ev: Event) => {
+      ev.preventDefault(); // don't steal focus
+    });
+    input.addEventListener("change", (ev: Event) => {
+      const tr = view.state.tr;
+      tr.setNodeMarkup(getPos(), node.type, {
+        ...node.attrs,
+        checked: (ev.target as HTMLInputElement).checked
+      });
+      view.dispatch(tr);
+    });
     container.appendChild(input);
 
     const content = window.document.createElement('div');
