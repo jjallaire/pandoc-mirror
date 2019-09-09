@@ -270,18 +270,20 @@ class ListItemNodeView implements NodeView {
       this.dom.setAttribute('data-tight', 'true');
     }
 
-    
+    const container = window.document.createElement('div');
+    container.classList.add('list-item-container');
+    this.dom.appendChild(container);
     
     const input = window.document.createElement('input');
     input.classList.add('list-item-checkbox');
     input.setAttribute('type', 'checkbox');
     input.contentEditable = 'false';
-    this.dom.appendChild(input);
+    container.appendChild(input);
 
     const content = window.document.createElement('div');
     content.classList.add('list-item-content');
     this.contentDOM = content;
-    this.dom.appendChild(content);
+    container.appendChild(content);
   }
 }
 

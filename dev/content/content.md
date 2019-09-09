@@ -37,8 +37,11 @@ Next line after soft break.
 - Here we go
 
 (i) Ordered
+
 (ii) List
+
 (ii) Example of
+
 
 This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank}*
 
