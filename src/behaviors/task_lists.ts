@@ -8,8 +8,13 @@ import { nodeDecoration } from "api/decoration";
 import { wrappingInputRule, InputRule } from "prosemirror-inputrules";
 
 
-// TODO: exiting task lists w/ enter (keeps going)
+// TODO: nested task lists?
+
 // TODO: insert command for task
+
+
+const kCheckedChar = '☒';
+const kUncheckedChar = '☐';
 
 const plugin = new PluginKey('task_lists');
 
@@ -36,20 +41,11 @@ const extension: Extension = {
 };
 
 
-enum TaskStatus {
-  None,
-  Checked,
-  Unchecked
-}
-
-const kCheckedChar = '☒';
-const kUncheckedChar = '☐';
-
-
 // Pandoc represents task lists by just inserting a '☒' or '☐' character at the beginning of the list item. 
 // Here we define a node decorator that looks for list items w/ those characters at the beginning, then positions
 // a check box over that character. The check box then listens for change events and creates a transaction to 
-// toggle the character underneath it.
+// toggle the character underneath it. This decorator also adds css classes to ul/ol/li tags to indicate that
+// they are task lists (no special styling is applied by default)
 function taskListItemDecorations(schema: Schema) {
   
   return (state: EditorState) => {
@@ -123,12 +119,28 @@ function taskListAppendTransaction(schema: Schema) {
       const oldListItem = findParentNodeOfType(schema.nodes.list_item)(oldState.selection);
       if (oldListItem && taskStatus(oldListItem) !== TaskStatus.None) {
 
-        // if the new state is at the beginning of a list item then insert a check box
+        // if the new state is at the beginning of a list item
         const newListItem = findParentNodeOfType(schema.nodes.list_item)(newState.selection);
         if (newListItem && (newListItem.pos + 2) === newState.selection.from) {
+
           const tr = newState.tr;
-          tr.insertText(kUncheckedChar + ' ');
+
+          // if the previous item is empty save for a check mark, then exit the list
+          if (oldListItem.node.textContent.length === 2) {
+
+            // remove the old and new list items
+            tr.delete(newListItem.pos, newListItem.pos + newListItem.node.nodeSize);
+            tr.delete(oldListItem.pos, oldListItem.pos + oldListItem.node.nodeSize);
+          
+          // othewise insert a check box
+          } else {
+            tr.insertText(kUncheckedChar + ' ');
+          }
+
+          // return transaction
           return tr;
+
+         
         }
       
       }
@@ -189,6 +201,13 @@ function insertCheckbox(tr: Transaction, match: string) {
 }
 
 // determine the task status of the passed node (checks the first character for [x] or [ ])
+
+enum TaskStatus {
+  None,
+  Checked,
+  Unchecked
+}
+
 function taskStatus(nodeWithPos: NodeWithPos) {
   const item = nodeWithPos.node;
   if (item.nodeSize >= 2) {
