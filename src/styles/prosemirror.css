@@ -42,18 +42,37 @@
 
 /* Impement support for data-tight on lists */
 
-.ProseMirror li[data-tight] > p {
+.ProseMirror li[data-tight] > div > p {
   margin-block-start: 0.1em;
 }
 
 /* Tweak bottom margins for list items */
 
-.ProseMirror li > p {
+.ProseMirror li > div.list-item-content > p {
   margin-bottom: 5px;
 }
 
-.ProseMirror li:last-of-type > p {
+.ProseMirror li:last-of-type > div.list-item-content > p {
   margin-bottom: 16px;
+}
+
+/* Checked list handling */
+
+
+.ProseMirror li {
+  display: flex;
+}
+
+.ProseMirror li > input.list-item-checkbox {
+  flex: 0 1 auto;
+}
+
+.ProseMirror li > div.list-item-content {
+  flex: 1 1 auto;
+}
+
+.ProseMirror li > .list-item-content > * {
+  display: initial;
 }
 
 /* Footnote handling */

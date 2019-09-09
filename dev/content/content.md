@@ -1,5 +1,8 @@
 ### Heading {#myHeading}
 
+- [x] Checkbox me
+- [ ] Don't checkbox me
+
 "This" is **bold** text. 
 
 *italic* at the beginning of a line.

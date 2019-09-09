@@ -1,9 +1,9 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { findParentNodeOfType } from 'prosemirror-utils';
+import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
+import { EditorView, Decoration, DecorationSet, NodeView } from 'prosemirror-view';
+import { findParentNodeOfType, findChildrenByType } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
@@ -159,6 +159,12 @@ const extension: Extension = {
     },
   ],
 
+  plugins: (schema: Schema) => {
+    return [
+      taskListPlugin(schema)
+    ];
+  },
+
   keymap: (schema: Schema) => {
     return {
       'Shift-Ctrl-8': wrapInList(schema.nodes.bullet_list),
@@ -189,6 +195,95 @@ const extension: Extension = {
     ];
   },
 };
+
+const plugin = new PluginKey('task_lists');
+
+function taskListPlugin(schema: Schema) {
+  return new Plugin({
+    key: plugin,
+    props: {
+      // decorations: taskListItemDecorations(schema),
+      nodeViews: {
+        list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+          return new ListItemNodeView(node, view, getPos);
+        },
+      }
+    }
+  });
+}
+
+function taskListItemDecorations(schema: Schema) {
+  
+  return (state: EditorState) => {
+
+    // decorations
+    const decorations: Decoration[] = [];
+
+    // find all list items
+    const listItems = findChildrenByType(state.doc, schema.nodes.list_item);
+    listItems.forEach(nodeWithPos => {
+        
+        // position a checkbox at the beginning of the paragraph
+        decorations.push(Decoration.widget(nodeWithPos.pos+2, 
+          (view, getPos: () => number) => {
+            const input = window.document.createElement("input");
+            input.setAttribute('type', 'checkbox');
+          
+            input.addEventListener("mousedown", (ev: Event) => {
+              ev.preventDefault(); // don't steal focus
+            });
+            input.addEventListener("change", (ev: Event) => {
+              const pos = getPos();
+              
+              /*
+              const tr = view.state.tr;
+              const char = input.checked ?  kCheckedChar : kUncheckedChar;
+              tr.replaceRangeWith(pos, pos+1, schema.text(char));
+              view.dispatch(tr);
+              */
+            });
+            return input;
+          }));
+       
+      
+    });
+
+    return DecorationSet.create(state.doc, decorations);
+  };
+}
+
+class ListItemNodeView implements NodeView {
+  public readonly dom: HTMLElement;
+  public readonly contentDOM: HTMLElement;
+
+  private readonly node: ProsemirrorNode;
+  private readonly view: EditorView;
+  private readonly getPos: () => number;
+
+  constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+    this.node = node;
+    this.view = view;
+    this.getPos = getPos;
+
+    this.dom = window.document.createElement('li');
+    if (node.attrs.tight) {
+      this.dom.setAttribute('data-tight', 'true');
+    }
+
+    
+    
+    const input = window.document.createElement('input');
+    input.classList.add('list-item-checkbox');
+    input.setAttribute('type', 'checkbox');
+    input.contentEditable = 'false';
+    this.dom.appendChild(input);
+
+    const content = window.document.createElement('div');
+    content.classList.add('list-item-content');
+    this.contentDOM = content;
+    this.dom.appendChild(content);
+  }
+}
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
