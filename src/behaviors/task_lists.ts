@@ -1,4 +1,4 @@
-import { Plugin, PluginKey, Transaction, EditorState } from "prosemirror-state";
+import { Plugin, PluginKey, Transaction, EditorState, TextSelection } from "prosemirror-state";
 import { Extension } from "api/extension";
 import { NodeWithPos, findParentNodeOfType, findChildrenByType, findParentNodeOfTypeClosestToPos } from "prosemirror-utils";
 import { Schema, Node as ProsemirrorNode } from "prosemirror-model";
@@ -9,6 +9,8 @@ import { wrappingInputRule, InputRule } from "prosemirror-inputrules";
 
 
 // TODO: nested task lists?
+
+// TODO: tweak selection after list input rule
 
 // TODO: insert command for task
 
@@ -140,7 +142,6 @@ function taskListAppendTransaction(schema: Schema) {
           // return transaction
           return tr;
 
-         
         }
       
       }
@@ -183,10 +184,16 @@ function taskListInputRule(schema: Schema) {
     // call the base handler to create the bullet list
     const tr = baseInputRule.handler(state, match, start, end);
     if (tr) {
-      
-
+    
       // insert the checkbox 
-      return insertCheckbox(tr, match[1]);
+      insertCheckbox(tr, match[1]);
+
+      // set selection
+
+
+      return tr;
+
+
     } else {
       return null;
     }
