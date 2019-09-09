@@ -17,6 +17,7 @@ import behaviorHistory from './behaviors/history';
 import behaviorSmarty from './behaviors/smarty';
 import behaviorAttrEdit from './behaviors/attr_edit';
 import behaviorTrailingP from './behaviors/trailing_p';
+import behaviorTaskLists from './behaviors/task_lists';
 import markCode from './marks/code';
 import markEm from './marks/em';
 import markLink from './marks/link';
@@ -34,7 +35,7 @@ import nodeSoftBreak from './nodes/soft_break';
 import nodeHeading from './nodes/heading';
 import nodeHorizontalRule from './nodes/horizontal_rule';
 import nodeImage from './nodes/image/image';
-import nodeLists from './nodes/lists/lists';
+import nodeLists from './nodes/lists';
 import nodeParagraph from './nodes/paragraph';
 import nodeText from './nodes/text';
 
@@ -51,6 +52,7 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
     behaviorHistory,
     behaviorAttrEdit,
     behaviorTrailingP,
+    behaviorTaskLists,
 
     // marks
     markEm,
