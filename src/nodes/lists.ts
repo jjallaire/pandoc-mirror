@@ -1,4 +1,4 @@
-import { wrappingInputRule } from 'prosemirror-inputrules';
+import { wrappingInputRule, InputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
@@ -205,6 +205,8 @@ const extension: Extension = {
         match => ({ order: +match[1] }),
         (match, node) => node.childCount + node.attrs.order === +match[1],
       ),
+      checkedListInputRule(schema),
+      checkedListItemInputRule(schema)
     ];
   },
 };
@@ -242,6 +244,8 @@ function checkedListItemAppendTransaction(schema: Schema) {
     // if this was a mutating transaction (as opposed to a selection-only transaction)
     if (transactions.some(transaction => transaction.docChanged)) {
       
+      // TODO: this is preventing us from deleting over checkboxes with the keyboard!!!!!
+
       // if the old state was a selection inside a checked list item
       const oldListItem = findParentNodeOfType(schema.nodes.list_item)(oldState.selection);
       if (oldListItem && listItemCheckedStatus(oldListItem) !== ListItemCheckedStatus.None) {
@@ -319,6 +323,58 @@ function checkedListItemDecorations(schema: Schema) {
     return DecorationSet.create(state.doc, decorations);
   };
 }
+
+
+
+function insertCheckbox(tr: Transaction, match: string) {
+ 
+  const checkText = match === 'x' ? kChecked : kUnchecked;
+  tr.insertText(checkText + ' ');
+  return tr;
+}
+
+function checkedListInputRule(schema: Schema) {
+
+  // regex to match checked list at the beginning of a line
+  const regex = /^\s*\[([ x])\]\s$/;
+
+  // we are going to steal the handler from the base bullet list wrapping input rule
+  const baseInputRule: any = wrappingInputRule(regex, schema.nodes.bullet_list);
+
+  return new InputRule(regex, (state: EditorState, match: string[], start: number, end: number) => {
+
+    // call the base handler to create the bullet list
+    const tr = baseInputRule.handler(state, match, start, end);
+    if (tr) {
+      
+
+      // insert the checkbox 
+      return insertCheckbox(tr, match[1]);
+    } else {
+      return null;
+    }
+  });
+}
+
+
+function checkedListItemInputRule(schema: Schema) {
+  return new InputRule(/\[([ x])\]\s$/, (state: EditorState, match: string[], start: number, end: number) => {
+
+    if (findParentNodeOfType(schema.nodes.list_item)(state.selection)) {
+
+      // delete entered text
+      const tr = state.tr;
+      tr.delete(start,end);
+
+      // insert checkbox
+      return insertCheckbox(tr, match[1]);
+
+    } else {
+      return null;
+    }
+  });
+}
+
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
