@@ -11,6 +11,7 @@ import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 import { findChildrenByType } from 'prosemirror-utils';
 import { nodeDecoration } from 'api/decoration';
+import { transactionsHaveChange } from 'api/transaction';
 
 
 const LIST_ATTRIBS = 0;
@@ -239,12 +240,19 @@ function listItemCheckedStatus(nodeWithPos: NodeWithPos) {
 
 function checkedListItemAppendTransaction(schema: Schema) {
 
+  const checkboxRegex = new RegExp(`[${kChecked}${kUnchecked}]`);
+  const checkboxChange = (node: ProsemirrorNode) => node.isText && checkboxRegex.test(node.textContent);
+
   return (transactions: Transaction[], oldState: EditorState, newState: EditorState) => {
 
     // if this was a mutating transaction (as opposed to a selection-only transaction)
     if (transactions.some(transaction => transaction.docChanged)) {
       
-      // TODO: this is preventing us from deleting over checkboxes with the keyboard!!!!!
+      // mask out removal of checkboxes (if we don't do this then removing the checkbox at the
+      // beginning of a line isn't possible)
+      if (transactionsHaveChange(transactions, oldState, newState, checkboxChange, "removed")) {
+        return null;
+      }
 
       // if the old state was a selection inside a checked list item
       const oldListItem = findParentNodeOfType(schema.nodes.list_item)(oldState.selection);
