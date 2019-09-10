@@ -1,5 +1,5 @@
 import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
-import { PandocTokenReader, PandocToken, PandocAst } from 'api/pandoc';
+import { PandocTokenReader, PandocToken, PandocAst, mapTokens } from 'api/pandoc';
 import { uuidv4 } from 'api/util';
 
 export function pandocToProsemirror(ast: PandocAst, schema: Schema, readers: readonly PandocTokenReader[]) {
@@ -113,12 +113,19 @@ class Parser {
           const attrs = getAttrs(tok);
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
-            const childAttrs: { tight?: boolean } = {};
+            const childAttrs: { tight?: boolean, checked: null | boolean } = { checked: null };
             if (tight) {
               childAttrs.tight = true;
             }
+
+            // look for checkbox in first character of child tokens
+            // if we see it, remove it and set childAttrs.checked as appropriate
+            const childWithChecked = tokensWithChecked(child);
+            childAttrs.checked = childWithChecked.checked;
+
+            // process children
             state.openNode(listItemNodeType, childAttrs);
-            this.parseTokens(state, child);
+            this.parseTokens(state, childWithChecked.tokens);
             state.closeNode();
           });
           state.closeNode();
@@ -152,6 +159,61 @@ class Parser {
     return handlers;
   }
 }
+
+
+const kCheckedChar = '☒';
+const kUncheckedChar = '☐';
+
+function tokensWithChecked(tokens: PandocToken[]) : { checked: null | boolean, tokens: PandocToken[] } {
+    
+  // will set this flag based on inspecting the first Str token
+  let checked: null | boolean | undefined;
+  let lastWasChecked = false;
+  
+  // map tokens
+  const mappedTokens = mapTokens(tokens, tok => {
+    
+    // if the last token was checked then strip the next space
+    if (tok.t === "Space" && lastWasChecked) {
+      lastWasChecked = false;
+      return {
+        t: "Str",
+        c: ""
+      };
+    }
+
+    // derive 'checked' from first chraracter of first Str token encountered
+    // if we find checked or unchecked then set the flag and strip off 
+    // the first 2 chraracters (the check and the space after it)
+    else if (tok.t === "Str" && (checked === undefined)) {
+      let text = tok.c as string;
+      if (text.charAt(0) === kCheckedChar) {
+        checked = true;
+        lastWasChecked = true;
+        text = text.slice(1);
+      } else  if (text.charAt(0) === kUncheckedChar) {
+        checked = false;
+        lastWasChecked = true;
+        text = text.slice(1);
+      } else {
+        checked = null;
+      }
+      return {
+        t: "Str",
+        c: text
+      };
+    } else {
+      return tok;
+    }
+  });
+  
+  // return
+  return {
+    checked: checked !== undefined ? checked : null,
+    tokens: mappedTokens
+  };
+}
+
 
 class ParserState {
   private readonly schema: Schema;

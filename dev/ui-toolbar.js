@@ -75,6 +75,8 @@ const initToolbar = function(toolbar, editor) {
   toolbar.add(kBreak)
   toolbar.add(button('bullet_list', 'fa-list-ul'))
   toolbar.add(button('ordered_list', 'fa-list-ol'))
+  toolbar.add(button('checked_list_item', 'fa-check-circle-o'))
+  toolbar.add(kBreak);
   toolbar.add(button('blockquote', 'fa-quote-right')),
   toolbar.add(kBreak)
   toolbar.add(button('image', 'fa-image'))

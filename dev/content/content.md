@@ -1,5 +1,17 @@
 ### Heading {#myHeading}
 
+- [x] Checkbox me
+- Another item
+- [ ] Don't checkbox me
+
+
+Here we go again:
+
+- Not a tight
+
+- List today
+
+
 "This" is **bold** text. 
 
 *italic* at the beginning of a line.
@@ -34,8 +46,11 @@ Next line after soft break.
 - Here we go
 
 (i) Ordered
+
 (ii) List
+
 (ii) Example of
+
 
 This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank}*
 

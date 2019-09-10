@@ -1,14 +1,24 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, NodeType, Schema, Fragment } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
-import { EditorState, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
+import { EditorView, NodeView } from 'prosemirror-view';
 import { findParentNodeOfType } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
+import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
+
+import { 
+  ListItemNodeView, 
+  fragmentWithCheck, 
+  checkedListItemDecorations, 
+  checkedListItemInputRule, 
+  checkedListInputRule, 
+  CheckedListItemCommand,
+  CheckedListItemToggleCommand
+} from './lists-checked';
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -33,32 +43,63 @@ enum ListNumberDelim {
   TwoParens = 'TwoParens',
 }
 
+const plugin = new PluginKey('list');
+
 const extension: Extension = {
   nodes: [
     {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
-        attrs: { tight: { default: false } },
+        attrs: { 
+          tight: { default: false },
+          checked: { default: null }
+        },
         defining: true,
         parseDOM: [
-          { tag: 'li', getAttrs: (dom: Node | string) => ({ tight: (dom as Element).hasAttribute('data-tight') }) },
+          { tag: 'li', 
+            getAttrs: (dom: Node | string) => { 
+              const el = dom as Element;
+              const attrs: any = {};
+              if (el.hasAttribute('data-tight')) {
+                attrs.tight = true;
+              }
+              if (el.hasAttribute('data-checked')) {
+                attrs.checked = el.getAttribute('data-checked') === 'true';
+              }
+              return attrs; 
+            },
+          }
         ],
         toDOM(node) {
+          const attrs: any = {};
           if (node.attrs.tight) {
-            return ['li', { 'data-tight': 'true' }, 0];
-          } else {
-            return ['li', 0];
+            attrs['data-tight'] = 'true';
           }
+          if (node.attrs.checked !== null) {
+            attrs['data-checked'] = node.attrs.checked ? 'true' : 'false';
+          }
+          return ['li', attrs, 0];
+          
         },
       },
       pandoc: {
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
+
           const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
+          const checked = node.attrs.checked;
+
           output.writeList(() => {
-            node.forEach((itemNode: ProsemirrorNode) => {
+            node.forEach((itemNode: ProsemirrorNode, _offset, index) => {              
               output.writeToken(itemBlockType, () => {
-                output.writeInlines(itemNode.content);
+                // for first item block, prepend check mark if we have one
+                if (checked !== null && index === 0) {
+                  output.writeInlines(
+                    fragmentWithCheck(node.type.schema, itemNode.content, checked)
+                  );
+                } else {
+                  output.writeInlines(itemNode.content);
+                }
               });
             });
           });
@@ -159,6 +200,22 @@ const extension: Extension = {
     },
   ],
 
+  plugins: (schema: Schema) => {
+    return [
+      new Plugin({
+        key: plugin,
+        props: {
+          decorations: checkedListItemDecorations(schema),
+          nodeViews: {
+            list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+              return new ListItemNodeView(node, view, getPos);
+            },
+          }
+        }
+      })
+    ];
+  },
+
   keymap: (schema: Schema) => {
     return {
       'Shift-Ctrl-8': wrapInList(schema.nodes.bullet_list),
@@ -174,6 +231,8 @@ const extension: Extension = {
       new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
       new OrderedListEditCommand(schema, ui),
+      new CheckedListItemCommand(schema.nodes.list_item),
+      new CheckedListItemToggleCommand(schema.nodes.list_item)
     ];
   },
 
@@ -186,9 +245,12 @@ const extension: Extension = {
         match => ({ order: +match[1] }),
         (match, node) => node.childCount + node.attrs.order === +match[1],
       ),
+      checkedListInputRule(schema),
+      checkedListItemInputRule(schema),
     ];
   },
 };
+
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {

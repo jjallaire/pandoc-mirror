@@ -40,20 +40,44 @@
   font-variant: small-caps;
 }
 
-/* Impement support for data-tight on lists */
+/* List item (use custom node view to accomodate checkbox) */
 
-.ProseMirror li[data-tight] > p {
-  margin-block-start: 0.1em;
+.ProseMirror li > .list-item-container {
+  display: flex;
+  margin-block-start: 0.9em;
+}
+
+.ProseMirror li .list-item-checkbox {
+  flex: 0 1 auto;
+  margin-right: 7px;
+}
+
+.ProseMirror li .list-item-content {
+  flex: 1 1 auto;
+}
+
+.ProseMirror li .list-item-content > * {
+  display: initial;
 }
 
 /* Tweak bottom margins for list items */
 
-.ProseMirror li > p {
-  margin-bottom: 5px;
+.ProseMirror li .list-item-content p {
+  margin-bottom: 7px;
 }
 
-.ProseMirror li:last-of-type > p {
+.ProseMirror li:last-of-type .list-item-content p {
   margin-bottom: 16px;
+}
+
+/* Impement support for data-tight on lists */
+
+.ProseMirror li > .list-item-container {
+  margin-block-start: 1em;
+}
+
+.ProseMirror li[data-tight] .list-item-container {
+  margin-block-start: 0.2em;
 }
 
 /* Footnote handling */
