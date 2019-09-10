@@ -10,11 +10,8 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 tight for all lists types
-consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
-
 definition lists
 
-support for ListNumberStyle.Example (@ syntax)
 support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
 
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
