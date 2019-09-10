@@ -16,10 +16,9 @@ import {
   checkedListItemDecorations, 
   checkedListItemInputRule, 
   checkedListInputRule, 
-  ToggleCheckedListItemCommand
+  CheckedListItemCommand,
+  CheckedListItemToggleCommand
 } from './lists-checked';
-
-// keyboard navigation to checkbox
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -232,7 +231,8 @@ const extension: Extension = {
       new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
       new OrderedListEditCommand(schema, ui),
-      new ToggleCheckedListItemCommand(schema.nodes.list_item)
+      new CheckedListItemCommand(schema.nodes.list_item),
+      new CheckedListItemToggleCommand(schema.nodes.list_item)
     ];
   },
 

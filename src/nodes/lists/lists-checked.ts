@@ -102,7 +102,7 @@ export function checkedListItemDecorations(schema: Schema) {
 }
 
 // command to toggle checked list items
-export function toggleCheckedListItemCommandFn(itemType: NodeType) {
+export function checkedListItemCommandFn(itemType: NodeType) {
   return (state: EditorState, dispatch?: ((tr: Transaction) => void) | undefined) => {
 
     const itemNode = findParentNodeOfType(itemType)(state.selection);
@@ -125,10 +125,31 @@ export function toggleCheckedListItemCommandFn(itemType: NodeType) {
   };
 }
 
-export class ToggleCheckedListItemCommand extends Command {
+export function checkedListItemToggleCommandFn(itemType: NodeType) {
+
+  return (state: EditorState, dispatch?: ((tr: Transaction) => void) | undefined) => {
+
+    const itemNode = findParentNodeOfType(itemType)(state.selection);
+    if (!itemNode || itemNode.node.attrs.checked === null) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr;
+      setItemChecked(tr, itemNode, !itemNode.node.attrs.checked);
+      dispatch(tr);
+    }
+
+    return true;
+
+  };
+
+}
+
+export class CheckedListItemCommand extends Command {
   
   constructor(itemType: NodeType) {
-    super('checked_list_item', null, toggleCheckedListItemCommandFn(itemType));
+    super('checked_list_item', ['Shift-Ctrl-1'], checkedListItemCommandFn(itemType));
   }
 
   public isActive(state: EditorState): boolean {
@@ -138,6 +159,13 @@ export class ToggleCheckedListItemCommand extends Command {
     } else {
       return false;
     }
+  }
+}
+
+export class CheckedListItemToggleCommand extends Command {
+
+  constructor(itemType: NodeType) {
+    super('checked_list_item_toggle', ['Shift-Ctrl-2'], checkedListItemToggleCommandFn(itemType));
   }
 
 }
