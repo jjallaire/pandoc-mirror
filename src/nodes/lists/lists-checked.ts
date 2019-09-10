@@ -43,6 +43,9 @@ export class ListItemNodeView implements NodeView {
       input.setAttribute('type', 'checkbox');
       input.checked = node.attrs.checked;
       input.contentEditable = 'false';
+      if (!view.props.editable) {
+        input.disabled = true;
+      }
       input.addEventListener("mousedown", (ev: Event) => {
         ev.preventDefault(); // don't steal focus
       });
@@ -53,6 +56,7 @@ export class ListItemNodeView implements NodeView {
           checked: (ev.target as HTMLInputElement).checked
         });
         view.dispatch(tr);
+        
       });
       container.appendChild(input);
 

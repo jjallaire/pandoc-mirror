@@ -14,7 +14,6 @@ import { ListItemNodeView, fragmentWithCheck, checkedListItemDecorations } from 
 
 
 // keyboard navigation to checkbox
-// checkbox should only allow allow click if the view is editable (see tiptap)
 // consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
 
 
