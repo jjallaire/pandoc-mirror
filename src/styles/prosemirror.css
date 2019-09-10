@@ -44,7 +44,6 @@
 
 .ProseMirror li > .list-item-container {
   display: flex;
-  margin-block-start: 0.9em;
 }
 
 .ProseMirror li .list-item-checkbox {
@@ -56,27 +55,18 @@
   flex: 1 1 auto;
 }
 
-.ProseMirror li .list-item-content > * {
-  display: initial;
-}
-
 /* Tweak bottom margins for list items */
 
 .ProseMirror li .list-item-content p {
-  margin-bottom: 7px;
+  margin-block-start: 1em;
+  margin-bottom: 3px;
 }
 
 .ProseMirror li:last-of-type .list-item-content p {
   margin-bottom: 16px;
 }
 
-/* Impement support for data-tight on lists */
-
-.ProseMirror li > .list-item-container {
-  margin-block-start: 1em;
-}
-
-.ProseMirror li[data-tight] .list-item-container {
+.ProseMirror li[data-tight] .list-item-content p {
   margin-block-start: 0.2em;
 }
 
