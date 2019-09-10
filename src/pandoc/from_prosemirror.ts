@@ -175,10 +175,12 @@ class PandocWriter implements PandocOutput {
     });
   }
 
+  public writeBlock(block: ProsemirrorNode) {
+    this.nodeWriters[block.type.name](this, block);
+  }
+
   public writeBlocks(parent: ProsemirrorNode) {
-    parent.forEach((node: ProsemirrorNode, _offset: number, index: number) => {
-      this.nodeWriters[node.type.name](this, node);
-    });
+    parent.forEach(this.writeBlock.bind(this));
   }
 
   public writeInlines(parent: Fragment) {

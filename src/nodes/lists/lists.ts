@@ -89,21 +89,26 @@ const extension: Extension = {
       pandoc: {
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
 
-          const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
+          const paraItemBlockType = node.attrs.tight ? 'Plain' : 'Para';
           const checked = node.attrs.checked;
 
           output.writeList(() => {
-            node.forEach((itemNode: ProsemirrorNode, _offset, index) => {              
-              output.writeToken(itemBlockType, () => {
-                // for first item block, prepend check mark if we have one
-                if (checked !== null && index === 0) {
-                  output.writeInlines(
-                    fragmentWithCheck(node.type.schema, itemNode.content, checked)
-                  );
-                } else {
-                  output.writeInlines(itemNode.content);
-                }
-              });
+            node.forEach((itemNode: ProsemirrorNode, _offset, index) => {    
+
+              if (itemNode.type === node.type.schema.nodes.paragraph) {
+                output.writeToken(paraItemBlockType, () => {
+                  // for first item block, prepend check mark if we have one
+                  if (checked !== null && index === 0) {
+                    output.writeInlines(
+                      fragmentWithCheck(node.type.schema, itemNode.content, checked)
+                    );
+                  } else {
+                    output.writeInlines(itemNode.content);
+                  }
+                });
+              } else {
+                output.writeBlock(itemNode);
+              }
             });
           });
         },

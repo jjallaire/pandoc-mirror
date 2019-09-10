@@ -66,6 +66,7 @@ export interface PandocOutput {
   writeList(content: () => void): void;
   writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]): void;
   writeText(text: string | null): void;
+  writeBlock(block: ProsemirrorNode): void;
   writeBlocks(parent: ProsemirrorNode): void;
   writeNote(note: ProsemirrorNode): void;
   writeInlines(parent: Fragment): void;
