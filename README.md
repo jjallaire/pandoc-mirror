@@ -19,8 +19,6 @@ support for ListDelimStyle (currently HTML output from pandoc doesn't respect th
 
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 
-todo list: https://tiptap.scrumpy.io/todo-list
-
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
 embedeed codemirror editor
