@@ -2,7 +2,7 @@ import { wrappingInputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, NodeType, Schema, Fragment } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
-import { EditorView, NodeView } from 'prosemirror-view';
+import { EditorView } from 'prosemirror-view';
 import { findParentNodeOfType } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
@@ -20,6 +20,8 @@ import {
   CheckedListItemToggleCommand
 } from './lists-checked';
 
+import { exampleListsAppendTransaction } from './lists-example';
+
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
 
@@ -27,16 +29,17 @@ const LIST_ATTRIB_ORDER = 0;
 const LIST_ATTRIB_NUMBER_STYLE = 1;
 const LIST_ATTRIB_NUMBER_DELIM = 2;
 
-enum ListNumberStyle {
+export enum ListNumberStyle {
   DefaultStyle = 'DefaultStyle',
   Decimal = 'Decimal',
   LowerRoman = 'LowerRoman',
   UpperRoman = 'UpperRoman',
   LowerAlpha = 'LowerAlpha',
   UpperAlpha = 'UpperAlpha',
+  Example = 'Example'
 }
 
-enum ListNumberDelim {
+export enum ListNumberDelim {
   DefaultDelim = 'DefaultDelim',
   Period = 'Period',
   OneParen = 'OneParen',
@@ -150,8 +153,11 @@ const extension: Extension = {
               if (!order) {
                 order = 1;
               }
+             
+              const numberStyle = el.getAttribute('data-example') 
+                ? ListNumberStyle.Example 
+                : typeToNumberStyle(el.getAttribute('type'));
 
-              const numberStyle = typeToNumberStyle(el.getAttribute('type'));
               return { order, numberStyle };
             },
           },
@@ -164,6 +170,9 @@ const extension: Extension = {
           const type = numberStyleToType(node.attrs.number_style);
           if (type) {
             attrs.type = type;
+          }
+          if (attrs.number_style === ListNumberStyle.Example) {
+            attrs['data-example'] = '1';
           }
           return ['ol', attrs, 0];
         },
@@ -211,7 +220,8 @@ const extension: Extension = {
               return new ListItemNodeView(node, view, getPos);
             },
           }
-        }
+        },
+        appendTransaction: exampleListsAppendTransaction(schema)
       })
     ];
   },
@@ -317,6 +327,7 @@ function numberStyleToType(style: ListNumberStyle): string | null {
   switch (style) {
     case ListNumberStyle.DefaultStyle:
     case ListNumberStyle.Decimal:
+    case ListNumberStyle.Example:
       return 'l';
     case ListNumberStyle.LowerAlpha:
       return 'a';
