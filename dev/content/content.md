@@ -17,7 +17,9 @@ Some text here
 
 
 - [x] Checkbox me
+
 - Another item
+
 - [ ] Don't checkbox me
 
 

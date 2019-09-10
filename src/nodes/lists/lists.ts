@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode, NodeType, Schema, Fragment } from 'prosemirror
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { findParentNodeOfType } from 'prosemirror-utils';
+import { findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
@@ -248,6 +248,7 @@ const extension: Extension = {
       new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
       new OrderedListEditCommand(schema, ui),
+      new TightListCommand(schema),
       new CheckedListItemCommand(schema.nodes.list_item),
       new CheckedListItemToggleCommand(schema.nodes.list_item)
     ];
@@ -269,10 +270,52 @@ const extension: Extension = {
 };
 
 
+
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
     super(name, null, listType, {}, toggleList(listType, listItemType));
   }
+}
+
+class TightListCommand extends Command {
+  
+  constructor(schema: Schema) {
+    super(
+      'tight_list',
+      ['Shift-Ctrl-0'],
+      (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
+        
+        const parentList = findParentNodeOfType([schema.nodes.bullet_list, schema.nodes.ordered_list])(state.selection);
+        if (!parentList) {
+          return false;
+        }
+
+        if (dispatch) {
+          const tr = state.tr;
+          parentList.node.forEach((node, offset) => {
+            tr.setNodeMarkup(parentList.pos + 1 + offset, schema.nodes.list_item, {
+              ...node.attrs,
+              tight: !node.attrs.tight
+            }); 
+          });
+
+          dispatch(tr);
+        }
+
+        return true;
+      },
+    );
+  }
+
+  public isActive(state: EditorState): boolean {
+    if (this.isEnabled(state)) {
+      const itemNode = findParentNodeOfType(state.schema.nodes.list_item)(state.selection) as NodeWithPos;
+      return itemNode.node.attrs.tight;
+    } else {
+      return false;
+    }
+  }
+
 }
 
 class OrderedListEditCommand extends Command {
@@ -280,7 +323,7 @@ class OrderedListEditCommand extends Command {
     super(
       'ordered_list_edit',
       null,
-      (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
+      (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
         // see if a parent node is an ordered list
         let node: ProsemirrorNode | null = null;
         let pos: number = 0;
