@@ -1,6 +1,7 @@
 ### Heading {#myHeading}
 
 - [x] Checkbox me
+- Another item
 - [ ] Don't checkbox me
 
 

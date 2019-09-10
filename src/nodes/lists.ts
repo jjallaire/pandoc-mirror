@@ -2,22 +2,19 @@ import { wrappingInputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, NodeType, Schema, Fragment } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
-import { EditorView, Decoration, DecorationSet, NodeView } from 'prosemirror-view';
-import { findParentNodeOfType, findChildrenByType } from 'prosemirror-utils';
+import { EditorView, NodeView } from 'prosemirror-view';
+import { findParentNodeOfType } from 'prosemirror-utils';
 
 import { toggleList, NodeCommand, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
-import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
+import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
-// inline todo below
 // move list pandoc import impl into lists.ts
 // split into multiple source files
 // keyboard navigation to checkbox
 // decorations for li and ul/ol when dealing with checked
-// confirmed that mixed task lists not possible (pandoc divides into multiple lists)
-// checkbox should allow allow click if the view is editable
+// checkbox should only allow allow click if the view is editable (see tiptap)
 // consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
 
 
