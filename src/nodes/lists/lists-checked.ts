@@ -1,10 +1,11 @@
 
-import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema, Fragment, NodeType } from 'prosemirror-model';
 import { NodeView, EditorView, Decoration, DecorationSet } from "prosemirror-view";
 import { EditorState, Transaction } from 'prosemirror-state';
-import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
+import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos, ContentNodeWithPos } from 'prosemirror-utils';
 import { nodeDecoration } from 'api/decoration';
 import { InputRule, wrappingInputRule } from 'prosemirror-inputrules';
+import { Command } from 'api/command';
 
 const kItemChecked = '☒';
 const kItemUnchecked = '☐';
@@ -100,6 +101,47 @@ export function checkedListItemDecorations(schema: Schema) {
   };
 }
 
+// command to toggle checked list items
+export function toggleCheckedListItemCommandFn(itemType: NodeType) {
+  return (state: EditorState, dispatch?: ((tr: Transaction) => void) | undefined) => {
+
+    const itemNode = findParentNodeOfType(itemType)(state.selection);
+    if (!itemNode) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr;
+      if (itemNode.node.attrs.checked !== null) {
+        setItemChecked(tr, itemNode, null);
+      } else {
+        setItemChecked(tr, itemNode, false);
+      }
+
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
+
+export class ToggleCheckedListItemCommand extends Command {
+  
+  constructor(itemType: NodeType) {
+    super('checked_list_item', null, toggleCheckedListItemCommandFn(itemType));
+  }
+
+  public isActive(state: EditorState): boolean {
+    if (this.isEnabled(state)) {
+      const itemNode = findParentNodeOfType(state.schema.nodes.list_item)(state.selection) as NodeWithPos;
+      return itemNode.node.attrs.checked !== null;
+    } else {
+      return false;
+    }
+  }
+
+}
+
 // allow users to type [x] or [ ] to define a checked list item
 export function checkedListItemInputRule(schema: Schema) {
   return new InputRule(/\[([ x])\]\s$/, (state: EditorState, match: string[], start: number, end: number) => {
@@ -156,10 +198,10 @@ export function checkedListInputRule(schema: Schema) {
 }
 
 
-function setItemChecked(tr: Transaction, itemNode: NodeWithPos, check: string) {
+function setItemChecked(tr: Transaction, itemNode: NodeWithPos, check: null | boolean | string) {
   tr.setNodeMarkup(itemNode.pos, itemNode.node.type, {
     ...itemNode.node.attrs,
-    checked: check === 'x' 
+    checked: check === null ? null : typeof check === "string" ? check === 'x' : check
   });
 }
 

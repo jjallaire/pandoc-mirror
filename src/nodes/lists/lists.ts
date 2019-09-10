@@ -10,13 +10,16 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
-import { ListItemNodeView, fragmentWithCheck, checkedListItemDecorations, checkedListItemInputRule, checkedListInputRule } from './lists-checked';
+import { 
+  ListItemNodeView, 
+  fragmentWithCheck, 
+  checkedListItemDecorations, 
+  checkedListItemInputRule, 
+  checkedListInputRule, 
+  ToggleCheckedListItemCommand
+} from './lists-checked';
 
-// input filters
-// insert command
 // keyboard navigation to checkbox
-// consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
-
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -229,6 +232,7 @@ const extension: Extension = {
       new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
       new OrderedListEditCommand(schema, ui),
+      new ToggleCheckedListItemCommand(schema.nodes.list_item)
     ];
   },
 
