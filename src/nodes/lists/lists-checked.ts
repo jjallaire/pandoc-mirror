@@ -1,9 +1,10 @@
 
 import { Node as ProsemirrorNode, Schema, Fragment } from 'prosemirror-model';
 import { NodeView, EditorView, Decoration, DecorationSet } from "prosemirror-view";
-import { EditorState } from 'prosemirror-state';
-import { findChildrenByType, findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
+import { EditorState, Transaction } from 'prosemirror-state';
+import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
 import { nodeDecoration } from 'api/decoration';
+import { InputRule, wrappingInputRule } from 'prosemirror-inputrules';
 
 const kItemChecked = '☒';
 const kItemUnchecked = '☐';
@@ -43,9 +44,7 @@ export class ListItemNodeView implements NodeView {
       input.setAttribute('type', 'checkbox');
       input.checked = node.attrs.checked;
       input.contentEditable = 'false';
-      if (!view.props.editable) {
-        input.disabled = true;
-      }
+      input.disabled = !(view as any).editable;
       input.addEventListener("mousedown", (ev: Event) => {
         ev.preventDefault(); // don't steal focus
       });
@@ -99,6 +98,69 @@ export function checkedListItemDecorations(schema: Schema) {
 
     return DecorationSet.create(state.doc, decorations);
   };
+}
+
+// allow users to type [x] or [ ] to define a checked list item
+export function checkedListItemInputRule(schema: Schema) {
+  return new InputRule(/\[([ x])\]\s$/, (state: EditorState, match: string[], start: number, end: number) => {
+
+    const itemNode = findParentNodeOfType(schema.nodes.list_item)(state.selection);
+    if (itemNode) {
+
+      // create transaction
+      const tr = state.tr;
+
+      // set checked
+      setItemChecked(tr, itemNode, match[1]);
+
+      // delete entered text
+      tr.delete(start,end);
+
+      // return transaction
+      return tr;
+      
+    } else {
+      return null;
+    }
+  });
+}
+
+
+// allow users to begin a new checked list by typing [x] or [ ] at the beginning of a line
+export function checkedListInputRule(schema: Schema) {
+
+  // regex to match checked list at the beginning of a line
+  const regex = /^\s*\[([ x])\]\s$/;
+
+  // we are going to steal the handler from the base bullet list wrapping input rule
+  const baseInputRule: any = wrappingInputRule(regex, schema.nodes.bullet_list);
+
+  return new InputRule(regex, (state: EditorState, match: string[], start: number, end: number) => {
+
+    // call the base handler to create the bullet list
+    const tr = baseInputRule.handler(state, match, start, end);
+    if (tr) {
+    
+      // set the checkbox
+      const itemNode = findParentNodeOfType(schema.nodes.list_item)(tr.selection); 
+      if (itemNode) {
+        setItemChecked(tr, itemNode, match[1]);
+      }
+
+      return tr;
+
+    } else {
+      return null;
+    }
+  });
+}
+
+
+function setItemChecked(tr: Transaction, itemNode: NodeWithPos, check: string) {
+  tr.setNodeMarkup(itemNode.pos, itemNode.node.type, {
+    ...itemNode.node.attrs,
+    checked: check === 'x' 
+  });
 }
 
 
