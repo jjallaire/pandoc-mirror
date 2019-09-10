@@ -62,6 +62,10 @@
   margin-bottom: 3px;
 }
 
+.ProseMirror li:first-of-type .list-item-content p {
+  margin-top: 0;
+}
+
 .ProseMirror li:last-of-type .list-item-content p {
   margin-bottom: 16px;
 }
