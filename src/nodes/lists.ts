@@ -1,5 +1,5 @@
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, NodeType, Schema, Fragment } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem, wrapInList } from 'prosemirror-schema-list';
 import { EditorState, Transaction, Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView, Decoration, DecorationSet, NodeView } from 'prosemirror-view';
@@ -10,6 +10,16 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListEditorFn, OrderedListProps, OrderedListEditResult } from 'api/ui';
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
+
+// inline todo below
+// move list pandoc import impl into lists.ts
+// split into multiple source files
+// keyboard navigation to checkbox
+// decorations for li and ul/ol when dealing with checked
+// confirmed that mixed task lists not possible (pandoc divides into multiple lists)
+// checkbox should allow allow click if the view is editable
+// consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
+
 
 const LIST_ATTRIBS = 0;
 const LIST_CHILDREN = 1;
@@ -33,6 +43,9 @@ enum ListNumberDelim {
   OneParen = 'OneParen',
   TwoParens = 'TwoParens',
 }
+
+const kCheckedChar = '☒';
+const kUncheckedChar = '☐';
 
 const extension: Extension = {
   nodes: [
@@ -74,11 +87,25 @@ const extension: Extension = {
       },
       pandoc: {
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
+
           const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
+
+          const checked = node.attrs.checked;
+
           output.writeList(() => {
-            node.forEach((itemNode: ProsemirrorNode) => {
+            node.forEach((itemNode: ProsemirrorNode, _offset, index) => {              
               output.writeToken(itemBlockType, () => {
-                output.writeInlines(itemNode.content);
+                
+                // add check box to fragment if necessary 
+                let fragment = itemNode.content;
+                if (checked !== null && index === 0) {
+                  const checkedText = node.type.schema.text(
+                    (checked ? kCheckedChar : kUncheckedChar) + ' '
+                  );
+                  fragment = Fragment.from(checkedText).append(fragment);
+                }
+
+                output.writeInlines(fragment);
               });
             });
           });
@@ -222,7 +249,6 @@ function taskListPlugin(schema: Schema) {
   return new Plugin({
     key: plugin,
     props: {
-      // decorations: taskListItemDecorations(schema),
       nodeViews: {
         list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
           return new ListItemNodeView(node, view, getPos);
@@ -232,45 +258,6 @@ function taskListPlugin(schema: Schema) {
   });
 }
 
-function taskListItemDecorations(schema: Schema) {
-  
-  return (state: EditorState) => {
-
-    // decorations
-    const decorations: Decoration[] = [];
-
-    // find all list items
-    const listItems = findChildrenByType(state.doc, schema.nodes.list_item);
-    listItems.forEach(nodeWithPos => {
-        
-        // position a checkbox at the beginning of the paragraph
-        decorations.push(Decoration.widget(nodeWithPos.pos+2, 
-          (view, getPos: () => number) => {
-            const input = window.document.createElement("input");
-            input.setAttribute('type', 'checkbox');
-          
-            input.addEventListener("mousedown", (ev: Event) => {
-              ev.preventDefault(); // don't steal focus
-            });
-            input.addEventListener("change", (ev: Event) => {
-              const pos = getPos();
-              
-              /*
-              const tr = view.state.tr;
-              const char = input.checked ?  kCheckedChar : kUncheckedChar;
-              tr.replaceRangeWith(pos, pos+1, schema.text(char));
-              view.dispatch(tr);
-              */
-            });
-            return input;
-          }));
-       
-      
-    });
-
-    return DecorationSet.create(state.doc, decorations);
-  };
-}
 
 class ListItemNodeView implements NodeView {
   public readonly dom: HTMLElement;
@@ -285,42 +272,48 @@ class ListItemNodeView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
+    // create root li element
     this.dom = window.document.createElement('li');
     if (node.attrs.tight) {
       this.dom.setAttribute('data-tight', 'true');
-    }
-    let checked = false;
-    if (node.attrs.checked !== null) {
-      checked = node.attrs.checked;
-      this.dom.setAttribute('data-checked', checked ? 'true' : 'false');
     }
 
     const container = window.document.createElement('div');
     container.classList.add('list-item-container');
     this.dom.appendChild(container);
-    
-    const input = window.document.createElement('input');
-    input.classList.add('list-item-checkbox');
-    input.setAttribute('type', 'checkbox');
-    input.checked = checked;
-    input.contentEditable = 'false';
-    input.addEventListener("mousedown", (ev: Event) => {
-      ev.preventDefault(); // don't steal focus
-    });
-    input.addEventListener("change", (ev: Event) => {
-      const tr = view.state.tr;
-      tr.setNodeMarkup(getPos(), node.type, {
-        ...node.attrs,
-        checked: (ev.target as HTMLInputElement).checked
-      });
-      view.dispatch(tr);
-    });
-    container.appendChild(input);
+  
+    // add checkbox for checked items
+    if (node.attrs.checked !== null) {
 
+      this.dom.setAttribute('data-checked', node.attrs.checked ? 'true' : 'false');
+
+      // checkbox for editing checked state
+      const input = window.document.createElement('input');
+      input.classList.add('list-item-checkbox');
+      input.setAttribute('type', 'checkbox');
+      input.checked = node.attrs.checked;
+      input.contentEditable = 'false';
+      input.addEventListener("mousedown", (ev: Event) => {
+        ev.preventDefault(); // don't steal focus
+      });
+      input.addEventListener("change", (ev: Event) => {
+        const tr = view.state.tr;
+        tr.setNodeMarkup(getPos(), node.type, {
+          ...node.attrs,
+          checked: (ev.target as HTMLInputElement).checked
+        });
+        view.dispatch(tr);
+      });
+      container.appendChild(input);
+
+    } 
+
+    // content div 
     const content = window.document.createElement('div');
     content.classList.add('list-item-content');
     this.contentDOM = content;
     container.appendChild(content);
+
   }
 }
 
