@@ -67,7 +67,7 @@
 }
 
 .ProseMirror li:last-of-type .list-item-content p {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .ProseMirror li[data-tight] .list-item-content p {
