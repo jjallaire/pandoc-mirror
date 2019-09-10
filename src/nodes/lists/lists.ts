@@ -10,10 +10,10 @@ import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
-// move list pandoc import impl into lists.ts
-// split into multiple source files
+import { ListItemNodeView, fragmentWithCheck, checkedListItemDecorations } from './lists-checked';
+
+
 // keyboard navigation to checkbox
-// decorations for li and ul/ol when dealing with checked
 // checkbox should only allow allow click if the view is editable (see tiptap)
 // consider tab/shift-tab for lists: https://github.com/scrumpy/tiptap/blob/master/packages/tiptap-extensions/src/nodes/TodoItem.js#L67-L73
 
@@ -41,8 +41,7 @@ enum ListNumberDelim {
   TwoParens = 'TwoParens',
 }
 
-const kCheckedChar = '☒';
-const kUncheckedChar = '☐';
+const plugin = new PluginKey('list');
 
 const extension: Extension = {
   nodes: [
@@ -86,23 +85,19 @@ const extension: Extension = {
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
 
           const itemBlockType = node.attrs.tight ? 'Plain' : 'Para';
-
           const checked = node.attrs.checked;
 
           output.writeList(() => {
             node.forEach((itemNode: ProsemirrorNode, _offset, index) => {              
               output.writeToken(itemBlockType, () => {
-                
-                // add check box to fragment if necessary 
-                let fragment = itemNode.content;
+                // for first item block, prepend check mark if we have one
                 if (checked !== null && index === 0) {
-                  const checkedText = node.type.schema.text(
-                    (checked ? kCheckedChar : kUncheckedChar) + ' '
+                  output.writeInlines(
+                    fragmentWithCheck(node.type.schema, itemNode.content, checked)
                   );
-                  fragment = Fragment.from(checkedText).append(fragment);
+                } else {
+                  output.writeInlines(itemNode.content);
                 }
-
-                output.writeInlines(fragment);
               });
             });
           });
@@ -205,7 +200,17 @@ const extension: Extension = {
 
   plugins: (schema: Schema) => {
     return [
-      taskListPlugin(schema)
+      new Plugin({
+        key: plugin,
+        props: {
+          decorations: checkedListItemDecorations(schema),
+          nodeViews: {
+            list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+              return new ListItemNodeView(node, view, getPos);
+            },
+          }
+        }
+      })
     ];
   },
 
@@ -240,79 +245,6 @@ const extension: Extension = {
   },
 };
 
-const plugin = new PluginKey('task_lists');
-
-function taskListPlugin(schema: Schema) {
-  return new Plugin({
-    key: plugin,
-    props: {
-      nodeViews: {
-        list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
-          return new ListItemNodeView(node, view, getPos);
-        },
-      }
-    }
-  });
-}
-
-
-class ListItemNodeView implements NodeView {
-  public readonly dom: HTMLElement;
-  public readonly contentDOM: HTMLElement;
-
-  private readonly node: ProsemirrorNode;
-  private readonly view: EditorView;
-  private readonly getPos: () => number;
-
-  constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
-    this.node = node;
-    this.view = view;
-    this.getPos = getPos;
-
-    // create root li element
-    this.dom = window.document.createElement('li');
-    if (node.attrs.tight) {
-      this.dom.setAttribute('data-tight', 'true');
-    }
-
-    const container = window.document.createElement('div');
-    container.classList.add('list-item-container');
-    this.dom.appendChild(container);
-  
-    // add checkbox for checked items
-    if (node.attrs.checked !== null) {
-
-      this.dom.setAttribute('data-checked', node.attrs.checked ? 'true' : 'false');
-
-      // checkbox for editing checked state
-      const input = window.document.createElement('input');
-      input.classList.add('list-item-checkbox');
-      input.setAttribute('type', 'checkbox');
-      input.checked = node.attrs.checked;
-      input.contentEditable = 'false';
-      input.addEventListener("mousedown", (ev: Event) => {
-        ev.preventDefault(); // don't steal focus
-      });
-      input.addEventListener("change", (ev: Event) => {
-        const tr = view.state.tr;
-        tr.setNodeMarkup(getPos(), node.type, {
-          ...node.attrs,
-          checked: (ev.target as HTMLInputElement).checked
-        });
-        view.dispatch(tr);
-      });
-      container.appendChild(input);
-
-    } 
-
-    // content div 
-    const content = window.document.createElement('div');
-    content.classList.add('list-item-content');
-    this.contentDOM = content;
-    container.appendChild(content);
-
-  }
-}
 
 class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
