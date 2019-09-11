@@ -76,7 +76,6 @@ class CodeBlockNodeView implements NodeView {
     this.incomingChanges = false;
 
     // Create a CodeMirror instance
-    
     this.cm = CodeMirror(null!, {
       value: this.node.textContent,
       lineNumbers: true,
@@ -86,9 +85,20 @@ class CodeBlockNodeView implements NodeView {
 
     // The editor's outer node is our DOM representation
     this.dom = this.cm.getWrapperElement();
+
+    // If it's being created immediately adjacent to the selection
+    // then grab the focus (this is an insert code block from a menu
+    // which doesn't end up propagating the focus into codemirror)
+    const takeFocus = Math.abs(view.state.selection.anchor - getPos()) <= 1;
+    
     // CodeMirror needs to be in the DOM to properly initialize, so
-    // schedule it to update itself
-    setTimeout(() =>  { this.cm.refresh(); }, 20);
+    // schedule it to update itself (also takeFocus if requested)
+    setTimeout(() => { 
+      this.cm.refresh(); 
+      if (takeFocus) {
+        this.cm.focus();
+      }
+    }, 20);
 
     // This flag is used to avoid an update loop between the outer and
     // inner editor
