@@ -14,6 +14,28 @@ Some text here
 (@) Item 3
 (@) Item 4
 
+Some JavaScript code:
+
+``` {.javascript data-foo=400}
+function max(a, b) {
+  return a > b ? a : b
+}
+```
+
+Some Python code:
+
+``` {.python}
+# Define a function `plus()`
+def plus(a,b):
+  return a + b
+  
+# Create a `Summation` class
+class Summation(object):
+  def sum(self, a, b):
+    self.contents = a + b
+    return self.contents 
+```
+
 
 
 - [x] Checkbox me
@@ -74,12 +96,6 @@ This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank
 
 This is an image:
 
-
-``` {.r data-foo=400}
-Here is a code block.
-
-Another line of code.
-```
 
 > This is a blockquote. See how it runs!
 

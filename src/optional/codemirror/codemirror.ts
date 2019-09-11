@@ -6,6 +6,19 @@ import { exitCode } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
 
 import CodeMirror from "codemirror";
+
+import "codemirror/mode/clike/clike";
+import "codemirror/mode/javascript/javascript";
+import "codemirror/mode/htmlembedded/htmlembedded";
+import "codemirror/mode/css/css";
+import "codemirror/mode/markdown/markdown";
+import "codemirror/mode/python/python";
+import "codemirror/mode/r/r";
+import "codemirror/mode/shell/shell";
+import "codemirror/mode/sql/sql";
+import "codemirror/mode/yaml/yaml";
+import "codemirror/mode/yaml-frontmatter/yaml-frontmatter";
+
 import 'codemirror/lib/codemirror.css';
 
 import { Extension } from "api/extension";
@@ -54,7 +67,7 @@ class CodeBlockNodeView implements NodeView {
   private updating: boolean;
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
-    
+
     // Store for later
     this.node = node;
     this.view = view;
@@ -66,7 +79,8 @@ class CodeBlockNodeView implements NodeView {
     this.cm = CodeMirror(null!, {
       value: this.node.textContent,
       lineNumbers: true,
-      extraKeys: this.codeMirrorKeymap()
+      extraKeys: this.codeMirrorKeymap(),
+      mode: modeForNode(node)
     });
 
     // The editor's outer node is our DOM representation
@@ -101,7 +115,7 @@ class CodeBlockNodeView implements NodeView {
       return false;
     }
     this.node = node;
-    const change = this.computeChange(this.cm.getValue(), node.textContent);
+    const change = computeChange(this.cm.getValue(), node.textContent);
     if (change) {
       this.updating = true;
       const cmDoc = this.cm.getDoc();
@@ -148,7 +162,7 @@ class CodeBlockNodeView implements NodeView {
   }
 
   private valueChanged() {
-    const change = this.computeChange(this.node.textContent, this.cm.getValue());
+    const change = computeChange(this.node.textContent, this.cm.getValue());
     if (change) {
       const start = this.getPos() + 1;
       const tr = this.view.state.tr.replaceWith(
@@ -193,30 +207,59 @@ class CodeBlockNodeView implements NodeView {
     this.view.dispatch(this.view.state.tr.setSelection(selection).scrollIntoView());
     this.view.focus();
   }
-
-  private computeChange(oldVal: string, newVal: string) {
-    if (oldVal === newVal) {
-      return null;
-    } 
-    let start = 0;
-    let oldEnd = oldVal.length;
-    let newEnd = newVal.length;
-    while (start < oldEnd && oldVal.charCodeAt(start) === newVal.charCodeAt(start)) {
-      ++start;
-    }
-    while (oldEnd > start && newEnd > start &&
-            oldVal.charCodeAt(oldEnd - 1) === newVal.charCodeAt(newEnd - 1)) {
-      oldEnd--; 
-      newEnd--; 
-    }
-    return {
-      from: start, 
-      to: oldEnd, 
-      text: newVal.slice(start, newEnd)
-    };
-  }
 }
 
+
+function computeChange(oldVal: string, newVal: string) {
+  if (oldVal === newVal) {
+    return null;
+  } 
+  let start = 0;
+  let oldEnd = oldVal.length;
+  let newEnd = newVal.length;
+  while (start < oldEnd && oldVal.charCodeAt(start) === newVal.charCodeAt(start)) {
+    ++start;
+  }
+  while (oldEnd > start && newEnd > start &&
+          oldVal.charCodeAt(oldEnd - 1) === newVal.charCodeAt(newEnd - 1)) {
+    oldEnd--; 
+    newEnd--; 
+  }
+  return {
+    from: start, 
+    to: oldEnd, 
+    text: newVal.slice(start, newEnd)
+  };
+}
+
+function modeForNode(node: ProsemirrorNode) {
+
+  const modeMap: { [key: string] : string } = {
+    r: 'r',
+    python: 'python',
+    sql: 'sql',
+    c: 'clike',
+    cpp: 'clike',
+    java: 'clike',
+    js: 'javascript',
+    javascript: 'javascript',
+    html: 'html',
+    css: 'css',
+    markdown: 'markdown',
+    yaml: 'yaml',
+    shell: 'shell',
+    bash: 'bash'
+  };
+  const modes = Object.keys(modeMap);
+
+  for (const clz of node.attrs.classes) {
+    if (modes.indexOf(clz) !== -1) {
+      return modeMap[clz];
+    }
+  }
+
+  return null;
+}
 
 function arrowHandler(dir: "up" | "down" | "left" | "right" | "forward" | "backward") {
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {
