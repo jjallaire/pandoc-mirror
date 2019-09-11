@@ -5,7 +5,6 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
-undoInputRule no longer seems to work
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
