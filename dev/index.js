@@ -9,7 +9,8 @@ let editor = new PandocMirror.Editor({
   pandoc: pandocEngine,
   ui: editorUI,
   options: {
-    autoFocus: true
+    autoFocus: true,
+    codemirror: true
   },
   hooks: {
     applyDevTools: ProseMirrorDevTools.applyDevTools

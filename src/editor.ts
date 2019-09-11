@@ -24,13 +24,14 @@ export interface EditorConfig {
   readonly parent: HTMLElement;
   readonly pandoc: PandocEngine;
   readonly ui: EditorUI;
-  readonly options?: EditorOptions;
+  readonly options: EditorOptions;
   readonly hooks?: EditorHooks;
   readonly extensions?: readonly Extension[];
 }
 
 export interface EditorOptions {
   readonly autoFocus?: boolean;
+  readonly codemirror?: boolean;
 }
 
 export interface EditorHooks {
