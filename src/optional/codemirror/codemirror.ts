@@ -205,6 +205,7 @@ class CodeBlockNodeView implements NodeView {
       // if there is an input rule we just executed then use this to undo it
       if (undoInputRule(this.view.state)) {
         undoInputRule(this.view.state, this.view.dispatch);
+        this.view.focus();
       } else {
         const tr = this.view.state.tr;
         tr.delete(this.getPos(), this.getPos() + this.node.nodeSize);
