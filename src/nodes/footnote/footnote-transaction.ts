@@ -30,10 +30,10 @@ export function footnoteAppendTransaction(schema: Schema) {
       node.type === schema.nodes.footnote || node.type === schema.nodes.note;
     if (transactionsHaveChange(transactions, oldState, newState, footnoteChange)) {
       // footnotes in the document
-      const footnotes = findChildrenByType(newState.doc, schema.nodes.footnote, true);
+      const footnotes = findChildrenByType(tr.doc, schema.nodes.footnote, true);
 
       // notes container
-      const notes = findChildrenByType(newState.doc, schema.nodes.notes, true)[0];
+      const notes = findChildrenByType(tr.doc, schema.nodes.notes, true)[0];
 
       // iterate through footnotes in the newState
       const refs = new Set<string>();
@@ -48,7 +48,7 @@ export function footnoteAppendTransaction(schema: Schema) {
         let newNote: any;
 
         // get reference to note (if any)
-        const note = findChildrenByType(newState.doc, schema.nodes.note, true).find(
+        const note = findChildrenByType(tr.doc, schema.nodes.note, true).find(
           noteWithPos => noteWithPos.node.attrs.ref === ref,
         );
 
@@ -102,7 +102,7 @@ export function footnoteAppendTransaction(schema: Schema) {
           ...footnote.node.attrs,
           ref,
           content,
-          number: index + 1,
+          number
         });
       });
     }

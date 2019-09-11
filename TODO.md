@@ -7,6 +7,7 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 
 - pandoc serialization error in main demo browser (copy paste of note breaks it)
+  the problem is copy/paste before the other note is in refs
 - focus codemirror after calling setBlockType
 
 
