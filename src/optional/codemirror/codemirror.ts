@@ -87,7 +87,7 @@ class CodeBlockNodeView implements NodeView {
     this.dom = this.cm.getWrapperElement();
     // CodeMirror needs to be in the DOM to properly initialize, so
     // schedule it to update itself
-    setTimeout(() => this.cm.refresh(), 20);
+    setTimeout(() =>  { this.cm.refresh(); }, 20);
 
     // This flag is used to avoid an update loop between the outer and
     // inner editor
@@ -126,7 +126,7 @@ class CodeBlockNodeView implements NodeView {
   }
 
   public setSelection(anchor: number, head: number) {
-    this.cm.focus();
+    this.focusWithDelay();
     this.updating = true;
     const cmDoc = this.cm.getDoc();
     cmDoc.setSelection(cmDoc.posFromIndex(anchor), cmDoc.posFromIndex(head));
@@ -134,11 +134,15 @@ class CodeBlockNodeView implements NodeView {
   }
 
   public selectNode() { 
-    this.cm.focus(); 
+    this.focusWithDelay();
   }
 
   public stopEvent() {
     return true;
+  }
+
+  private focusWithDelay() {
+    setTimeout(() => this.cm.focus(), 20); 
   }
 
   private forwardSelection() {
