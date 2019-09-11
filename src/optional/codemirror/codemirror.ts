@@ -128,7 +128,7 @@ class CodeBlockNodeView implements NodeView {
   }
 
   public setSelection(anchor: number, head: number) {
-    this.focusWithDelay();
+    this.cm.focus();
     this.updating = true;
     const cmDoc = this.cm.getDoc();
     cmDoc.setSelection(cmDoc.posFromIndex(anchor), cmDoc.posFromIndex(head));
@@ -136,16 +136,14 @@ class CodeBlockNodeView implements NodeView {
   }
 
   public selectNode() { 
-    this.focusWithDelay();
+    this.cm.focus();
   }
 
   public stopEvent() {
     return true;
   }
 
-  private focusWithDelay() {
-    setTimeout(() => this.cm.focus(), 20); 
-  }
+
 
   private forwardSelection() {
     if (!this.cm.hasFocus()) { 
