@@ -9,10 +9,6 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 - pandoc serialization error in main demo browser (copy paste of note breaks it)
   the problem is copy/paste before the other note is in refs
 
-- focus codemirror after calling setBlockType. We can fix this by delaying the call
-  to view.focus() in setSelection, but this messes up using the arrow keys to
-  navigate out of CodeMirror.
-
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
