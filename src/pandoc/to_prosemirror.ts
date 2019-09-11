@@ -1,4 +1,5 @@
 import { Mark, Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model';
+
 import { PandocTokenReader, PandocToken, PandocAst, mapTokens } from 'api/pandoc';
 import { uuidv4 } from 'api/util';
 

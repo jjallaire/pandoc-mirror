@@ -3,7 +3,6 @@ import { EditorView, DecorationSet, NodeView } from 'prosemirror-view';
 import {
   findParentNodeOfType,
   NodeWithPos,
-  findSelectedNodeOfType,
   findChildrenByType,
   findChildren
 } from 'prosemirror-utils';

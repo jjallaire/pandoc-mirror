@@ -1,4 +1,5 @@
 import { Node as ProsemirrorNode, Fragment, MarkType, Mark } from 'prosemirror-model';
+
 import {
   PandocAst,
   PandocToken,

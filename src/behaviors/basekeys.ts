@@ -1,4 +1,4 @@
-import { baseKeymap, joinDown, joinUp, lift, selectParentNode } from 'prosemirror-commands';
+import { baseKeymap, joinDown, joinUp, lift } from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 

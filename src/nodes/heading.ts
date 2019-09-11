@@ -1,9 +1,9 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { Node as ProsemirrorNode, Schema, NodeType } from 'prosemirror-model';
-
-import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorState } from 'prosemirror-state';
 import { findParentNode } from 'prosemirror-utils';
+
+import { PandocOutput, PandocToken } from 'api/pandoc';
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';

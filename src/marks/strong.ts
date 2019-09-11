@@ -3,7 +3,7 @@ import { Schema, Mark, Fragment } from 'prosemirror-model';
 import { MarkCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
-import { markInputRule, delimiterMarkInputRule } from 'api/mark';
+import { delimiterMarkInputRule } from 'api/mark';
 
 const extension: Extension = {
   marks: [

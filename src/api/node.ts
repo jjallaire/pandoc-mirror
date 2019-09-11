@@ -1,6 +1,6 @@
 import { Node as ProsemirrorNode, NodeSpec, NodeType } from 'prosemirror-model';
 import { EditorState, Selection, NodeSelection, Transaction } from 'prosemirror-state';
-import { findParentNode, findSelectedNodeOfType, ContentNodeWithPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
+import { findParentNode, findSelectedNodeOfType, ContentNodeWithPos, NodeWithPos } from 'prosemirror-utils';
 
 import { PandocTokenReader, PandocNodeWriterFn } from './pandoc';
 

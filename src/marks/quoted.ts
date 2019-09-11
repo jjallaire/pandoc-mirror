@@ -5,7 +5,7 @@ import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { findChildrenByMark } from 'prosemirror-utils';
 import { getMarkRange } from 'api/mark';
-import { TextWithPos, mergedTextNodes } from 'api/text';
+import { mergedTextNodes } from 'api/text';
 import { transactionsHaveChange } from 'api/transaction';
 
 const QUOTE_TYPE = 0;

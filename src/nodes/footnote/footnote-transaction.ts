@@ -1,7 +1,7 @@
 import { Schema, Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
 import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
 import { transactionsHaveChange } from 'api/transaction';
-import { findChildrenByType, NodeWithPos, findSelectedNodeOfType, findChildren } from 'prosemirror-utils';
+import { findChildrenByType, NodeWithPos, findSelectedNodeOfType } from 'prosemirror-utils';
 
 import { findNoteNode, selectedNote } from './footnote';
 import { uuidv4 } from 'api/util';

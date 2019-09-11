@@ -3,8 +3,9 @@ import { Node as ProsemirrorNode, Schema, Fragment, NodeType } from 'prosemirror
 import { NodeView, EditorView, Decoration, DecorationSet } from "prosemirror-view";
 import { EditorState, Transaction } from 'prosemirror-state';
 import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
-import { nodeDecoration } from 'api/decoration';
 import { InputRule, wrappingInputRule } from 'prosemirror-inputrules';
+
+import { nodeDecoration } from 'api/decoration';
 import { Command } from 'api/command';
 
 const kItemChecked = '☒';
