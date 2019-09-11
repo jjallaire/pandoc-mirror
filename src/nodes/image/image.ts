@@ -109,8 +109,8 @@ const extension: Extension = {
           handleDOMEvents: {
             drop: imageDrop(schema.nodes.image),
           },
-        }
-      })
+        },
+      }),
     ];
   },
 };
@@ -135,7 +135,5 @@ function imageCommand(nodeType: NodeType, onEditImage: ImageEditorFn) {
     return true;
   };
 }
-
-
 
 export default extension;

@@ -56,8 +56,7 @@ function insertTrailingP(selection: Selection, schema: Schema) {
 }
 
 function editingRootNode(selection: Selection, schema: Schema) {
-  return findParentNodeOfType(schema.nodes.body)(selection) ||
-         findParentNodeOfType(schema.nodes.note)(selection);
+  return findParentNodeOfType(schema.nodes.body)(selection) || findParentNodeOfType(schema.nodes.note)(selection);
 }
 
 function isParagraphNode(node: ProsemirrorNode | null | undefined, schema: Schema) {

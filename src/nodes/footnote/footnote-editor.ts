@@ -1,11 +1,6 @@
 import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 import { EditorView, DecorationSet, NodeView } from 'prosemirror-view';
-import {
-  findParentNodeOfType,
-  NodeWithPos,
-  findChildrenByType,
-  findChildren
-} from 'prosemirror-utils';
+import { findParentNodeOfType, NodeWithPos, findChildrenByType, findChildren } from 'prosemirror-utils';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { nodeDecoration } from 'api/decoration';
@@ -111,7 +106,6 @@ class NoteEditorView implements NodeView {
 // custom handling for arrow keys that cause selection to escape the editor
 export function footnoteEditorKeyDownHandler(schema: Schema) {
   return (view: EditorView, event: KeyboardEvent) => {
-    
     // alias selection
     const selection = view.state.selection;
 
@@ -133,13 +127,13 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
     };
 
     // if this is the Escape key then close the editor
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       selectFootnote();
       return true;
     }
 
     // ...otherwise check to see if the user is attempting to arrow out of the footnote
-  
+
     // get first and last text block nodes (bail if we aren't in either)
     const firstTextBlock = firstNode(noteNode, node => node.isTextblock);
     const lastTextBlock = lastNode(noteNode, node => node.isTextblock);
@@ -152,13 +146,13 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       if (selectionIsWithin(selection, firstTextBlock)) {
         switch (event.key) {
           case 'ArrowLeft':
-            if (selection.anchor === (firstTextBlock.pos + 1)) {
+            if (selection.anchor === firstTextBlock.pos + 1) {
               selectFootnote(true);
               return true;
             }
             break;
           case 'ArrowUp': {
-            if (view.endOfTextblock("up")) {
+            if (view.endOfTextblock('up')) {
               selectFootnote(true);
               return true;
             }
@@ -173,23 +167,22 @@ export function footnoteEditorKeyDownHandler(schema: Schema) {
       if (selectionIsWithin(selection, lastTextBlock)) {
         switch (event.key) {
           case 'ArrowRight':
-            if (selection.anchor === (lastTextBlock.pos + lastTextBlock.node.nodeSize - 1)) {
+            if (selection.anchor === lastTextBlock.pos + lastTextBlock.node.nodeSize - 1) {
               selectFootnote(false);
               return true;
             }
             break;
           case 'ArrowDown': {
-            if (view.endOfTextblock("down")) {
+            if (view.endOfTextblock('down')) {
               selectFootnote(false);
               return true;
             }
             break;
           }
         }
-
       }
     }
-  
+
     return false;
   };
 }

@@ -1,12 +1,10 @@
+import { NodeType, Schema, Node as ProsemirrorNode } from 'prosemirror-model';
+import { EditorState, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
 
-import { NodeType, Schema, Node as ProsemirrorNode } from "prosemirror-model";
-import { EditorState, Transaction } from "prosemirror-state";
-import { EditorView } from "prosemirror-view";
-import { findParentNodeOfType, NodeWithPos } from "prosemirror-utils";
-
-import { NodeCommand, toggleList, Command } from "api/command";
-import { EditorUI, OrderedListProps, OrderedListEditResult } from "api/ui";
-
+import { NodeCommand, toggleList, Command } from 'api/command';
+import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
 export class ListCommand extends NodeCommand {
   constructor(name: string, listType: NodeType, listItemType: NodeType) {
@@ -15,13 +13,11 @@ export class ListCommand extends NodeCommand {
 }
 
 export class TightListCommand extends Command {
-  
   constructor(schema: Schema) {
     super(
       'tight_list',
       ['Shift-Ctrl-0'],
       (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
-        
         const parentList = findParentNodeOfType([schema.nodes.bullet_list, schema.nodes.ordered_list])(state.selection);
         if (!parentList) {
           return false;
@@ -32,8 +28,8 @@ export class TightListCommand extends Command {
           parentList.node.forEach((node, offset) => {
             tr.setNodeMarkup(parentList.pos + 1 + offset, schema.nodes.list_item, {
               ...node.attrs,
-              tight: !node.attrs.tight
-            }); 
+              tight: !node.attrs.tight,
+            });
           });
 
           dispatch(tr);
@@ -52,41 +48,36 @@ export class TightListCommand extends Command {
       return false;
     }
   }
-
 }
 
 export class OrderedListEditCommand extends Command {
   constructor(schema: Schema, ui: EditorUI) {
-    super(
-      'ordered_list_edit',
-      null,
-      (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
-        // see if a parent node is an ordered list
-        let node: ProsemirrorNode | null = null;
-        let pos: number = 0;
-        const nodeWithPos = findParentNodeOfType(schema.nodes.ordered_list)(state.selection);
-        if (nodeWithPos) {
-          node = nodeWithPos.node;
-          pos = nodeWithPos.pos;
-        }
+    super('ordered_list_edit', null, (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
+      // see if a parent node is an ordered list
+      let node: ProsemirrorNode | null = null;
+      let pos: number = 0;
+      const nodeWithPos = findParentNodeOfType(schema.nodes.ordered_list)(state.selection);
+      if (nodeWithPos) {
+        node = nodeWithPos.node;
+        pos = nodeWithPos.pos;
+      }
 
-        // return false (disabled) for no targets
-        if (!node) {
-          return false;
-        }
+      // return false (disabled) for no targets
+      if (!node) {
+        return false;
+      }
 
-        // execute command when requested
-        if (dispatch) {
-          editOrderedList(node as ProsemirrorNode, pos, state, dispatch, ui).then(() => {
-            if (view) {
-              view.focus();
-            }
-          });
-        }
+      // execute command when requested
+      if (dispatch) {
+        editOrderedList(node as ProsemirrorNode, pos, state, dispatch, ui).then(() => {
+          if (view) {
+            view.focus();
+          }
+        });
+      }
 
-        return true;
-      },
-    );
+      return true;
+    });
   }
 }
 

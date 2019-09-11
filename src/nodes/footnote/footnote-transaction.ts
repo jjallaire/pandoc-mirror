@@ -6,9 +6,6 @@ import { findChildrenByType, NodeWithPos, findSelectedNodeOfType } from 'prosemi
 import { findNoteNode, selectedNote } from './footnote';
 import { uuidv4 } from 'api/util';
 
-
-
-
 // examine transactions and filter out attempts to place foonotes within note bodies
 // (this is not allowed by pandoc markdown)
 export function footnoteFilterTransaction(schema: Schema) {
@@ -89,10 +86,7 @@ export function footnoteAppendTransaction(schema: Schema) {
           // if there is no note then create one using the content attr
           // (this can happen for a copy/paste operation from another document)
         } else if (content) {
-          newNote = schema.nodes.note.createAndFill(
-            { ref, number },
-            Fragment.fromJSON(schema, JSON.parse(content)),
-          );
+          newNote = schema.nodes.note.createAndFill({ ref, number }, Fragment.fromJSON(schema, JSON.parse(content)));
         }
 
         // insert newNote if necessary
@@ -128,4 +122,3 @@ export function footnoteAppendTransaction(schema: Schema) {
     }
   };
 }
-

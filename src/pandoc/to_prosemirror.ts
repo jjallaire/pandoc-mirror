@@ -114,7 +114,7 @@ class Parser {
           const attrs = getAttrs(tok);
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
-            const childAttrs: { tight?: boolean, checked: null | boolean } = { checked: null };
+            const childAttrs: { tight?: boolean; checked: null | boolean } = { checked: null };
             if (tight) {
               childAttrs.tight = true;
             }
@@ -161,38 +161,35 @@ class Parser {
   }
 }
 
-
 const kCheckedChar = '☒';
 const kUncheckedChar = '☐';
 
-function tokensWithChecked(tokens: PandocToken[]) : { checked: null | boolean, tokens: PandocToken[] } {
-    
+function tokensWithChecked(tokens: PandocToken[]): { checked: null | boolean; tokens: PandocToken[] } {
   // will set this flag based on inspecting the first Str token
   let checked: null | boolean | undefined;
   let lastWasChecked = false;
-  
+
   // map tokens
   const mappedTokens = mapTokens(tokens, tok => {
-    
     // if the last token was checked then strip the next space
-    if (tok.t === "Space" && lastWasChecked) {
+    if (tok.t === 'Space' && lastWasChecked) {
       lastWasChecked = false;
       return {
-        t: "Str",
-        c: ""
+        t: 'Str',
+        c: '',
       };
     }
 
     // derive 'checked' from first chraracter of first Str token encountered
-    // if we find checked or unchecked then set the flag and strip off 
+    // if we find checked or unchecked then set the flag and strip off
     // the first 2 chraracters (the check and the space after it)
-    else if (tok.t === "Str" && (checked === undefined)) {
+    else if (tok.t === 'Str' && checked === undefined) {
       let text = tok.c as string;
       if (text.charAt(0) === kCheckedChar) {
         checked = true;
         lastWasChecked = true;
         text = text.slice(1);
-      } else  if (text.charAt(0) === kUncheckedChar) {
+      } else if (text.charAt(0) === kUncheckedChar) {
         checked = false;
         lastWasChecked = true;
         text = text.slice(1);
@@ -200,21 +197,20 @@ function tokensWithChecked(tokens: PandocToken[]) : { checked: null | boolean, t
         checked = null;
       }
       return {
-        t: "Str",
-        c: text
+        t: 'Str',
+        c: text,
       };
     } else {
       return tok;
     }
   });
-  
+
   // return
   return {
     checked: checked !== undefined ? checked : null,
-    tokens: mappedTokens
+    tokens: mappedTokens,
   };
 }
-
 
 class ParserState {
   private readonly schema: Schema;

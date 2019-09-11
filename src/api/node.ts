@@ -31,7 +31,7 @@ export function firstNode(parent: NodeWithPos, predicate: (node: ProsemirrorNode
       if (predicate(node)) {
         foundNode = {
           node,
-          pos: parent.pos + 1 + pos
+          pos: parent.pos + 1 + pos,
         };
         return false;
       }
@@ -48,7 +48,7 @@ export function lastNode(parent: NodeWithPos, predicate: (node: ProsemirrorNode)
     if (predicate(node)) {
       last = {
         node,
-        pos: parent.pos + 1 + pos
+        pos: parent.pos + 1 + pos,
       };
     }
   });
@@ -77,7 +77,11 @@ export function canInsertNode(state: EditorState, nodeType: NodeType) {
   return false;
 }
 
-export function insertAndSelectNode(node: ProsemirrorNode, state: EditorState, dispatch: (tr: Transaction<any>) => void) {
+export function insertAndSelectNode(
+  node: ProsemirrorNode,
+  state: EditorState,
+  dispatch: (tr: Transaction<any>) => void,
+) {
   // create new transaction
   const tr = state.tr;
 

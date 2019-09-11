@@ -7,32 +7,25 @@ import { EditorView } from 'prosemirror-view';
 import { Extension } from 'api/extension';
 import { EditorUI } from 'api/ui';
 
-import { 
-  ListCommand, 
-  TightListCommand, 
-  OrderedListEditCommand 
-} from './list-commands';
+import { ListCommand, TightListCommand, OrderedListEditCommand } from './list-commands';
 
-import { 
-  ListItemNodeView, 
-  checkedListItemDecorations, 
-  checkedListItemInputRule, 
-  checkedListInputRule, 
+import {
+  ListItemNodeView,
+  checkedListItemDecorations,
+  checkedListItemInputRule,
+  checkedListInputRule,
   CheckedListItemCommand,
-  CheckedListItemToggleCommand
+  CheckedListItemToggleCommand,
 } from './list-checked';
 
-import { 
-  exampleListsAppendTransaction 
-} from './list-example';
+import { exampleListsAppendTransaction } from './list-example';
 
-import { 
-  pandocWriteListItem, 
-  pandocWriteBulletList, 
-  pandocOrderedListReader, 
-  pandocWriteOrderedList 
+import {
+  pandocWriteListItem,
+  pandocWriteBulletList,
+  pandocOrderedListReader,
+  pandocWriteOrderedList,
 } from './list-pandoc';
-
 
 export enum ListNumberStyle {
   DefaultStyle = 'DefaultStyle',
@@ -41,7 +34,7 @@ export enum ListNumberStyle {
   UpperRoman = 'UpperRoman',
   LowerAlpha = 'LowerAlpha',
   UpperAlpha = 'UpperAlpha',
-  Example = 'Example'
+  Example = 'Example',
 }
 
 export enum ListNumberDelim {
@@ -59,14 +52,15 @@ const extension: Extension = {
       name: 'list_item',
       spec: {
         content: 'paragraph block*',
-        attrs: { 
+        attrs: {
           tight: { default: true },
-          checked: { default: null }
+          checked: { default: null },
         },
         defining: true,
         parseDOM: [
-          { tag: 'li', 
-            getAttrs: (dom: Node | string) => { 
+          {
+            tag: 'li',
+            getAttrs: (dom: Node | string) => {
               const el = dom as Element;
               const attrs: any = {};
               if (el.hasAttribute('data-tight')) {
@@ -75,9 +69,9 @@ const extension: Extension = {
               if (el.hasAttribute('data-checked')) {
                 attrs.checked = el.getAttribute('data-checked') === 'true';
               }
-              return attrs; 
+              return attrs;
             },
-          }
+          },
         ],
         toDOM(node) {
           const attrs: any = {};
@@ -88,11 +82,10 @@ const extension: Extension = {
             attrs['data-checked'] = node.attrs.checked ? 'true' : 'false';
           }
           return ['li', attrs, 0];
-          
         },
       },
       pandoc: {
-        writer: pandocWriteListItem
+        writer: pandocWriteListItem,
       },
     },
     {
@@ -112,7 +105,7 @@ const extension: Extension = {
             list: 'bullet_list',
           },
         ],
-        writer: pandocWriteBulletList
+        writer: pandocWriteBulletList,
       },
     },
     {
@@ -135,9 +128,9 @@ const extension: Extension = {
               if (!order) {
                 order = 1;
               }
-             
-              const numberStyle = el.getAttribute('data-example') 
-                ? ListNumberStyle.Example 
+
+              const numberStyle = el.getAttribute('data-example')
+                ? ListNumberStyle.Example
                 : typeToNumberStyle(el.getAttribute('type'));
 
               return { order, numberStyle };
@@ -160,10 +153,8 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        readers: [
-          pandocOrderedListReader
-        ],
-        writer: pandocWriteOrderedList
+        readers: [pandocOrderedListReader],
+        writer: pandocWriteOrderedList,
       },
     },
   ],
@@ -178,10 +169,10 @@ const extension: Extension = {
             list_item(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
               return new ListItemNodeView(node, view, getPos);
             },
-          }
+          },
         },
-        appendTransaction: exampleListsAppendTransaction(schema)
-      })
+        appendTransaction: exampleListsAppendTransaction(schema),
+      }),
     ];
   },
 
@@ -193,7 +184,7 @@ const extension: Extension = {
       'Mod-[': liftListItem(schema.nodes.list_item),
       'Shift-Tab': liftListItem(schema.nodes.list_item),
       'Mod-]': sinkListItem(schema.nodes.list_item),
-      'Tab': sinkListItem(schema.nodes.list_item)
+      Tab: sinkListItem(schema.nodes.list_item),
     };
   },
 
@@ -204,7 +195,7 @@ const extension: Extension = {
       new OrderedListEditCommand(schema, ui),
       new TightListCommand(schema),
       new CheckedListItemCommand(schema.nodes.list_item),
-      new CheckedListItemToggleCommand(schema.nodes.list_item)
+      new CheckedListItemToggleCommand(schema.nodes.list_item),
     ];
   },
 
@@ -222,8 +213,6 @@ const extension: Extension = {
     ];
   },
 };
-
-
 
 function numberStyleToType(style: ListNumberStyle): string | null {
   switch (style) {

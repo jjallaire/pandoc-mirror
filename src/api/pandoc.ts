@@ -93,13 +93,11 @@ export function tokensCollectText(c: PandocToken[]): string {
 }
 
 export function mapTokens(c: PandocToken[], f: (tok: PandocToken) => PandocToken) {
-  return c
-    .map(tok => {
-      const mappedTok = f(tok);
-      if (mappedTok.c instanceof Array) {
-        mappedTok.c = mapTokens(mappedTok.c, f);
-      } 
-      return mappedTok;
-    });
+  return c.map(tok => {
+    const mappedTok = f(tok);
+    if (mappedTok.c instanceof Array) {
+      mappedTok.c = mapTokens(mappedTok.c, f);
+    }
+    return mappedTok;
+  });
 }
-
