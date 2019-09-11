@@ -74,7 +74,14 @@ const extension: Extension = {
               return {
                 src: target[TARGET_URL],
                 title: target[TARGET_TITLE] || null,
-                // TODO: support for figures
+                // TODO: support for figures. actually represent within the DOM as a <figure>
+                /*
+                <figure>
+                  <img src="/media/examples/elephant-660-480.jpg"
+                      alt="Elephant at sunset">
+                  <figcaption>An elephant at sunset</figcaption>
+                </figure>
+                */
                 alt: tokensCollectText(tok.c[IMAGE_ALT]) || null,
                 ...pandocAttrReadAST(tok, IMAGE_ATTR),
               };
