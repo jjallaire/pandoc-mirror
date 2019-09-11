@@ -1,7 +1,7 @@
 import { Schema } from "prosemirror-model";
 import { Transaction, EditorState } from "prosemirror-state";
 
-import { ListNumberStyle } from './lists';
+import { ListNumberStyle } from './list';
 import { findChildrenByType } from "prosemirror-utils";
 
 export function exampleListsAppendTransaction(schema: Schema) {

@@ -5,29 +5,34 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { Extension } from 'api/extension';
-import { PandocOutput, PandocToken } from 'api/pandoc';
 import { EditorUI } from 'api/ui';
 
-import { ListCommand, TightListCommand, OrderedListEditCommand } from './lists-commands';
+import { 
+  ListCommand, 
+  TightListCommand, 
+  OrderedListEditCommand 
+} from './list-commands';
 
 import { 
   ListItemNodeView, 
-  fragmentWithCheck, 
   checkedListItemDecorations, 
   checkedListItemInputRule, 
   checkedListInputRule, 
   CheckedListItemCommand,
   CheckedListItemToggleCommand
-} from './lists-checked';
+} from './list-checked';
 
-import { exampleListsAppendTransaction } from './lists-example';
+import { 
+  exampleListsAppendTransaction 
+} from './list-example';
 
-const LIST_ATTRIBS = 0;
-const LIST_CHILDREN = 1;
+import { 
+  pandocWriteListItem, 
+  pandocWriteBulletList, 
+  pandocOrderedListReader, 
+  pandocWriteOrderedList 
+} from './list-pandoc';
 
-const LIST_ATTRIB_ORDER = 0;
-const LIST_ATTRIB_NUMBER_STYLE = 1;
-const LIST_ATTRIB_NUMBER_DELIM = 2;
 
 export enum ListNumberStyle {
   DefaultStyle = 'DefaultStyle',
@@ -87,31 +92,7 @@ const extension: Extension = {
         },
       },
       pandoc: {
-        writer: (output: PandocOutput, node: ProsemirrorNode) => {
-
-          const paraItemBlockType = node.attrs.tight ? 'Plain' : 'Para';
-          const checked = node.attrs.checked;
-
-          output.writeList(() => {
-            node.forEach((itemNode: ProsemirrorNode, _offset, index) => {    
-
-              if (itemNode.type === node.type.schema.nodes.paragraph) {
-                output.writeToken(paraItemBlockType, () => {
-                  // for first item block, prepend check mark if we have one
-                  if (checked !== null && index === 0) {
-                    output.writeInlines(
-                      fragmentWithCheck(node.type.schema, itemNode.content, checked)
-                    );
-                  } else {
-                    output.writeInlines(itemNode.content);
-                  }
-                });
-              } else {
-                output.writeBlock(itemNode);
-              }
-            });
-          });
-        },
+        writer: pandocWriteListItem
       },
     },
     {
@@ -131,11 +112,7 @@ const extension: Extension = {
             list: 'bullet_list',
           },
         ],
-        writer: (output: PandocOutput, node: ProsemirrorNode) => {
-          output.writeToken('BulletList', () => {
-            output.writeBlocks(node);
-          });
-        },
+        writer: pandocWriteBulletList
       },
     },
     {
@@ -184,32 +161,9 @@ const extension: Extension = {
       },
       pandoc: {
         readers: [
-          {
-            token: 'OrderedList',
-            list: 'ordered_list',
-            getAttrs: (tok: PandocToken) => {
-              const attribs = tok.c[LIST_ATTRIBS];
-              return {
-                order: attribs[LIST_ATTRIB_ORDER],
-                number_style: attribs[LIST_ATTRIB_NUMBER_STYLE].t,
-                number_delim: attribs[LIST_ATTRIB_NUMBER_DELIM].t,
-              };
-            },
-            getChildren: (tok: PandocToken) => tok.c[LIST_CHILDREN],
-          },
+          pandocOrderedListReader
         ],
-        writer: (output: PandocOutput, node: ProsemirrorNode) => {
-          output.writeToken('OrderedList', () => {
-            output.writeList(() => {
-              output.write(node.attrs.order);
-              output.writeToken(node.attrs.number_style);
-              output.writeToken(node.attrs.number_delim);
-            });
-            output.writeList(() => {
-              output.writeBlocks(node);
-            });
-          });
-        },
+        writer: pandocWriteOrderedList
       },
     },
   ],

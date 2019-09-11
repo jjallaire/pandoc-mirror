@@ -2,7 +2,7 @@
 import { Node as ProsemirrorNode, Schema, Fragment, NodeType } from 'prosemirror-model';
 import { NodeView, EditorView, Decoration, DecorationSet } from "prosemirror-view";
 import { EditorState, Transaction } from 'prosemirror-state';
-import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos, ContentNodeWithPos } from 'prosemirror-utils';
+import { findChildrenByType, findParentNodeOfTypeClosestToPos, findParentNodeOfType, NodeWithPos } from 'prosemirror-utils';
 import { nodeDecoration } from 'api/decoration';
 import { InputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { Command } from 'api/command';
