@@ -1,4 +1,4 @@
-import { Schema, Node as ProsemirrorNode } from "prosemirror-model";
+import { Schema } from "prosemirror-model";
 import { Transaction, EditorState } from "prosemirror-state";
 
 import { ListNumberStyle } from './lists';
