@@ -18,10 +18,12 @@ export function exampleListsAppendTransaction(schema: Schema) {
       // set their order
       let order = 1;
       exampleLists.forEach(nodeWithPos => {
-        tr.setNodeMarkup(nodeWithPos.pos, nodeWithPos.node.type, {
-          ...nodeWithPos.node.attrs,
-          order,
-        });
+        if (order !== nodeWithPos.node.attrs.order) {
+          tr.setNodeMarkup(nodeWithPos.pos, nodeWithPos.node.type, {
+            ...nodeWithPos.node.attrs,
+            order,
+          });
+        }
         order += findChildrenByType(nodeWithPos.node, schema.nodes.list_item).length;
       });
 
