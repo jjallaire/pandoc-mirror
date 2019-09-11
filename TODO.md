@@ -7,9 +7,7 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 
 - pandoc serialization error in main demo browser (copy paste of note breaks it)
-
-- can't escape using keyboard from codemirror
-
+- focus codemirror after calling setBlockType
 
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
