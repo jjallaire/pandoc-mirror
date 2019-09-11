@@ -15,12 +15,6 @@ handle meta fields (edit w/ codemirror + special handling for title/author/date/
 
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
-CodeMirror:
-  - Adjacent code block issue: https://discuss.prosemirror.net/t/bug-with-neighboring-codemirror-nodes/2170
-  - Can I remove an embedded editor easily / with backspace?
-
-
-
 inline math with MathQuill/MathJax: 
    https://pboysen.github.io/
    https://discuss.prosemirror.net/t/odd-behavior-with-nodeview-and-atom-node/1521

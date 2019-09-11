@@ -4,6 +4,7 @@ import { EditorView, NodeView } from "prosemirror-view";
 import { undo, redo } from "prosemirror-history";
 import { exitCode } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
+import { undoInputRule } from 'prosemirror-inputrules';
 
 import CodeMirror from "codemirror";
 
@@ -201,11 +202,16 @@ class CodeBlockNodeView implements NodeView {
   private backspaceMaybeDeleteNode() {
     // if the node is empty and we execute a backspace then delete the node
     if (this.node.childCount === 0) {
-      const tr = this.view.state.tr;
-      tr.delete(this.getPos(), this.getPos() + this.node.nodeSize);
-      tr.setSelection(TextSelection.near(tr.doc.resolve(this.getPos()), -1 ));
-      this.view.dispatch(tr);
-      this.view.focus();
+      // if there is an input rule we just executed then use this to undo it
+      if (undoInputRule(this.view.state)) {
+        undoInputRule(this.view.state, this.view.dispatch);
+      } else {
+        const tr = this.view.state.tr;
+        tr.delete(this.getPos(), this.getPos() + this.node.nodeSize);
+        tr.setSelection(TextSelection.near(tr.doc.resolve(this.getPos()), -1 ));
+        this.view.dispatch(tr);
+        this.view.focus();
+      }
     } else {
       return CodeMirror.Pass;
     }
