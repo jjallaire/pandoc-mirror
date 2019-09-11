@@ -55,7 +55,7 @@ const extension: Extension = {
       spec: {
         content: 'paragraph block*',
         attrs: { 
-          tight: { default: false },
+          tight: { default: true },
           checked: { default: null }
         },
         defining: true,
