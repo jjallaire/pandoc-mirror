@@ -1,6 +1,4 @@
-# Pandoc Mirror
 
-### TODO
 
 pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Definition.hs#L94>
 
