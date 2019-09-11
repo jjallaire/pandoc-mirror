@@ -107,6 +107,7 @@ class CodeBlockNodeView implements NodeView {
       }
       this.incomingChanges = false;
     });
+
     this.cm.on("focus", () => this.forwardSelection());
   }
 
@@ -181,10 +182,11 @@ class CodeBlockNodeView implements NodeView {
     const mod = /Mac/.test(navigator.platform) ? "Cmd" : "Ctrl";
     // note: normalizeKeyMap not declared in CodeMirror types
     return (CodeMirror as any).normalizeKeyMap({
-      Up: () => this.maybeEscape("line", -1),
-      Left: () => this.maybeEscape("char", -1),
-      Down: () => this.maybeEscape("line", 1),
-      Right: () => this.maybeEscape("char", 1),
+      Up: () => this.arrowMaybeEscape("line", -1),
+      Left: () => this.arrowMaybeEscape("char", -1),
+      Down: () => this.arrowMaybeEscape("line", 1),
+      Right: () => this.arrowMaybeEscape("char", 1),
+      Backspace: () => this.backspaceMaybeDeleteNode(),
       [`${mod}-Z`]: () => undo(view.state, view.dispatch),
       [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
       [`${mod}-Y`]: () => redo(view.state, view.dispatch),
@@ -196,7 +198,21 @@ class CodeBlockNodeView implements NodeView {
     });
   }
 
-  private maybeEscape(unit: string, dir: number) {
+  private backspaceMaybeDeleteNode() {
+    // if the node is empty and we execute a backspace then delete the node
+    if (this.node.childCount === 0) {
+      const tr = this.view.state.tr;
+      tr.delete(this.getPos(), this.getPos() + this.node.nodeSize);
+      tr.setSelection(TextSelection.near(tr.doc.resolve(this.getPos()), -1 ));
+      this.view.dispatch(tr);
+      this.view.focus();
+    } else {
+      return CodeMirror.Pass;
+    }
+   
+  }
+
+  private arrowMaybeEscape(unit: string, dir: number) {
     const cmDoc = this.cm.getDoc();
     const pos = cmDoc.getCursor();
     if (cmDoc.somethingSelected() ||
