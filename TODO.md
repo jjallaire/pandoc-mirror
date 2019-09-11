@@ -6,10 +6,6 @@ pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 
-- pandoc serialization error in main demo browser (copy paste of note breaks it)
-  the problem is copy/paste before the other note is in refs
-
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
@@ -20,11 +16,11 @@ handle meta fields (edit w/ codemirror + special handling for title/author/date/
 
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
+tables
+
 inline math with MathQuill/MathJax: 
    https://pboysen.github.io/
    https://discuss.prosemirror.net/t/odd-behavior-with-nodeview-and-atom-node/1521
-
-
 
 add outline notifications / navigation
 
