@@ -1,0 +1,9 @@
+
+.ProseMirror .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+.ProseMirror .CodeMirror pre { 
+  white-space: pre !important 
+}
+

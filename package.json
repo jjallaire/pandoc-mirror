@@ -52,6 +52,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
+    "@types/codemirror": "0.0.76",
     "@types/orderedmap": "^1.0.0",
     "@types/prosemirror-commands": "^1.0.1",
     "@types/prosemirror-dropcursor": "^1.0.0",
@@ -64,6 +65,7 @@
     "@types/prosemirror-state": "^1.2.3",
     "@types/prosemirror-tables": "^0.8.0",
     "@types/prosemirror-view": "^1.9.0",
+    "codemirror": "^5.48.4",
     "orderedmap": "^1.0.0",
     "prosemirror-changeset": "^2.0.4",
     "prosemirror-commands": "^1.0.8",

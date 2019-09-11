@@ -1,11 +1,11 @@
-import { setBlockType } from 'prosemirror-commands';
+import { setBlockType, exitCode } from 'prosemirror-commands';
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { textblockTypeInputRule } from 'prosemirror-inputrules';
 
 import { BlockCommand } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput, PandocToken } from 'api/pandoc';
 import { pandocAttrSpec, pandocAttrParseDom, pandocAttrToDomAttr, pandocAttrReadAST } from 'api/pandoc_attr';
-import { textblockTypeInputRule } from 'prosemirror-inputrules';
 
 const CODE_BLOCK_ATTR = 0;
 const CODE_BLOCK_TEXT = 1;
@@ -70,5 +70,7 @@ const extension: Extension = {
     return [textblockTypeInputRule(/^```/, schema.nodes.code_block)];
   },
 };
+
+
 
 export default extension;

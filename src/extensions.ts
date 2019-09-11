@@ -28,7 +28,7 @@ import markSmallcaps from './marks/smallcaps';
 import markQuoted from './marks/quoted';
 import nodeBlockquote from './nodes/blockquote';
 import nodeFootnote from './nodes/footnote/footnote';
-import nodeCodeBlock from './nodes/code_block';
+import nodeCodeBlock from './nodes/code_block/code_block';
 import nodeHardBreak from './nodes/hard_break';
 import nodeSoftBreak from './nodes/soft_break';
 import nodeHeading from './nodes/heading';
@@ -37,6 +37,8 @@ import nodeImage from './nodes/image/image';
 import nodeLists from './nodes/list/list';
 import nodeParagraph from './nodes/paragraph';
 import nodeText from './nodes/text';
+
+import codemirror from './nodes/code_block/codemirror';
 
 export function initExtensions(config: EditorConfig): ExtensionManager {
   // create extension manager
@@ -76,6 +78,9 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
     nodeSoftBreak,
     nodeImage,
   ]);
+
+  // codemirror 
+  manager.register([codemirror]);
 
   // register external extensions
   if (config.extensions) {
