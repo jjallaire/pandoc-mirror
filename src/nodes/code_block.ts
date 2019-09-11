@@ -20,6 +20,7 @@ const extension: Extension = {
         marks: '',
         code: true,
         defining: true,
+        isolating: true,
         attrs: { ...pandocAttrSpec },
         parseDOM: [
           {

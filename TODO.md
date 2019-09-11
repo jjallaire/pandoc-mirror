@@ -15,7 +15,7 @@ handle meta fields (edit w/ codemirror + special handling for title/author/date/
 
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
-closer look on inserting/removing/manipluating codemirror
+closer look on inserting/removing/manipluating codemirror:
 
 inline math with MathQuill/MathJax: 
    https://pboysen.github.io/
