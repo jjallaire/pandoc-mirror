@@ -55,12 +55,20 @@
   flex: 1 1 auto;
 }
 
-.ProseMirror li .list-item-content p {
-  margin-top: 0.8em;
-  margin-bottom: 0.8em;
+.ProseMirror li ul, 
+.ProseMirror li ol {
+  margin-bottom: 1em;
 }
 
-.ProseMirror li:first-of-type > .list-item-container > .list-item-content > p {
+.ProseMirror ol[data-tight] li ul, 
+.ProseMirror ol[data-tight] li ol, 
+.ProseMirror ul[data-tight] li ul, 
+.ProseMirror ul[data-tight] li ol {
+  margin-bottom: 0;
+}
+
+
+.ProseMirror li > .list-item-container > .list-item-content > p {
   margin-top: 0;
 }
 
