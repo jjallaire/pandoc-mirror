@@ -6,9 +6,6 @@ pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 
-Checkbox at top of list item no longer shows up correctly
-``` after 2. Item 2 causes an HTML comment to be inserted!
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
