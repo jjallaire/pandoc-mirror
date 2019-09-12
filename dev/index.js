@@ -19,7 +19,8 @@ let editor = new PandocMirror.Editor({
 
 // create codemirror instance for preview
 let cm = new CodeMirror(layout.markdown, {
-  mode: 'markdown'
+  mode: 'markdown',
+  readOnly: true
 });
 
 // initialize toolbar
