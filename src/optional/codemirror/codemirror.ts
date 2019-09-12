@@ -197,13 +197,16 @@ class CodeBlockNodeView implements NodeView {
       }
     };
 
-    // note: normalizeKeyMap not declared in CodeMirror types
+    // Note: normalizeKeyMap not declared in CodeMirror types
+    // so we cast to any
     return (CodeMirror as any).normalizeKeyMap({
       Up: () => this.arrowMaybeEscape("line", -1),
       Left: () => this.arrowMaybeEscape("char", -1),
       Down: () => this.arrowMaybeEscape("line", 1),
       Right: () => this.arrowMaybeEscape("char", 1),
       Backspace: () => this.backspaceMaybeDeleteNode(),
+      // undo/redo keys are technically rebindable in the parent 
+      // editor so we may need a way to propagate the rebinding here
       [`${mod}-Z`]: () => undo(view.state, view.dispatch),
       [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
       [`${mod}-Y`]: () => redo(view.state, view.dispatch),
