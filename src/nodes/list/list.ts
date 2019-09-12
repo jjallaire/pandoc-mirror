@@ -37,6 +37,9 @@ export enum ListNumberStyle {
   Example = 'Example',
 }
 
+// NOTE: HTML output doesn't currently respect this and it's difficult to
+// do with CSS (especially for nested lists). So we allow the user to edit
+// it but it isn't reflected in the editor.
 export enum ListNumberDelim {
   DefaultDelim = 'DefaultDelim',
   Period = 'Period',
