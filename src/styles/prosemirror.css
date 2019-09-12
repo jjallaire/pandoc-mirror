@@ -40,7 +40,7 @@
   font-variant: small-caps;
 }
 
-/* List item (use custom node view to accomodate checkbox) */
+/* List item */
 
 .ProseMirror li > .list-item-container {
   display: flex;
