@@ -25,13 +25,11 @@ export class TightListCommand extends Command {
 
         if (dispatch) {
           const tr = state.tr;
-          parentList.node.forEach((node, offset) => {
-            tr.setNodeMarkup(parentList.pos + 1 + offset, schema.nodes.list_item, {
-              ...node.attrs,
+          const node = parentList.node;
+          tr.setNodeMarkup(parentList.pos, node.type, {
+            ...node.attrs,
               tight: !node.attrs.tight,
-            });
           });
-
           dispatch(tr);
         }
 

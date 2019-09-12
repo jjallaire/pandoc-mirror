@@ -64,7 +64,9 @@
   margin-top: 0;
 }
 
-.ProseMirror li[data-tight] > .list-item-container > .list-item-content > p {
+.ProseMirror ul[data-tight] > li > .list-item-container > .list-item-content > p,
+.ProseMirror ol[data-tight] > li > .list-item-container > .list-item-content > p
+ {
   margin-top: 0;
   margin-bottom: 0.4rem;
 }

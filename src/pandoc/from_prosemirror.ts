@@ -30,6 +30,7 @@ class PandocWriter implements PandocOutput {
   private readonly notes: { [key: string]: ProsemirrorNode };
   private readonly containers: any[][];
   private readonly activeMarks: MarkType[];
+  private readonly tightList: boolean[];
 
   constructor(
     apiVersion: PandocApiVersion,
@@ -59,6 +60,7 @@ class PandocWriter implements PandocOutput {
     };
     this.containers = [this.ast.blocks];
     this.activeMarks = [];
+    this.tightList = [];
   }
 
   public output(): PandocAst {
@@ -143,10 +145,10 @@ class PandocWriter implements PandocOutput {
     }
   }
 
-  public writeList(content: () => void) {
-    const list: any[] = [];
-    this.fill(list, content);
-    this.write(list);
+  public writeArray(content: () => void) {
+    const arr: any[] = [];
+    this.fill(arr, content);
+    this.write(arr);
   }
 
   public writeAttr(id: string, classes = [], keyvalue = []) {
@@ -167,6 +169,20 @@ class PandocWriter implements PandocOutput {
         }
       });
     }
+  }
+
+  public writeListBlock(list: ProsemirrorNode, content: () => void) {
+    const token = list.type === list.type.schema.nodes.ordered_list 
+        ? 'OrderedList' : 'BulletList';
+    this.tightList.push(list.attrs.tight);
+    this.writeToken(token, content);
+    this.tightList.pop();
+  }
+
+  public writeListItemParagraph(content: () => void) {
+    const tight = this.tightList[this.tightList.length - 1];
+    const paraItemBlockType = tight ? 'Plain' : 'Para';
+    this.writeToken(paraItemBlockType, content);
   }
 
   public writeNote(note: ProsemirrorNode) {

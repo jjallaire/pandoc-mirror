@@ -91,7 +91,7 @@ const extension: Extension = {
         writer: (output: PandocOutput, node: ProsemirrorNode) => {
           output.writeToken('Image', () => {
             output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            output.writeList(() => {
+            output.writeArray(() => {
               // TODO: support for arbitrary inlines in alt
               // May simply need a separate figure node type
               output.writeText(node.attrs.alt);

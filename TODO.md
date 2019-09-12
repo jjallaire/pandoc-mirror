@@ -6,11 +6,17 @@ pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 
+tight list attribute at list level?
+support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
+
+
+``` after 2. Item 2 causes an HTML comment to be inserted!
+
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 
 definition lists
 
-support for ListDelimStyle (currently HTML output from pandoc doesn't respect this)
+
 
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 

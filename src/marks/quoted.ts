@@ -76,7 +76,7 @@ const extension: Extension = {
           write: (output: PandocOutput, mark: Mark, parent: Fragment) => {
             output.writeToken('Quoted', () => {
               output.writeToken(mark.attrs.type);
-              output.writeList(() => {
+              output.writeArray(() => {
                 const text = parent.cut(1, parent.size - 1);
                 output.writeInlines(text);
               });

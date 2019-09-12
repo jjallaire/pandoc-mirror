@@ -63,11 +63,13 @@ export interface PandocOutput {
   write(value: any): void;
   writeToken(type: string, content?: (() => void) | any): void;
   writeMark(type: string, parent: Fragment, expelEnclosingWhitespace?: boolean): void;
-  writeList(content: () => void): void;
+  writeArray(content: () => void): void;
   writeAttr(id: string, classes?: readonly string[], keyvalue?: readonly string[]): void;
   writeText(text: string | null): void;
   writeBlock(block: ProsemirrorNode): void;
   writeBlocks(parent: ProsemirrorNode): void;
+  writeListBlock(list: ProsemirrorNode, content: () => void): void;
+  writeListItemParagraph(content: () => void): void;
   writeNote(note: ProsemirrorNode): void;
   writeInlines(parent: Fragment): void;
 }

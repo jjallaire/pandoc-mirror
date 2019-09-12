@@ -110,15 +110,12 @@ class Parser {
         const listItemNodeType = this.schema.nodes[listItem];
         handlers[reader.token] = (state: ParserState, tok: PandocToken) => {
           const children = getChildren(tok);
-          const tight = children.length && children[0][0].t === 'Plain';
           const attrs = getAttrs(tok);
+          attrs.tight = children.length && children[0][0].t === 'Plain';
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
-            const childAttrs: { tight?: boolean; checked: null | boolean } = { checked: null };
-            if (tight) {
-              childAttrs.tight = true;
-            }
-
+            const childAttrs: { checked: null | boolean } = { checked: null };
+           
             // look for checkbox in first character of child tokens
             // if we see it, remove it and set childAttrs.checked as appropriate
             const childWithChecked = tokensWithChecked(child);

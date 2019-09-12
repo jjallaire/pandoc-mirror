@@ -76,7 +76,7 @@ const extension: Extension = {
           write: (output: PandocOutput, mark: Mark, parent: Fragment) => {
             output.writeToken('Link', () => {
               output.writeAttr(mark.attrs.id, mark.attrs.classes, mark.attrs.keyvalue);
-              output.writeList(() => {
+              output.writeArray(() => {
                 output.writeInlines(parent);
               });
               output.write([mark.attrs.href || '', mark.attrs.title || '']);

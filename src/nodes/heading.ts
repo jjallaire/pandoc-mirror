@@ -54,7 +54,7 @@ const extension: Extension = {
           output.writeToken('Header', () => {
             output.write(node.attrs.level);
             output.writeAttr(node.attrs.id, node.attrs.classes, node.attrs.keyvalue);
-            output.writeList(() => {
+            output.writeArray(() => {
               output.writeInlines(node.content);
             });
           });

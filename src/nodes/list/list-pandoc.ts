@@ -26,32 +26,32 @@ export const pandocOrderedListReader = {
 };
 
 export function pandocWriteOrderedList(output: PandocOutput, node: ProsemirrorNode) {
-  output.writeToken('OrderedList', () => {
-    output.writeList(() => {
+  output.writeListBlock(node, () => {
+    output.writeArray(() => {
       output.write(node.attrs.order);
       output.writeToken(node.attrs.number_style);
       output.writeToken(node.attrs.number_delim);
     });
-    output.writeList(() => {
+    output.writeArray(() => {
       output.writeBlocks(node);
     });
   });
 }
 
 export function pandocWriteBulletList(output: PandocOutput, node: ProsemirrorNode) {
-  output.writeToken('BulletList', () => {
+  output.writeListBlock(node, () => {
     output.writeBlocks(node);
   });
 }
 
 export function pandocWriteListItem(output: PandocOutput, node: ProsemirrorNode) {
-  const paraItemBlockType = node.attrs.tight ? 'Plain' : 'Para';
+
   const checked = node.attrs.checked;
 
-  output.writeList(() => {
+  output.writeArray(() => {
     node.forEach((itemNode: ProsemirrorNode, _offset, index) => {
       if (itemNode.type === node.type.schema.nodes.paragraph) {
-        output.writeToken(paraItemBlockType, () => {
+        output.writeListItemParagraph(() => {
           // for first item block, prepend check mark if we have one
           if (checked !== null && index === 0) {
             output.writeInlines(fragmentWithCheck(node.type.schema, itemNode.content, checked));

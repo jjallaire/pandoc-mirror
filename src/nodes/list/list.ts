@@ -53,7 +53,6 @@ const extension: Extension = {
       spec: {
         content: 'paragraph block*',
         attrs: {
-          tight: { default: true },
           checked: { default: null },
         },
         defining: true,
@@ -63,9 +62,6 @@ const extension: Extension = {
             getAttrs: (dom: Node | string) => {
               const el = dom as Element;
               const attrs: any = {};
-              if (el.hasAttribute('data-tight')) {
-                attrs.tight = true;
-              }
               if (el.hasAttribute('data-checked')) {
                 attrs.checked = el.getAttribute('data-checked') === 'true';
               }
@@ -75,9 +71,6 @@ const extension: Extension = {
         ],
         toDOM(node) {
           const attrs: any = {};
-          if (node.attrs.tight) {
-            attrs['data-tight'] = 'true';
-          }
           if (node.attrs.checked !== null) {
             attrs['data-checked'] = node.attrs.checked ? 'true' : 'false';
           }
@@ -93,9 +86,28 @@ const extension: Extension = {
       spec: {
         content: 'list_item+',
         group: 'block',
-        parseDOM: [{ tag: 'ul' }],
-        toDOM() {
-          return ['ul', 0];
+        attrs: {
+          tight: { default: true },
+        },
+        parseDOM: [
+          { 
+            tag: 'ul',
+            getAttrs: (dom: Node | string) => {
+              const el = dom as Element;
+              const attrs: any = {};
+              if (el.hasAttribute('data-tight')) {
+                attrs.tight = true;
+              }
+              return attrs;
+            }
+          }
+        ],
+        toDOM(node) {
+          const attrs: { [key: string]: string } = {};
+          if (node.attrs.tight) {
+            attrs['data-tight'] = 'true';
+          }
+          return ['ul', attrs, 0];
         },
       },
       pandoc: {
@@ -114,6 +126,7 @@ const extension: Extension = {
         content: 'list_item+',
         group: 'block',
         attrs: {
+          tight: { default: true },
           order: { default: 1 },
           number_style: { default: ListNumberStyle.Decimal },
           number_delim: { default: ListNumberDelim.Period },
@@ -124,6 +137,8 @@ const extension: Extension = {
             getAttrs(dom: Node | string) {
               const el = dom as Element;
 
+              const tight = el.hasAttribute('data-tight');
+
               let order: string | number | null = el.getAttribute('start');
               if (!order) {
                 order = 1;
@@ -133,12 +148,15 @@ const extension: Extension = {
                 ? ListNumberStyle.Example
                 : typeToNumberStyle(el.getAttribute('type'));
 
-              return { order, numberStyle };
+              return { tight, order, numberStyle };
             },
           },
         ],
         toDOM(node) {
           const attrs: { [key: string]: string } = {};
+          if (node.attrs.tight) {
+            attrs['data-tight'] = 'true';
+          }
           if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order;
           }
