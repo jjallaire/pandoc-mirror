@@ -85,11 +85,11 @@ Next line after soft break.
 - List
 - Here we go
 
-(i) Ordered
+i. Ordered
 
-(ii) List
+ii. List
 
-(ii) Example of
+iii. Example of
 
 
 This is a link to *[Google](https://www.google.com){#myLink .splat target=_blank}*
