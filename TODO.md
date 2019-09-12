@@ -5,14 +5,17 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
+Input rule for HR
+
+codemirror markdown in preview
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
-
-definition lists
-
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 
+handle raw divs and raw spans
 handle duplicate ids when block elements are split (required once we support ids on divs)
+
+definition lists
 
 tables
 

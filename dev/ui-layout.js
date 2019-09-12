@@ -4,7 +4,7 @@ function initLayout() {
   // create containers
   const layout = createContainer('layout', 'div')
   const editor = createContainer('editor', 'div')
-  const markdown = createContainer('markdown', 'pre')
+  const markdown = createContainer('markdown', 'div')
 
   // layout ui
   const w2layout = $(layout).w2layout({

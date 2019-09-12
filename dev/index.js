@@ -17,6 +17,11 @@ let editor = new PandocMirror.Editor({
   }
 });
 
+// create codemirror instance for preview
+let codemirror = new CodeMirror(layout.markdown, {
+  mode: 'markdown'
+});
+
 // initialize toolbar
 initToolbar(layout.toolbar, editor)
 
@@ -25,7 +30,10 @@ initToolbar(layout.toolbar, editor)
 editor.subscribe(PandocMirror.kEventUpdate, () => {
   editor.getMarkdown()
     .then(markdown => {
-      $(layout.markdown).text(markdown)
+      const scrollInfo = codemirror.getScrollInfo();
+      codemirror.setValue(markdown);
+      codemirror.scrollTo(scrollInfo.left, scrollInfo.top);
+
     })
     .catch(error => {
       editorUI.alert(error.message)
