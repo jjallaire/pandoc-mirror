@@ -56,10 +56,16 @@
 }
 
 .ProseMirror li .list-item-content p {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+
+.ProseMirror li:first-of-type > .list-item-container > .list-item-content > p {
   margin-top: 0;
 }
 
-.ProseMirror li[data-tight] .list-item-content p {
+.ProseMirror li[data-tight] > .list-item-container > .list-item-content > p {
+  margin-top: 0;
   margin-bottom: 0.4rem;
 }
 
