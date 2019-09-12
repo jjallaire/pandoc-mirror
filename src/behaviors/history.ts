@@ -5,7 +5,7 @@ import { Extension } from 'api/extension';
 
 const extension: Extension = {
   commands: () => {
-    return [new Command('undo', ['Mod-z'], undo), new Command('redo', ['Shift-Mod-z'], redo)];
+    return [new Command('undo', ['Mod-z'], undo), new Command('redo', ['Mod-y', 'Shift-Mod-z'], redo)];
   },
 
   plugins: () => {
