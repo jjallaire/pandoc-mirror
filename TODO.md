@@ -7,8 +7,6 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 
 Input rule for HR
 
-codemirror markdown in preview
-
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 
