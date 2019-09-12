@@ -2,10 +2,13 @@ import { chainCommands, exitCode } from 'prosemirror-commands';
 import { Schema } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import { keymap } from 'prosemirror-keymap';
 
-import { CommandFn } from 'api/command';
+import { CommandFn, Command } from 'api/command';
 import { Extension } from 'api/extension';
 import { PandocOutput } from 'api/pandoc';
+import { EditorUI } from 'api/ui';
+
 
 const extension: Extension = {
   nodes: [
@@ -34,7 +37,8 @@ const extension: Extension = {
     },
   ],
 
-  keymap: (schema: Schema, mac: boolean) => {
+  plugins: (schema: Schema, ui: EditorUI, mac: boolean) => {
+    
     const br = schema.nodes.hard_break;
     const cmd = chainCommands(
       exitCode,
@@ -45,14 +49,19 @@ const extension: Extension = {
         return true;
       },
     );
-    const keys: { [key: string]: CommandFn } = {};
-    keys['Mod-Enter'] = cmd;
-    keys['Shift-Enter'] = cmd;
+
+    const keys: { [key: string]: CommandFn } = {
+      'Mod-Enter': cmd,
+      'Shift-Enter': cmd,
+    };
     if (mac) {
       keys['Ctrl-Enter'] = cmd;
     }
-    return keys;
-  },
+    
+    return [
+      keymap(keys)
+    ];
+  }
 };
 
 export default extension;

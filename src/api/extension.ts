@@ -10,8 +10,7 @@ import { EditorUI } from './ui';
 export interface Extension {
   marks?: PandocMark[];
   nodes?: PandocNode[];
-  keymap?: (schema: Schema, mac: boolean) => { [key: string]: CommandFn };
-  commands?: (schema: Schema, ui: EditorUI) => readonly Command[];
   inputRules?: (schema: Schema) => readonly InputRule[];
-  plugins?: (schema: Schema, ui: EditorUI) => readonly Plugin[];
+  commands?: (schema: Schema, ui: EditorUI, mac: boolean) => readonly Command[];
+  plugins?: (schema: Schema, ui: EditorUI, mac: boolean) => readonly Plugin[];
 }

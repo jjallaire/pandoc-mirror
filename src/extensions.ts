@@ -3,7 +3,7 @@ import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
 import { EditorUI } from 'api/ui';
-import { CommandFn, Command } from 'api/command';
+import { Command } from 'api/command';
 import { PandocMark } from 'api/mark';
 import { PandocNode } from 'api/node';
 import { Extension } from 'api/extension';
@@ -12,6 +12,7 @@ import { PandocTokenReader, PandocMarkWriter, PandocNodeWriter } from 'api/pando
 import { EditorConfig } from 'editor';
 
 import behaviorBasekeys from './behaviors/basekeys';
+import behaviorSelectAll from './behaviors/select_all';
 import behaviorCursor from './behaviors/cursor';
 import behaviorHistory from './behaviors/history';
 import behaviorSmarty from './behaviors/smarty';
@@ -48,6 +49,7 @@ export function initExtensions(config: EditorConfig): ExtensionManager {
   manager.register([
     // behaviors
     behaviorBasekeys,
+    behaviorSelectAll,
     behaviorCursor,
     behaviorSmarty,
     behaviorHistory,
@@ -143,37 +145,26 @@ export class ExtensionManager {
     });
   }
 
-  public commands(schema: Schema, ui: EditorUI): readonly Command[] {
+  public commands(schema: Schema, ui: EditorUI, mac: boolean): readonly Command[] {
     return this.collect<Command>((extension: Extension) => {
       if (extension.commands) {
-        return extension.commands(schema, ui);
+        return extension.commands(schema, ui, mac);
       } else {
         return undefined;
       }
     });
   }
 
-  public plugins(schema: Schema, ui: EditorUI): readonly Plugin[] {
+  public plugins(schema: Schema, ui: EditorUI, mac: boolean): readonly Plugin[] {
     return this.collect<Plugin>((extension: Extension) => {
       if (extension.plugins) {
-        return extension.plugins(schema, ui);
+        return extension.plugins(schema, ui, mac);
       } else {
         return undefined;
       }
     });
   }
 
-  // NOTE: return value not readonly b/c it will be fed directly to a
-  // Prosemirror interface that doesn't take readonly
-  public keymap(schema: Schema, mac: boolean): { [key: string]: CommandFn } {
-    let keys: { [key: string]: CommandFn } = {};
-    this.extensions.forEach(extension => {
-      if (extension.keymap) {
-        keys = { ...keys, ...extension.keymap(schema, mac) };
-      }
-    });
-    return keys;
-  }
 
   // NOTE: return value not readonly b/c it will be fed directly to a
   // Prosemirror interface that doesn't take readonly

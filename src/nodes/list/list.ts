@@ -26,6 +26,7 @@ import {
   pandocOrderedListReader,
   pandocWriteOrderedList,
 } from './list-pandoc';
+import { Command } from 'api/command';
 
 export enum ListNumberStyle {
   DefaultStyle = 'DefaultStyle',
@@ -197,22 +198,13 @@ const extension: Extension = {
     ];
   },
 
-  keymap: (schema: Schema) => {
-    return {
-      'Shift-Ctrl-8': wrapInList(schema.nodes.bullet_list),
-      'Shift-Ctrl-9': wrapInList(schema.nodes.ordered_list),
-      Enter: splitListItem(schema.nodes.list_item),
-      'Mod-[': liftListItem(schema.nodes.list_item),
-      'Shift-Tab': liftListItem(schema.nodes.list_item),
-      'Mod-]': sinkListItem(schema.nodes.list_item),
-      Tab: sinkListItem(schema.nodes.list_item),
-    };
-  },
-
   commands: (schema: Schema, ui: EditorUI) => {
     return [
-      new ListCommand('bullet_list', schema.nodes.bullet_list, schema.nodes.list_item),
-      new ListCommand('ordered_list', schema.nodes.ordered_list, schema.nodes.list_item),
+      new ListCommand('bullet_list', ['Shift-Ctrl-8'], schema.nodes.bullet_list, schema.nodes.list_item),
+      new ListCommand('ordered_list', ['Shift-Ctrl-9'], schema.nodes.ordered_list, schema.nodes.list_item),
+      new Command('sink_list_item', ['Tab', 'Mod-]'], sinkListItem(schema.nodes.list_item)),
+      new Command('lift_list_item', ['Shift-Tab', 'Mod-['], liftListItem(schema.nodes.list_item)),
+      new Command('split_list_item', ['Enter'], splitListItem(schema.nodes.list_item)),
       new OrderedListEditCommand(schema, ui),
       new TightListCommand(schema),
       new CheckedListItemCommand(schema.nodes.list_item),

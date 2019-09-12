@@ -7,8 +7,8 @@ import { NodeCommand, toggleList, Command } from 'api/command';
 import { EditorUI, OrderedListProps, OrderedListEditResult } from 'api/ui';
 
 export class ListCommand extends NodeCommand {
-  constructor(name: string, listType: NodeType, listItemType: NodeType) {
-    super(name, null, listType, {}, toggleList(listType, listItemType));
+  constructor(name: string, keymap: string[] | null, listType: NodeType, listItemType: NodeType) {
+    super(name, keymap, listType, {}, toggleList(listType, listItemType));
   }
 }
 

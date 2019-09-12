@@ -49,6 +49,8 @@ export interface EditorCommand {
 export const kEventUpdate = 'update';
 export const kEventSelectionChange = 'selectionChange';
 
+const kMac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
+
 export class Editor {
   private readonly parent: HTMLElement;
   private readonly ui: EditorUI;
@@ -167,7 +169,7 @@ export class Editor {
 
   public commands(): { [name: string]: EditorCommand } {
     return this.extensions
-      .commands(this.schema, this.ui)
+      .commands(this.schema, this.ui, kMac)
       .reduce((commands: { [name: string]: EditorCommand }, command: Command) => {
         return {
           ...commands,
@@ -278,7 +280,7 @@ export class Editor {
   private initPlugins(): Plugin[] {
     return [
       ...this.keymapPlugins(),
-      ...this.extensions.plugins(this.schema, this.ui),
+      ...this.extensions.plugins(this.schema, this.ui, kMac),
       inputRules({ rules: this.extensions.inputRules(this.schema) }),
       new Plugin({
         key: new PluginKey('editable'),
@@ -292,7 +294,7 @@ export class Editor {
   private keymapPlugins(): Plugin[] {
     // command keys from extensions
     const commandKeys: { [key: string]: CommandFn } = {};
-    const commands: readonly Command[] = this.extensions.commands(this.schema, this.ui);
+    const commands: readonly Command[] = this.extensions.commands(this.schema, this.ui, kMac);
     commands.forEach((command: Command) => {
       if (command.keymap) {
         command.keymap.forEach((key: string) => {
@@ -301,12 +303,8 @@ export class Editor {
       }
     });
 
-    // keymap from extensions
-    const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
-    const extensionKeys = this.extensions.keymap(this.schema, mac);
-
     // return plugins
-    return [keymap(commandKeys), keymap(extensionKeys)];
+    return [keymap(commandKeys)];
   }
 
   private emptyDoc(): ProsemirrorNode {

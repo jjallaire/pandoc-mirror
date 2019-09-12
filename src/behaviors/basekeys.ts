@@ -1,23 +1,32 @@
-import { baseKeymap, joinDown, joinUp, lift } from 'prosemirror-commands';
+import { 
+  chainCommands, newlineInCode, createParagraphNear, 
+  liftEmptyBlock, splitBlock, deleteSelection, 
+  joinBackward, selectNodeBackward, joinForward, selectNodeForward 
+} from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
-import { CommandFn } from 'api/command';
 import { Extension } from 'api/extension';
 
 const extension: Extension = {
   plugins: () => {
-    const keys: { [key: string]: CommandFn } = {};
-    function bindKey(key: string, cmd: CommandFn) {
-      keys[key] = cmd;
-    }
-    bindKey('Backspace', undoInputRule);
-    bindKey('Alt-ArrowUp', joinUp);
-    bindKey('Alt-ArrowDown', joinDown);
-    bindKey('Mod-BracketLeft', lift);
+    // create base (non-rebindable) keymap
 
-    return [keymap(keys), keymap(baseKeymap)];
-  },
+    const enter = chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock);
+    const backspace = chainCommands(undoInputRule, deleteSelection, joinBackward, selectNodeBackward);
+    const del = chainCommands(deleteSelection, joinForward, selectNodeForward);
+    
+    const keys = {
+      "Enter": enter,
+      "Backspace": backspace,
+      "Mod-Backspace": backspace,
+      "Delete": del,
+      "Mod-Delete": del,
+    };
+    
+    // return keymap
+    return [keymap(keys)];
+  }
 };
 
 export default extension;

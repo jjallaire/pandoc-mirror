@@ -189,6 +189,14 @@ class CodeBlockNodeView implements NodeView {
   private codeMirrorKeymap() {
     const view = this.view;
     const mod = /Mac/.test(navigator.platform) ? "Cmd" : "Ctrl";
+
+    // exit code block
+    const exitBlock = () => {
+      if (exitCode(view.state, view.dispatch)) {
+        view.focus();
+      }
+    };
+
     // note: normalizeKeyMap not declared in CodeMirror types
     return (CodeMirror as any).normalizeKeyMap({
       Up: () => this.arrowMaybeEscape("line", -1),
@@ -199,11 +207,9 @@ class CodeBlockNodeView implements NodeView {
       [`${mod}-Z`]: () => undo(view.state, view.dispatch),
       [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
       [`${mod}-Y`]: () => redo(view.state, view.dispatch),
-      "Ctrl-Enter": () => {
-        if (exitCode(view.state, view.dispatch)) {
-          view.focus();
-        }
-      }
+      "Ctrl-Enter": exitBlock,
+      "Shift-Enter": exitBlock,
+      [`${mod}-Enter`]: exitBlock
     });
   }
 

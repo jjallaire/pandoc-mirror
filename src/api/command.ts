@@ -81,8 +81,7 @@ export function toggleList(listType: NodeType, itemType: NodeType): CommandFn {
   function isList(node: Node, schema: Schema) {
     return (
       node.type === schema.nodes.bullet_list ||
-      node.type === schema.nodes.ordered_list ||
-      node.type === schema.nodes.todo_list
+      node.type === schema.nodes.ordered_list
     );
   }
 

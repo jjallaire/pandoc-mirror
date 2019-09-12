@@ -57,14 +57,8 @@ const extension: Extension = {
     },
   ],
 
-  keymap: (schema: Schema) => {
-    return {
-      'Shift-Ctrl-\\': setBlockType(schema.nodes.code_block),
-    };
-  },
-
   commands: (schema: Schema) => {
-    return [new BlockCommand('code_block', null, schema.nodes.code_block, schema.nodes.paragraph, {})];
+    return [new BlockCommand('code_block', ['Shift-Ctrl-\\'], schema.nodes.code_block, schema.nodes.paragraph, {})];
   },
 
   inputRules: (schema: Schema) => {
