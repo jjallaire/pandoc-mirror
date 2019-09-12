@@ -175,6 +175,7 @@ export class Editor {
           ...commands,
           [command.name]: {
             name: command.name,
+            keymap: command.keymap,
             isActive: () => command.isActive(this.state),
             isEnabled: () => command.isEnabled(this.state),
             execute: () => command.execute(this.state, this.view.dispatch, this.view),

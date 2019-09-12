@@ -34,7 +34,7 @@ const extension: Extension = {
   ],
 
   commands: (schema: Schema) => {
-    return [new WrapCommand('blockquote', ['Ctrl->'], schema.nodes.blockquote)];
+    return [new WrapCommand('blockquote', ['Mod->'], schema.nodes.blockquote)];
   },
 
   inputRules: (schema: Schema) => {

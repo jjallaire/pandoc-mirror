@@ -140,7 +140,7 @@ export function checkedListItemToggleCommandFn(itemType: NodeType) {
 
 export class CheckedListItemCommand extends Command {
   constructor(itemType: NodeType) {
-    super('checked_list_item', ['Shift-Ctrl-1'], checkedListItemCommandFn(itemType));
+    super('list_item_check', null, checkedListItemCommandFn(itemType));
   }
 
   public isActive(state: EditorState): boolean {
@@ -155,7 +155,7 @@ export class CheckedListItemCommand extends Command {
 
 export class CheckedListItemToggleCommand extends Command {
   constructor(itemType: NodeType) {
-    super('checked_list_item_toggle', ['Shift-Ctrl-2'], checkedListItemToggleCommandFn(itemType));
+    super('list_item_check_toggle', null, checkedListItemToggleCommandFn(itemType));
   }
 }
 

@@ -54,7 +54,7 @@ const extension: Extension = {
   ],
 
   commands: (schema: Schema) => {
-    return [new MarkCommand('code', ['Mod-d', 'Mod-D'], schema.marks.code)];
+    return [new MarkCommand('code', ['Mod-d'], schema.marks.code)];
   },
 
   inputRules: (schema: Schema) => {

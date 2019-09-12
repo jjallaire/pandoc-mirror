@@ -202,9 +202,9 @@ const extension: Extension = {
     return [
       new ListCommand('bullet_list', ['Shift-Ctrl-8'], schema.nodes.bullet_list, schema.nodes.list_item),
       new ListCommand('ordered_list', ['Shift-Ctrl-9'], schema.nodes.ordered_list, schema.nodes.list_item),
-      new Command('sink_list_item', ['Tab', 'Mod-]'], sinkListItem(schema.nodes.list_item)),
-      new Command('lift_list_item', ['Shift-Tab', 'Mod-['], liftListItem(schema.nodes.list_item)),
-      new Command('split_list_item', ['Enter'], splitListItem(schema.nodes.list_item)),
+      new Command('list_item_sink', ['Tab', 'Mod-]'], sinkListItem(schema.nodes.list_item)),
+      new Command('list_item_lift', ['Shift-Tab', 'Mod-['], liftListItem(schema.nodes.list_item)),
+      new Command('list_item_split', ['Enter'], splitListItem(schema.nodes.list_item)),
       new OrderedListEditCommand(schema, ui),
       new TightListCommand(schema),
       new CheckedListItemCommand(schema.nodes.list_item),

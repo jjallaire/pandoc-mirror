@@ -16,7 +16,7 @@ export class TightListCommand extends Command {
   constructor(schema: Schema) {
     super(
       'tight_list',
-      ['Shift-Ctrl-0'],
+      ['Shift-Ctrl-7'],
       (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
         const parentList = findParentNodeOfType([schema.nodes.bullet_list, schema.nodes.ordered_list])(state.selection);
         if (!parentList) {
