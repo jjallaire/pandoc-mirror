@@ -38,13 +38,13 @@ function initLayout() {
             { type: 'html',
               id: 'markdown_caption',
               style: 'color: rgb(54, 55, 85); font-weight: 600;',
-              html: '&nbsp;Preview' },
+              html: '&nbsp;Markdown' },
             { type: 'spacer' },
             { type: 'button',
               icon: 'fa fa-angle-double-right',
               onClick: () => { 
-                layout.hide('right')
-                layout.get('main').toolbar.show('show_markdown')
+                w2layout.hide('right')
+                w2layout.get('main').toolbar.show('show_markdown')
               }
              },
           ],
@@ -55,10 +55,11 @@ function initLayout() {
   });
 
   // return layout components
-  return {
-    toolbar: w2layout.get('main').toolbar,
+  return {    
+    w2layout,
     editor: editor,
-    markdown: markdown
+    markdown: markdown,
+
   }
 }
 

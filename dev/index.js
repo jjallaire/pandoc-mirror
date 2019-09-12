@@ -18,22 +18,23 @@ let editor = new PandocMirror.Editor({
 });
 
 // create codemirror instance for preview
-let codemirror = new CodeMirror(layout.markdown, {
+let cm = new CodeMirror(layout.markdown, {
   mode: 'markdown'
 });
 
 // initialize toolbar
-initToolbar(layout.toolbar, editor)
+initToolbar(layout.w2layout, editor)
 
 
 // update markdown when editor is updated
 editor.subscribe(PandocMirror.kEventUpdate, () => {
   editor.getMarkdown()
     .then(markdown => {
-      const scrollInfo = codemirror.getScrollInfo();
-      codemirror.setValue(markdown);
-      codemirror.scrollTo(scrollInfo.left, scrollInfo.top);
-
+      cm.replaceRange(
+        markdown,
+        { line: cm.firstLine(), ch: 0 },
+        { line: cm.lastLine(), ch: cm.getLine(cm.lastLine()).length } 
+      );
     })
     .catch(error => {
       editorUI.alert(error.message)

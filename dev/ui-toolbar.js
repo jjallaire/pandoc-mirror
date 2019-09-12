@@ -1,5 +1,8 @@
 
-const initToolbar = function(toolbar, editor) {
+const initToolbar = function(w2layout, editor) {
+
+  // get the toolbar
+  const toolbar = w2layout.get('main').toolbar;
 
   // functions for creating toolbar buttons and menus
   const commands = editor.commands()
@@ -93,7 +96,7 @@ const initToolbar = function(toolbar, editor) {
     hidden: true,
     icon: 'fa fa-angle-double-left',
     onClick: () => { 
-      layout.show('right');
+      w2layout.show('right');
       toolbar.hide('show_markdown')
     }
   })
