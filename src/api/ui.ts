@@ -43,6 +43,7 @@ export interface ImageProps extends AttrProps {
 export type ImageEditResult = ImageProps;
 
 export interface OrderedListProps {
+  readonly tight: boolean;
   readonly start: number;
   readonly number_style: string;
   readonly number_delim: string;

@@ -74,7 +74,7 @@ const editorUI = {
   
     })
   },
-  
+ 
   editOrderedList(list) {
 
     return new Promise(resolve => {
@@ -84,14 +84,15 @@ const editorUI = {
         title: 'Edit Ordered List', 
         fields: [
           { field: 'order', type: 'number', required: true },
+          { field: 'tight', type: 'number', required: true },
           { field: 'number_style', type: 'text', required: true },
-          { field: 'number_delim', type: 'text', required: true }
+          { field: 'number_delim', type: 'text', required: true },
         ],
         buttons: null,
-        record: list, 
+        record: { ...list, tight: list.tight ? 1 : 0 }, 
         actions: {
           save: (result) => {
-            resolve({ ...result, order: parseInt(result.order) })
+            resolve({ ...result, order: parseInt(result.order), tight: parseInt(result.tight) > 0 })
           },
           cancel: () => resolve(null)
         },
