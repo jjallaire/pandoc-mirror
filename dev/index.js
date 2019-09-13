@@ -46,6 +46,9 @@ editor.subscribe(PandocMirror.kEventUpdate, () => {
 // get content and load it into the editor
 axios.get('content/content.md') .then(result => {
   editor.setMarkdown(result.data)
+    .then(() => {
+      
+    })
     .catch(error => {
       editorUI.alert(error.message)
     })
