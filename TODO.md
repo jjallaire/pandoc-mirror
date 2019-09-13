@@ -5,6 +5,8 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
+editing container based on phospher: http://phosphorjs.github.io/phosphor/api/widgets/globals.html
+
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
@@ -22,6 +24,9 @@ inline math with MathQuill/MathJax:
    https://discuss.prosemirror.net/t/odd-behavior-with-nodeview-and-atom-node/1521
 
 add outline notifications / navigation
+
+menus for dev project
+  https://jqueryui.com/menu/
 
 support for image figures (where alt text is displayed in a p below the image). note that alt text supports arbitrary markup so need a structured way to allow selection and editing of just the alt text. figures will
 be an additional node type with a custom node view (or something like that). Notes on making the caption editable

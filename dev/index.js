@@ -47,7 +47,12 @@ editor.subscribe(PandocMirror.kEventUpdate, () => {
 axios.get('content/content.md') .then(result => {
   editor.setMarkdown(result.data)
     .then(() => {
-      
+      /*
+      Object.entries(editor.commands()).forEach(entry => {
+        const command = entry[1];
+        console.log(command.name + ': ' + (command.keymap ? command.keymap.join(', ') : ''));
+      })
+      */
     })
     .catch(error => {
       editorUI.alert(error.message)
