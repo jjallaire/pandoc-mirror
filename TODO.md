@@ -9,7 +9,8 @@ pandoc jats:    https://github.com/mfenner/pandoc-jats
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
 handle meta fields (edit w/ codemirror + special handling for title/author/date/abstract?)
 
-handle raw divs and raw spans
+handle divs and raw spans
+handle rawhtml, rawtex, and raw(other)
 handle duplicate ids when block elements are split (required once we support ids on divs)
 
 definition lists
@@ -26,7 +27,6 @@ support for image figures (where alt text is displayed in a p below the image). 
 be an additional node type with a custom node view (or something like that). Notes on making the caption editable
 are here: https://discuss.prosemirror.net/t/getting-a-feel-for-nodeview/972
 
-allow overriding of editor keys (need to use EditorState.reconfigure for this)
 
 find/replace
   https://tiptap.scrumpy.io/search-and-replace 
