@@ -10,7 +10,11 @@ editing container based on phospher:
    react in phospher widget:
      https://github.com/jupyterlab/jupyterlab/blob/master/packages/apputils/src/vdom.ts
      https://github.com/jupyterlab/jupyterlab/blob/master/packages/apputils/src/toolbar.tsx
-
+     https://github.com/jupyterlab/jupyterlab/blob/master/packages/ui-components/src/blueprint.tsx
+     https://blueprintjs.com/docs/
+     https://blueprintjs.com/docs/#core/components/menu
+     react tiling window manager that works with blueprint:
+        https://github.com/nomcopter/react-mosaic
 
 
 
