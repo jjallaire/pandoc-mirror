@@ -5,7 +5,13 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
-editing container based on phospher: http://phosphorjs.github.io/phosphor/api/widgets/globals.html
+editing container based on phospher: 
+   http://phosphorjs.github.io/phosphor/api/widgets/globals.html
+   react in phospher widget:
+     https://github.com/jupyterlab/jupyterlab/blob/master/packages/apputils/src/vdom.ts
+     https://github.com/jupyterlab/jupyterlab/blob/master/packages/apputils/src/toolbar.tsx
+
+
 
 
 pre-processing and post-processing for Rmd fenced code attributes (don't conform)
