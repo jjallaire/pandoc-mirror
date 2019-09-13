@@ -1,6 +1,6 @@
 import OrderedMap from 'orderedmap';
 import { inputRules } from 'prosemirror-inputrules';
-import { keymap } from 'prosemirror-keymap';
+import { keydownHandler } from 'prosemirror-keymap';
 import { MarkSpec, Node as ProsemirrorNode, NodeSpec, Schema } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -26,6 +26,7 @@ export interface EditorConfig {
   readonly ui: EditorUI;
   readonly options: EditorOptions;
   readonly hooks?: EditorHooks;
+  readonly keybindings?: EditorKeybindings;
   readonly extensions?: readonly Extension[];
 }
 
@@ -39,6 +40,8 @@ export interface EditorHooks {
   applyDevTools?: (view: EditorView, stateClass: any) => void;
 }
 
+export interface EditorKeybindings { [key: string]: string[] | null; }
+
 export interface EditorCommand {
   readonly name: string;
   isEnabled: () => boolean;
@@ -51,24 +54,30 @@ export const kEventSelectionChange = 'selectionChange';
 
 const kMac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
 
+
 export class Editor {
+
+  private static readonly keybindingsPlugin = new PluginKey('keybindings');
+
   private readonly parent: HTMLElement;
   private readonly ui: EditorUI;
   private readonly options: EditorOptions;
   private readonly hooks: EditorHooks;
-  private events: ReadonlyMap<string, Event>;
   private readonly schema: Schema;
   private readonly view: EditorView;
   private readonly extensions: ExtensionManager;
   private readonly pandocConverter: PandocConverter;
 
   private state: EditorState;
+  private events: ReadonlyMap<string, Event>;
+  private keybindings: EditorKeybindings;
 
   constructor(config: EditorConfig) {
     // initialize references
     this.parent = config.parent;
     this.ui = config.ui;
     this.options = config.options || {};
+    this.keybindings = config.keybindings || {};
     this.hooks = config.hooks || {};
 
     // initialize custom events
@@ -84,7 +93,7 @@ export class Editor {
     this.state = EditorState.create({
       schema: this.schema,
       doc: this.emptyDoc(),
-      plugins: this.initPlugins(),
+      plugins: this.createPlugins(),
     });
 
     // create view
@@ -168,6 +177,10 @@ export class Editor {
   }
 
   public commands(): { [name: string]: EditorCommand } {
+
+    // get keybindings (merge user + default)
+    const commandKeys = this.commandKeys();
+
     return this.extensions
       .commands(this.schema, this.ui, kMac)
       .reduce((commands: { [name: string]: EditorCommand }, command: Command) => {
@@ -175,13 +188,21 @@ export class Editor {
           ...commands,
           [command.name]: {
             name: command.name,
-            keymap: command.keymap,
+            keymap: commandKeys[command.name],
             isActive: () => command.isActive(this.state),
             isEnabled: () => command.isEnabled(this.state),
             execute: () => command.execute(this.state, this.view.dispatch, this.view),
           },
         };
       }, {});
+  }
+
+  public setKeybindings(keyBindings: EditorKeybindings) {
+    this.keybindings = keyBindings;
+    this.state = this.state.reconfigure({
+      schema: this.state.schema,
+      plugins: this.createPlugins()
+    });
   }
 
   private dispatchTransaction(transaction: Transaction) {
@@ -278,9 +299,9 @@ export class Editor {
     });
   }
 
-  private initPlugins(): Plugin[] {
+  private createPlugins(): Plugin[] {
     return [
-      ...this.keymapPlugins(),
+      this.keybindingsPlugin(),
       ...this.extensions.plugins(this.schema, this.ui, kMac),
       inputRules({ rules: this.extensions.inputRules(this.schema) }),
       new Plugin({
@@ -292,20 +313,46 @@ export class Editor {
     ];
   }
 
-  private keymapPlugins(): Plugin[] {
+  private keybindingsPlugin(): Plugin {
+
+    // get keybindings (merge user + default)
+    const commandKeys = this.commandKeys();
+
     // command keys from extensions
-    const commandKeys: { [key: string]: CommandFn } = {};
-    const commands: readonly Command[] = this.extensions.commands(this.schema, this.ui, kMac);
+    const pluginKeys: { [key: string]: CommandFn } = {};
+    const commands = this.extensions.commands(this.schema, this.ui, kMac);
     commands.forEach((command: Command) => {
-      if (command.keymap) {
-        command.keymap.forEach((key: string) => {
-          commandKeys[key] = command.execute;
+      const keys = commandKeys[command.name];
+      if (keys) {
+        keys.forEach((key: string) => {
+          pluginKeys[key] = command.execute;
         });
       }
     });
 
-    // return plugins
-    return [keymap(commandKeys)];
+    // return plugin
+    return new Plugin({
+      key: Editor.keybindingsPlugin,
+      props: {
+        handleKeyDown: keydownHandler(pluginKeys)
+      }
+    });
+  }
+
+  private commandKeys() : { [key: string]: readonly string[] | null } {
+    
+    // start with keys provided within command definitions
+    const commands = this.extensions.commands(this.schema, this.ui, kMac);
+    const defaultKeys = commands.reduce((keys: { [key: string]: readonly string[] | null }, command: Command) => {
+      keys[command.name] = command.keymap;
+      return keys;
+    }, {});
+    
+    // merge with user keybindings
+    return {
+      ...defaultKeys,
+      ...this.keybindings
+    };
   }
 
   private emptyDoc(): ProsemirrorNode {
