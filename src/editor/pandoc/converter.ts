@@ -1,6 +1,12 @@
 import { Schema, Node as ProsemirrorNode } from 'prosemirror-model';
 
-import { PandocEngine, PandocTokenReader, PandocNodeWriter, PandocApiVersion, PandocMarkWriter } from 'editor/api/pandoc';
+import {
+  PandocEngine,
+  PandocTokenReader,
+  PandocNodeWriter,
+  PandocApiVersion,
+  PandocMarkWriter,
+} from 'editor/api/pandoc';
 
 import { pandocToProsemirror } from './to_prosemirror';
 import { pandocFromProsemirror } from './from_prosemirror';

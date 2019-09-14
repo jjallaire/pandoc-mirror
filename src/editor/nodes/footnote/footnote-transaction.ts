@@ -102,7 +102,7 @@ export function footnoteAppendTransaction(schema: Schema) {
           ...footnote.node.attrs,
           ref,
           content,
-          number
+          number,
         });
       });
     }

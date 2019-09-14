@@ -66,6 +66,4 @@ const extension: Extension = {
   },
 };
 
-
-
 export default extension;

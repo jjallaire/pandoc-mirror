@@ -172,8 +172,7 @@ class PandocWriter implements PandocOutput {
   }
 
   public writeListBlock(list: ProsemirrorNode, content: () => void) {
-    const token = list.type === list.type.schema.nodes.ordered_list 
-        ? 'OrderedList' : 'BulletList';
+    const token = list.type === list.type.schema.nodes.ordered_list ? 'OrderedList' : 'BulletList';
     this.tightList.push(list.attrs.tight);
     this.writeToken(token, content);
     this.tightList.pop();

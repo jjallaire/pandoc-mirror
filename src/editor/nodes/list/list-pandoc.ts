@@ -45,7 +45,6 @@ export function pandocWriteBulletList(output: PandocOutput, node: ProsemirrorNod
 }
 
 export function pandocWriteListItem(output: PandocOutput, node: ProsemirrorNode) {
-
   const checked = node.attrs.checked;
 
   output.writeArray(() => {

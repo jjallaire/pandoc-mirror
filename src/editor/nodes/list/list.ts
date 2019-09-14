@@ -94,7 +94,7 @@ const extension: Extension = {
           tight: { default: true },
         },
         parseDOM: [
-          { 
+          {
             tag: 'ul',
             getAttrs: (dom: Node | string) => {
               const el = dom as Element;
@@ -103,8 +103,8 @@ const extension: Extension = {
                 attrs.tight = true;
               }
               return attrs;
-            }
-          }
+            },
+          },
         ],
         toDOM(node) {
           const attrs: { [key: string]: string } = {};

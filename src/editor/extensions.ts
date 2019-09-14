@@ -165,7 +165,6 @@ export class ExtensionManager {
     });
   }
 
-
   // NOTE: return value not readonly b/c it will be fed directly to a
   // Prosemirror interface that doesn't take readonly
   public inputRules(schema: Schema): InputRule[] {

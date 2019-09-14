@@ -37,16 +37,16 @@ const extension: Extension = {
   },
 
   inputRules: (schema: Schema) => {
-
     return [
       new InputRule(/^\*{3}$/, (state: EditorState, match: string[], start: number, end: number) => {
         const paraNode = findParentNodeOfType(schema.nodes.paragraph)(state.selection);
-        if (paraNode && state.selection.$anchor.depth === 2) { // only in top-level paragraphs
+        if (paraNode && state.selection.$anchor.depth === 2) {
+          // only in top-level paragraphs
           return state.tr.replaceRangeWith(start, end, schema.nodes.horizontal_rule.create());
         } else {
           return null;
         }
-      })
+      }),
     ];
   },
 };

@@ -28,7 +28,7 @@ export class TightListCommand extends Command {
           const node = parentList.node;
           tr.setNodeMarkup(parentList.pos, node.type, {
             ...node.attrs,
-              tight: !node.attrs.tight,
+            tight: !node.attrs.tight,
           });
           dispatch(tr);
         }

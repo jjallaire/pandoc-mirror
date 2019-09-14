@@ -44,7 +44,9 @@ export interface EditorHooks {
   applyDevTools?: (view: EditorView, stateClass: any) => void;
 }
 
-export interface EditorKeybindings { [key: string]: string[] | null; }
+export interface EditorKeybindings {
+  [key: string]: string[] | null;
+}
 
 export interface EditorCommand {
   readonly name: string;
@@ -58,9 +60,7 @@ export const kEventSelectionChange = 'selectionChange';
 
 const kMac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
 
-
 export class Editor {
-
   private static readonly keybindingsPlugin = new PluginKey('keybindings');
 
   private readonly parent: HTMLElement;
@@ -181,7 +181,6 @@ export class Editor {
   }
 
   public commands(): { [name: string]: EditorCommand } {
-
     // get keybindings (merge user + default)
     const commandKeys = this.commandKeys();
 
@@ -205,7 +204,7 @@ export class Editor {
     this.keybindings = keyBindings;
     this.state = this.state.reconfigure({
       schema: this.state.schema,
-      plugins: this.createPlugins()
+      plugins: this.createPlugins(),
     });
   }
 
@@ -318,7 +317,6 @@ export class Editor {
   }
 
   private keybindingsPlugin(): Plugin {
-
     // get keybindings (merge user + default)
     const commandKeys = this.commandKeys();
 
@@ -338,24 +336,23 @@ export class Editor {
     return new Plugin({
       key: Editor.keybindingsPlugin,
       props: {
-        handleKeyDown: keydownHandler(pluginKeys)
-      }
+        handleKeyDown: keydownHandler(pluginKeys),
+      },
     });
   }
 
-  private commandKeys() : { [key: string]: readonly string[] | null } {
-    
+  private commandKeys(): { [key: string]: readonly string[] | null } {
     // start with keys provided within command definitions
     const commands = this.extensions.commands(this.schema, this.ui, kMac);
     const defaultKeys = commands.reduce((keys: { [key: string]: readonly string[] | null }, command: Command) => {
       keys[command.name] = command.keymap;
       return keys;
     }, {});
-    
+
     // merge with user keybindings
     return {
       ...defaultKeys,
-      ...this.keybindings
+      ...this.keybindings,
     };
   }
 

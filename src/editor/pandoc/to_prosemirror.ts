@@ -115,7 +115,7 @@ class Parser {
           state.openNode(nodeType, attrs);
           children.forEach((child: PandocToken[]) => {
             const childAttrs: { checked: null | boolean } = { checked: null };
-           
+
             // look for checkbox in first character of child tokens
             // if we see it, remove it and set childAttrs.checked as appropriate
             const childWithChecked = tokensWithChecked(child);

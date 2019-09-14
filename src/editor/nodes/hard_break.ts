@@ -9,7 +9,6 @@ import { Extension } from 'editor/api/extension';
 import { PandocOutput } from 'editor/api/pandoc';
 import { EditorUI } from 'editor/api/ui';
 
-
 const extension: Extension = {
   nodes: [
     {
@@ -38,7 +37,6 @@ const extension: Extension = {
   ],
 
   plugins: (schema: Schema, ui: EditorUI, mac: boolean) => {
-    
     const br = schema.nodes.hard_break;
     const cmd = chainCommands(
       exitCode,
@@ -57,11 +55,9 @@ const extension: Extension = {
     if (mac) {
       keys['Ctrl-Enter'] = cmd;
     }
-    
-    return [
-      keymap(keys)
-    ];
-  }
+
+    return [keymap(keys)];
+  },
 };
 
 export default extension;

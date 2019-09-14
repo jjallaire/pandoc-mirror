@@ -79,10 +79,7 @@ export class WrapCommand extends NodeCommand {
 
 export function toggleList(listType: NodeType, itemType: NodeType): CommandFn {
   function isList(node: Node, schema: Schema) {
-    return (
-      node.type === schema.nodes.bullet_list ||
-      node.type === schema.nodes.ordered_list
-    );
+    return node.type === schema.nodes.bullet_list || node.type === schema.nodes.ordered_list;
   }
 
   return (state: EditorState, dispatch?: (tr: Transaction<any>) => void, view?: EditorView) => {

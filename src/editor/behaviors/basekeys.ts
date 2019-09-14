@@ -1,7 +1,14 @@
-import { 
-  chainCommands, newlineInCode, createParagraphNear, 
-  liftEmptyBlock, splitBlock, deleteSelection, 
-  joinBackward, selectNodeBackward, joinForward, selectNodeForward 
+import {
+  chainCommands,
+  newlineInCode,
+  createParagraphNear,
+  liftEmptyBlock,
+  splitBlock,
+  deleteSelection,
+  joinBackward,
+  selectNodeBackward,
+  joinForward,
+  selectNodeForward,
 } from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -15,18 +22,18 @@ const extension: Extension = {
     const enter = chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock);
     const backspace = chainCommands(undoInputRule, deleteSelection, joinBackward, selectNodeBackward);
     const del = chainCommands(deleteSelection, joinForward, selectNodeForward);
-    
+
     const keys = {
-      "Enter": enter,
-      "Backspace": backspace,
-      "Mod-Backspace": backspace,
-      "Delete": del,
-      "Mod-Delete": del,
+      Enter: enter,
+      Backspace: backspace,
+      'Mod-Backspace': backspace,
+      Delete: del,
+      'Mod-Delete': del,
     };
-    
+
     // return keymap
     return [keymap(keys)];
-  }
+  },
 };
 
 export default extension;
