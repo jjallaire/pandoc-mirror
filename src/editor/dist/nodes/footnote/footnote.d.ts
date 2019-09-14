@@ -1,0 +1,10 @@
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Selection } from 'prosemirror-state';
+import { NodeWithPos } from 'prosemirror-utils';
+import { Extension } from 'editor/api/extension';
+declare const extension: Extension;
+export declare function selectedFootnote(schema: Schema, selection: Selection): NodeWithPos | undefined;
+export declare function selectedNote(schema: Schema, selection: Selection): NodeWithPos | undefined;
+export declare function findNoteNode(doc: ProsemirrorNode, ref: string): NodeWithPos | undefined;
+export declare function findFootnoteNode(doc: ProsemirrorNode, ref: string): NodeWithPos | undefined;
+export default extension;

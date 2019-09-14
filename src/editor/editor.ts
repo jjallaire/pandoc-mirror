@@ -30,6 +30,10 @@ export interface EditorConfig {
   readonly extensions?: readonly Extension[];
 }
 
+export { PandocEngine } from 'editor/api/pandoc';
+
+export * from 'editor/api/ui';
+
 export interface EditorOptions {
   readonly autoFocus?: boolean;
   readonly codemirror?: boolean;

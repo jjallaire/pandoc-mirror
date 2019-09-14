@@ -1,0 +1,16 @@
+import "codemirror/mode/clike/clike";
+import "codemirror/mode/javascript/javascript";
+import "codemirror/mode/htmlembedded/htmlembedded";
+import "codemirror/mode/css/css";
+import "codemirror/mode/markdown/markdown";
+import "codemirror/mode/python/python";
+import "codemirror/mode/r/r";
+import "codemirror/mode/shell/shell";
+import "codemirror/mode/sql/sql";
+import "codemirror/mode/yaml/yaml";
+import "codemirror/mode/yaml-frontmatter/yaml-frontmatter";
+import 'codemirror/lib/codemirror.css';
+import { Extension } from "editor/api/extension";
+import './codemirror.css';
+declare const extension: Extension;
+export default extension;
