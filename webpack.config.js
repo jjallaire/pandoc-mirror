@@ -12,7 +12,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 module.exports = {
   entry: path.join(__dirname, '/src/index.ts'),
   output: {
-    filename: 'editor.js',
+    filename: 'pandoc-mirror.js',
     path: path.join(__dirname, '/dist'),
     library: "PandocMirror",
     libraryTarget: "var"
