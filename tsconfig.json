@@ -4,6 +4,7 @@
     "module": "amd",
     "declaration": true,
     "outDir": "./dist",
+    "outFile": "./dist/editor.js",
     "strict": true,
     "baseUrl": "./src",
     "sourceMap": true,
