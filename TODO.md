@@ -5,6 +5,18 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
+may need to make use of project references (allows mutliple tsconfig.json files
+that all reference eachother)
+   https://www.typescriptlang.org/docs/handbook/project-references.html
+will ultimately need something like lerna:
+   https://blog.logrocket.com/setting-up-a-monorepo-with-lerna-for-a-typescript-project-b6a81fe8e4f8/
+
+simple explanation:
+   https://stackoverflow.com/questions/51631786/how-to-use-project-references-in-typescript-3-0
+   https://gitlab.com/parzh/re-scaled/commit/ca47c1f6195b211ed5d61d2821864c8cecd86bad
+   https://www.typescriptlang.org/docs/handbook/project-references.html#structuring-for-relative-modules
+
+
 editing container based on phospher: 
    http://phosphorjs.github.io/phosphor/api/widgets/globals.html
    react in phospher widget:
