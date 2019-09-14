@@ -10,7 +10,7 @@ const child_process = require('child_process')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
-  entry: path.join(__dirname, '/src/editor.ts'),
+  entry: path.join(__dirname, '/src/index.ts'),
   output: {
     filename: 'editor.js',
     path: path.join(__dirname, '/dist'),
