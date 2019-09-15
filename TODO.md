@@ -5,6 +5,29 @@ pandoc schema: <https://github.com/jgm/pandoc-types/blob/master/Text/Pandoc/Defi
 pandoc scholar: https://pandoc-scholar.github.io/
 pandoc jats:    https://github.com/mfenner/pandoc-jats
 
+for now, just do this:
+
+pantograph
+panharmonicon
+panoptic
+
+1) use create-react-app <foo> --typescript to get everything including hot-reloading dev server working
+
+2) add a an express endpoint via "proxy" seting: 
+   https://flaviocopes.com/how-to-serve-react-from-same-origin/
+   https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/
+   https://medium.com/@maison.moa/setting-up-an-express-backend-server-for-create-react-app-bc7620b20a61
+   https://www.freecodecamp.org/news/how-to-make-create-react-app-work-with-a-node-backend-api-7c5c48acb1b0/
+
+2a) Use 'concurrently' to run the 2 together:
+   https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/#concurrently
+
+3) have the editor folder contain the pandoc-mirror code (and use baseUrl to ref e.g. 'editor/api/node/..')
+
+4) don't allow the editor to take dependencies outside of it's directory
+
+5) Use blueprint.js as the client framework (phosphorjs doesn't do enough + docs are non-existent)
+
 may need to make use of project references (allows mutliple tsconfig.json files
 that all reference eachother)
    https://www.typescriptlang.org/docs/handbook/project-references.html
